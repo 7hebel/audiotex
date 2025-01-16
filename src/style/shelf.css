@@ -1,0 +1,86 @@
+.shelf {
+    height: 100%;
+    width: 100%;
+    padding: 24px;
+    box-sizing: border-box;
+}
+
+#audiobooks-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 32px;
+}
+
+.ab-entry {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.ab-cover {
+    height: 250px;
+    width: 250px;
+    border-radius: 12px;
+    border: 1px solid #aaaaaa17;
+    box-shadow: 0px 0px 22px 0px #00000085;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    background-color: #17181b;
+    background-size: contain;
+    background-repeat: no-repeat;
+    padding: 8px;
+    box-sizing: border-box;
+    gap: 8px;
+    opacity: .85;
+    transition: box-shadow .4s, opacity .4s;
+}
+
+.ab-cover:hover {
+    box-shadow: -6px 0px 22px 4px #000000;
+    opacity: 1;
+}
+
+#add-audiobook .ab-cover {
+    color: #ffffff1c;
+    font-size: 50px;
+    justify-content: center;
+    align-items: center;
+}
+
+#add-audiobook .ab-title {
+    color: #ffffff25
+}
+
+.ab-title {
+    color: rgb(246, 248, 252);
+    font-family: 'Code';
+    font-size: 16px;
+    font-weight: 400;
+    max-width: 240px;
+    margin-top: 8px;
+    margin-bottom: 0px;
+    text-align: center;
+}
+
+.ab-author {
+    margin-top: 4px;
+    color: rgb(143, 143, 143);
+    font-family: 'Code';
+    font-size: 12px;
+    max-width: 240px;
+    text-align: center;
+}
+
+.ab-meta {
+    color: white;
+    font-family: 'Code';
+    font-size: 12px;
+    background-color: rgba(0, 0, 0, 0.623);
+    padding: 6px;
+    border-radius: 6px;
+    backdrop-filter: blur(12px);
+    border: 1px solid #00000034
+}

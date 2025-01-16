@@ -1,0 +1,50 @@
+@font-face {
+    font-family: 'Code';
+    src: url('../font/SourceCodePro.ttf')
+}
+
+@font-face {
+    font-family: 'ClashDisplay';
+    font-weight: 200;
+    src: url('../font/clash-dp/ClashDisplay-Extralight.otf')
+}
+
+@font-face {
+    font-family: 'ClashDisplay';
+    font-weight: 300;
+    src: url('../font/clash-dp/ClashDisplay-Light.otf')
+}
+
+@font-face {
+    font-family: 'ClashDisplay';
+    font-weight: 400;
+    src: url('../font/clash-dp/ClashDisplay-Regular.otf')
+}
+
+@font-face {
+    font-family: 'ClashDisplay';
+    font-weight: 500;
+    src: url('../font/clash-dp/ClashDisplay-Medium.otf')
+}
+
+@font-face {
+    font-family: 'ClashDisplay';
+    font-weight: 600;
+    src: url('../font/clash-dp/ClashDisplay-Semibold.otf')
+}
+
+@font-face {
+    font-family: 'ClashDisplay';
+    font-weight: 700;
+    src: url('../font/clash-dp/ClashDisplay-Bold.otf')
+}
+
+* {
+    user-select: none;
+}
+
+body {
+    background-color: #0f0e11;
+    margin: 0;
+    padding: 0;
+}

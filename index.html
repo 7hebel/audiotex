@@ -1,18 +1,150 @@
 <!DOCTYPE html>
 <html lang="en">
-
+    
 <head>
     <meta charset="UTF-8">
-    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
-    <title>Hello World!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://kit.fontawesome.com/e526ea242b.js" crossorigin="anonymous"></script>
+    
+    <script defer src="src/code/generators.js"></script>
+    <script defer src="src/code/info-popup.js"></script>
+    <link rel="stylesheet" href="src/style/main.css">
+    <link rel="stylesheet" href="src/style/shelf.css">
+    <link rel="stylesheet" href="src/style/info.css">
+    <title>AudioTex</title>
 </head>
 
 <body>
-    <h1>Hello World!</h1>
-    We are using Node.js <span id="node-version"></span>,
-    Chromium <span id="chrome-version"></span>,
-    and Electron <span id="electron-version"></span>.
-</body>
+    <div id="ab-info-popup" show="0" edit="0">
+        <div class="info-window">
+            <div class="info-meta-part">
+                <img id="info-cover" class="info-not-editable" src="src/cov.jpg">
+                <h5 id="info-title" class="info-editable">Wish You Were Here</h5>
+                
+                <div class="meta-container">
+                    <div class="info-meta-entry">
+                        <div class="meta-entry-icon">
+                            <i class="fa-solid fa-user"></i>
+                        </div>
+                        <span id="info-author" class="info-editable">Pink Floyd</span>
+                    </div>
+                    <div class="info-meta-entry info-not-editable">
+                        <div class="meta-entry-icon">
+                            <i class="fa-regular fa-clock"></i>
+                        </div>
+                        <span id="info-duration">14h 25m</span>
+                    </div>
+                    <div class="info-meta-entry info-not-editable">
+                        <div class="meta-entry-icon">
+                            <i class="fa-regular fa-folder"></i>
+                        </div>
+                        <span id="info-path">C:\Users\root\Desktop\awd\dfojiosef</span>
+                    </div>
+                    <div class="info-meta-entry info-not-editable">
+                        <div class="meta-entry-icon">
+                            <i class="fa-regular fa-hashtag"></i>
+                        </div>
+                        <span id="info-items">14 items</span>
+                    </div>
+                    <div class="info-meta-entry info-not-editable">
+                        <div class="meta-entry-icon">
+                            <i class="fa-solid fa-pause"></i>
+                        </div>
+                        <span id="info-progress">6/14 (46%)</span>
+                    </div>
+                    <div class="info-meta-entry info-not-editable">
+                        <div class="meta-entry-icon">
+                            <i class="fa-solid fa-clock-rotate-left"></i>
+                        </div>
+                        <span id="info-recent">12/03/2024</span>
+                    </div>
+                    <div class="info-meta-entry info-not-editable">
+                        <div class="meta-entry-icon">
+                            <i class="fa-solid fa-bookmark"></i>
+                        </div>
+                        <span id="info-bookmarks">3 bookmarks</span>
+                    </div>
+                </div>
 
+                <div class="info-buttons">
+                    <button class="info-btn-secondary" onclick="enterInfoEditMode()">
+                        <i class="fa-solid fa-pencil"></i>
+                    </button>
+                    <button class="info-btn-primary">
+                        <i class="fa-solid fa-play"></i>
+                    </button>
+                    <button class="info-btn-secondary" onclick="closeInfoPopup()">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <div class="info-buttons-edit">
+                    <button class="info-btn-secondary" onclick="cancelInfoEdit()">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                    <button class="info-btn-primary" onclick="saveInfoEdit()">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                    </button>
+                    <button class="info-btn-secondary" onclick="deleteAudiobook()">
+                        <i class="fa-solid fa-trash" style="color: rgb(228, 136, 136)"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="vertical-sep"></div>
+
+            <div class="info-tracks-part">
+                <table id="info-tracks-table">
+                    <tbody>
+                        <tr>
+                            <th id="no-col">#</th>
+                            <th id="title-col">title</th>
+                            <th id="time-col">time</th>
+                        </tr>
+                        <tr draggable="true">
+                            <td>1</td>
+                            <td>Shine on You crazy Diamondsf esf sefdfgdfg(parts 1-5)</td>
+                            <td>12:46</td>
+                        </tr>
+                        <tr draggable="true">
+                            <td>2</td>
+                            <td>Welcome to the machine</td>
+                            <td>04:28</td>
+                        </tr>
+                        <tr draggable="true">
+                            <td>3</td>
+                            <td>Wish You Were Here</td>
+                            <td>05:13</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>            
+        </div>
+    </div>
+
+    <div class="shelf">
+        <div id="audiobooks-container">
+            <div class="ab-entry" id="add-audiobook">
+                <div class="ab-cover">
+                    <i class="fa-solid fa-plus"></i>
+                </div>
+                <p class="ab-title">import audiobook</p>
+            </div>
+
+            <div class="ab-entry">
+                <div class="ab-cover" style="background-image: url('src/cov.jpg');">
+                    <span class="ab-meta">12h 15m</span>
+                    <span class="ab-meta">45%</span>
+                </div>
+                <p class="ab-title">Wish You Were Here</p>
+                <p class="ab-author">Pink Floyd</p>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="playback">
+
+    </div>
+</body>
 </html>

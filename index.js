@@ -4,7 +4,7 @@ const createWindow = () => {
     const win = new BrowserWindow({
         width: 800,
         height: 600,
-        backgroundColor: '#2e2c29',
+        backgroundColor: '#0f0e11',
     });
 
     win.setMenu(null);
