@@ -124,6 +124,12 @@
 
     <div class="shelf">
         <div id="audiobooks-container">
+            <script>
+                const selectDirButton = document.getElementById('audiobooks-container');
+                selectDirButton.addEventListener('click', async () => {
+                    await window.electron.openDirectory();
+                });
+            </script>
             <div class="ab-entry" id="add-audiobook">
                 <div class="ab-cover">
                     <i class="fa-solid fa-plus"></i>
