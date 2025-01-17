@@ -11,6 +11,8 @@ infoPopupContainer.onclick = (ev) => {
 
 function closeInfoPopup() {
     infoPopupContainer.setAttribute("show", "0");
+    infoPopupContainer.setAttribute("edit", "0");
+    infoPopupContainer.setAttribute("target", "-1")
 }
 
 function openInfoPopup(ab_id) {
@@ -46,20 +48,6 @@ function saveInfoEdit() {
 
 }
 
-function deleteAudiobook() {
-
-}
-
-
-function __recalculateTableIndexes() {
-    let i = 1;
-    Array.from(tracksTable.children).slice(1).forEach(tr => {
-        tr.children[0].innerHTML = i;
-        i++;
-    })
-}
-
-
 const tableBody = document.querySelector('#info-tracks-table tbody');
 let draggingRow = null;
 
@@ -80,7 +68,6 @@ tableBody.addEventListener('dragover', (e) => {
     } else {
         tableBody.insertBefore(draggingRow, afterElement);
     }
-    __recalculateTableIndexes();
 });
 
 tableBody.addEventListener('dragend', (e) => {

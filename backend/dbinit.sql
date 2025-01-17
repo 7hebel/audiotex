@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS audiobooks (
     dirpath TEXT NOT NULL, -- Directory path where the audiobook files are stored
     total_time TEXT NOT NULL, -- Total audiobook time in the HH: MM format
     total_tracks INTEGER NOT NULL,
+    cover_src TEXT NOT NULL,
     curr_track INTEGER NOT NULL DEFAULT 0,
     curr_moment_s INTEGER NOT NULL DEFAULT 0,
     last_listened TEXT NOT NULL

@@ -16,7 +16,7 @@
 .info-window {
     width: 1050px;
     min-height: 600px;
-    background-color: rgb(23, 23, 24);
+    background-color: #151518;
     border-radius: 12px;
     border: 1px solid #43434326;
     padding: 16px;
@@ -158,7 +158,9 @@
 
 .info-tracks-part {
     padding-inline: 20px;
+    max-height: 600px;
     width: 58%;
+    overflow-y: scroll;
 }
 
 #info-tracks-table {

@@ -1,17 +1,17 @@
 const { app, BrowserWindow, dialog, ipcMain } = require('electron');
-const { importAudiobook } = require('./backend/audiobook');
+const audibook = require('./backend/audiobook');
 const db = require('./backend/database');
 const path = require('path');
 
 const createWindow = () => {
     const win = new BrowserWindow({
-        width: 1200,
-        height: 800,
+        width: 1600,
+        height: 1000,
         backgroundColor: '#0f0e11',
         webPreferences: {
-            preload: path.join(__dirname, 'preload.js'), // Ensure this path points to your preload.js
-            nodeIntegration: false, // Disable nodeIntegration for security
-            contextIsolation: true, // Isolate the context for security
+            preload: path.join(__dirname, 'preload.js'),
+            nodeIntegration: false,
+            contextIsolation: true,
         }
     });
 
@@ -20,15 +20,35 @@ const createWindow = () => {
     win.webContents.openDevTools();
 }
 
-ipcMain.handle('open-directory-dialog', async () => {
+ipcMain.handle('import-new-ab', async () => {
     const result = await dialog.showOpenDialog({
         properties: ['openDirectory']
     });
 
     if (!result.canceled) {
         console.log("calling with ", result.filePaths[0]);
-        await importAudiobook(result.filePaths[0]);
+        return await audibook.importAudiobook(result.filePaths[0]);
     }
+
+    return false;
+});
+
+ipcMain.handle('get-all-audiobooks', async () => {
+    return db.getAllAudiobooks();
+});
+
+
+ipcMain.handle('get-audiobook-data', async (ev, ab_id) => {
+    return db.getAudiobook(ab_id);
+});
+
+
+ipcMain.handle('get-tracks', async (ev, ab_id) => {
+    return db.getTracks(ab_id);
+});
+
+ipcMain.handle('delete-audiobook', async (ev, ab_id) => {
+    return db.deleteAudiobookRelated(ab_id);
 });
 
 

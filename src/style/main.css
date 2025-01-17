@@ -48,3 +48,25 @@ body {
     margin: 0;
     padding: 0;
 }
+
+::-webkit-scrollbar {
+    width: 4px;
+    height: 6px;
+    border-radius: 100px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #ffffff23;
+    border-radius: 0px;
+    border-radius: 100px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #ffffff3d;
+    cursor: pointer;
+    border-radius: 100px;
+}
