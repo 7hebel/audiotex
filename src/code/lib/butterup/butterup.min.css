@@ -1,0 +1,120 @@
+.toaster,
+ol.rack {
+    list-style: none;
+    margin: 0
+}
+
+.toaster {
+    font-family: 'Code';
+    box-sizing: border-box;
+    outline: 0;
+    z-index: 999999999;
+    position: fixed;
+}
+
+.butteruptoast,
+.butteruptoast.brutalist {
+    font-size: 16px;
+    font-weight: 500;
+    display: flex;
+    padding: 12px;
+    width: max-content;
+}
+
+.toaster.bottom-right {
+    bottom: 90px;
+    right: 30px
+}
+
+.toaster.bottom-right ol.rack {
+    flex-direction: column;
+    align-items: end;
+}
+
+ol.rack {
+    padding: 0;
+    display: flex
+}
+
+ol.rack li {
+    margin-bottom: 16px
+}
+
+.butteruptoast {
+    border-radius: 8px;
+    box-shadow: 0 4px 12px #0000001a;
+    align-items: center;
+    gap: 6px;
+    max-width: 500px;
+    cursor: pointer;
+}
+
+.notif .desc .message {
+    font-weight: 400;
+    word-break: break-word;
+    font-size: 14px;
+    margin-inline: 4px;
+    padding-block: 2px;
+}
+
+
+.butteruptoast.info {
+    color: #ebf6ff;
+    background-color: #1d1f28;
+    border: 1px solid #ffffff08;
+    box-shadow: 0px 0px 10px 0px #00000070;
+}
+
+.butteruptoast.error {
+    color: #ffebeb;
+    background-color: #261c1c;
+    border: 1px solid #ffffff08;
+    box-shadow: 0px 0px 10px 0px #00000070;
+}
+
+
+.toastUp {
+    animation: .5s ease-in-out forwards slideUp
+}
+
+.toastDown {
+    animation: .5s ease-in-out forwards slideDown
+}
+
+@keyframes slideDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-100%)
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0)
+    }
+}
+
+@keyframes slideUp {
+    0% {
+        opacity: 0;
+        transform: translateY(100%)
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0)
+    }
+}
+
+.fadeOutToast {
+    animation: .3s ease-in-out forwards fadeOut
+}
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1
+    }
+
+    100% {
+        opacity: 0
+    }
+}

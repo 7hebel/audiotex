@@ -1,5 +1,6 @@
 const { loadMusicMetadata } = require(`music-metadata`);
 const { secondsToReadable } = require('./timeutils')
+const msg = require('./messages');
 const db = require('./database');
 const path = require('path');
 const fs = require('fs');
@@ -7,20 +8,23 @@ const fs = require('fs');
 
 function __isDirpathInitialized(dirpath) {
     const stmt = db.db.prepare(`SELECT * FROM audiobooks WHERE dirpath = '${dirpath}'`);
+    console.log(stmt.all())
     return stmt.all().length > 0;
 }
 
 
 async function importAudiobook(dirpath) {
+    dirpath = dirpath.replaceAll("\\", "/")
+    
     try {
         if (__isDirpathInitialized(dirpath)) {
             console.error("Audiobook already initialized in this path.");
-            return false;
+            return msg.displayError("This audiobook is already imported.");
         }
 
         const TITLE = path.basename(dirpath);
         const files = await fs.promises.readdir(dirpath, { withFileTypes: true });
-        if (files.length == 0) { return }
+        if (files.length == 0) return msg.displayError("No files in the directory.");
         
         const mm = await loadMusicMetadata();
 
@@ -55,8 +59,8 @@ async function importAudiobook(dirpath) {
         TOTAL_TIME = secondsToReadable(TOTAL_TIME);
         console.log("Successfuly parsed directory.");
 
-        const AB_ID = db.insertAudiobook(TITLE, AUTHOR, TOTAL_TIME, dirpath.replaceAll("\\", "/"), TOTAL_ITEMS, "");
-        if (AB_ID == -1) { return; }
+        const AB_ID = db.insertAudiobook(TITLE, AUTHOR, TOTAL_TIME, dirpath, TOTAL_ITEMS, "");
+        if (AB_ID == -1) return msg.displayError(`Failed to save: ${TITLE}`);
         
         for (let track of tracks) {
             db.insertTrack(track.name, track.filepath, track.trackNumber, track.length, AB_ID);
@@ -74,12 +78,12 @@ async function importAudiobook(dirpath) {
         }
         
         console.log(`Inserted all contents of: ${TITLE} into the DB.`);
-        // (ab.id, ab.title, ab.author, ab.cover_src, ab.total_time, progress)
+        msg.displayInfo(`Imported: ${TITLE}`)
         return [AB_ID, TITLE, AUTHOR, coverPath, TOTAL_TIME, "0%"];
         
     } catch (err) {
         console.error(`Error reading directory ${dirpath}:`, err);
-        return false;
+        return msg.displayError("Failed to read directory.");
     }
 };
 

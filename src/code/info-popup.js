@@ -15,7 +15,7 @@ function closeInfoPopup() {
     exitInfoEditMode();
 }
 
-function openInfoPopup(ab_id) {
+function openInfoPopup() {
     infoPopupContainer.setAttribute("show", "1");
 }
 

@@ -6,6 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://kit.fontawesome.com/e526ea242b.js" crossorigin="anonymous"></script>
     
+    <script>
+        window.ipcRenderer.on('msg-info', (event, message) => { displayInfoMessage(message) });
+        window.ipcRenderer.on('msg-error', (event, message) => { displayErrorMessage(message) });
+    </script>
+
+    <script src="src/code/lib/butterup/butterup.min.js"></script>
+    <link rel="stylesheet" href="src/code/lib/butterup/butterup.min.css">
+
     <script defer src="src/code/generators.js"></script>
     <script defer src="src/code/info-popup.js"></script>
     <script defer src="src/code/playview.js"></script>
@@ -99,6 +107,13 @@
                             const newTitle = document.getElementById("info-title").textContent;
                             const newAuthor = document.getElementById("info-author").textContent;
 
+                            if (!newTitle.trim()) {
+                                return displayErrorMessage("Title cannot be blank.");
+                            }
+                            if (!newAuthor.trim()) {
+                                return displayErrorMessage("Author cannot be blank.");
+                            }
+
                             let newTracksOrder = []
                             Array.from(document.getElementById("info-tracks").children).slice(1).forEach((trackEl) => {
                                 newTracksOrder.push([
@@ -109,6 +124,7 @@
                             
                             await window.electron.updateAudiobookMeta(ab_id, newTitle, newAuthor, newTracksOrder);                            
                             acceptInfoEditChanges();
+                            displayInfoMessage("Changes saved.")
                         })
 
                         const deleteAudiobookBtn = document.getElementById('delete-ab-btn');
@@ -117,6 +133,7 @@
                             await window.electron.deleteAudiobook(ab_id);
                             closeInfoPopup();
                             document.getElementById(String(ab_id)).remove();
+                            displayInfoMessage('Removed audiobook from shelf.')
                         });
                     </script>
                 </div>
@@ -172,6 +189,7 @@
                 <button class="flow-ctrl-btn" id="next-track-btn">
                     <i class="fa-solid fa-forward-step"></i>
                 </button>
+                <span id="pv-track-time">12:45 / 36:13</span>
             </div>
             
             <div class="current-info-group">

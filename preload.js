@@ -1,5 +1,10 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
+contextBridge.exposeInMainWorld('ipcRenderer', {
+    send: ipcRenderer.send.bind(ipcRenderer),
+    on: ipcRenderer.on.bind(ipcRenderer)
+});
+
 contextBridge.exposeInMainWorld('electron', {
     importNewAudiobook: () => ipcRenderer.invoke("import-new-ab"),
     getAllAudiobooks: () => ipcRenderer.invoke("get-all-audiobooks"),

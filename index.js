@@ -1,10 +1,14 @@
 const { app, BrowserWindow, dialog, ipcMain } = require('electron');
 const audibook = require('./backend/audiobook');
+const msg = require('./backend/messages');
 const db = require('./backend/database');
 const path = require('path');
 
+
+let ROOT_WIN = null;
+
 const createWindow = () => {
-    const win = new BrowserWindow({
+    ROOT_WIN = new BrowserWindow({
         width: 1600,
         height: 1000,
         backgroundColor: '#0f0e11',
@@ -15,9 +19,10 @@ const createWindow = () => {
         }
     });
 
-    win.setMenu(null);
-    win.loadFile('index.html');
-    win.webContents.openDevTools();
+    msg._setWin(ROOT_WIN);
+    ROOT_WIN.setMenu(null);
+    ROOT_WIN.loadFile('index.html');
+    ROOT_WIN.webContents.openDevTools();
 }
 
 ipcMain.handle('import-new-ab', async () => {
@@ -37,11 +42,9 @@ ipcMain.handle('get-all-audiobooks', async () => {
     return db.getAllAudiobooks();
 });
 
-
 ipcMain.handle('get-audiobook-data', async (ev, ab_id) => {
     return db.getAudiobook(ab_id);
 });
-
 
 ipcMain.handle('get-tracks', async (ev, ab_id) => {
     return db.getTracks(ab_id);
