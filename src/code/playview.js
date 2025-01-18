@@ -3,15 +3,18 @@ const audioPlayer = document.getElementById("audio-player");
 const volumeControl = document.getElementById("volume-bar");
 const speedControl = document.getElementById("speed-bar");
 
+
 volumeControl.addEventListener("input", (e) => {
     const value = parseInt(volumeControl.value);
     volumeControl.style.setProperty('--volume-bar-value', `${value}%`);
+    document.getElementById("volume-info-value").textContent = `${value}%`
     setAudioVolume(value / 100);
 })
 
 speedControl.addEventListener("input", (e) => {
     const value = ((speedControl.value - speedControl.min) / (speedControl.max - speedControl.min)) * 100;
     speedControl.style.setProperty('--speed-bar-value', `${value}%`);
+    document.getElementById("speed-info-value").textContent = `${speedControl.value}x`
     setPlaybackRate(parseFloat(speedControl.value));
 })
 
@@ -22,8 +25,12 @@ Array.from(document.getElementsByClassName("feature-btn")).forEach(el => {
         const contentElement = el.querySelector(".feature-range-container");
         const checkInterval = setInterval(() => {
             if (!el.matches(":hover") && !contentElement.matches(":hover")) {
-                el.setAttribute("showContent", "0");
-                clearInterval(checkInterval);
+                contentElement.style.opacity = 0;
+                setTimeout(() => {
+                    el.setAttribute("showContent", "0");
+                    contentElement.style.opacity = 1;
+                    clearInterval(checkInterval);
+                }, 400)
             }
         }, 1500)
     })

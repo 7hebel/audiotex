@@ -142,7 +142,7 @@ input[type="range"]::-moz-range-thumb {
 .features-group {
     display: flex;
     flex-direction: row;
-    gap: 18px;
+    gap: 24px;
 }
 
 .feature-btn {
@@ -163,6 +163,8 @@ input[type="range"]::-moz-range-thumb {
 
 .feature-range-container {
     position: relative;
+    opacity: 0;
+    transition: opacity .3s;
 }
 
 .feature-range {
@@ -189,6 +191,21 @@ input[type="range"]::-moz-range-thumb {
     width: 12px;
     border-radius: 8px;
     cursor: pointer;
+}
+
+.feature-value {
+    position: absolute;
+    min-width: 34px;
+    top: -38px;
+    left: -10px;
+    font-family: 'Code';
+    font-size: 16px;
+    background-color: #24252d;
+    padding-block: 2px;
+    padding-inline: 4px;
+    border-radius: 6px;
+    border: 1px solid #ffffff0f;
+    box-shadow: 0px 0px 20px 0px #0000005e;
 }
 
 #volume-bar {
