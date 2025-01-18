@@ -1,5 +1,29 @@
 const playBar = document.getElementById("play-bar");
 const audioPlayer = document.getElementById("audio-player");
+const volumeControl = document.getElementById("volume-bar");
+
+volumeControl.addEventListener("input", (e) => {
+    const value = parseInt(volumeControl.value);
+    volumeControl.style.setProperty('--volume-bar-value', `${value}%`);
+    setAudioVolume(value / 100);
+})
+
+function isMouseHovering(element) {
+    return element;
+}
+
+Array.from(document.getElementsByClassName("feature-btn")).forEach(el => {
+    el.addEventListener("mouseenter", e => {el.setAttribute("showContent", "1")})
+    el.addEventListener("mouseleave", e => {
+        const contentElement = el.querySelector(".feature-range-container");
+        const checkInterval = setInterval(() => {
+            if (!el.matches(":hover") && !contentElement.matches(":hover")) {
+                el.setAttribute("showContent", "0");
+                clearInterval(checkInterval);
+            }
+        }, 1500)
+    })
+})
 
 function __updatePlayBarLine() {
     const value = ((playBar.value - playBar.min) / (playBar.max - playBar.min)) * 100;
@@ -13,7 +37,6 @@ playBar.addEventListener("input", (e) => {
     const newTime = newProgress * audioPlayer.duration;
     updatePlayTime(newTime, audioPlayer.duration);
     seekAudioAt(newTime);
-    // __updatePlayBarLine();
 });
 
 audioPlayer.addEventListener("timeupdate", (e) => {

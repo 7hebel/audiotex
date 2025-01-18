@@ -190,16 +190,25 @@
                 <button class="flow-ctrl-btn" id="next-track-btn">
                     <i class="fa-solid fa-forward-step"></i>
                 </button>
-                <span id="pv-track-time">12:45 / 36:13</span>
+                <span id="pv-track-time">00:00 / 00:00</span>
             </div>
             
             <div class="current-info-group">
-                <span id="pv-curr-track">track name</span>
-                <span id="pv-curr-audiobook">audiobook name</span>
+                <span id="pv-curr-track">-</span>
+                <span id="pv-curr-audiobook">AudioTex</span>
             </div>
             
             <div class="features-group">
-                <button class="flow-ctrl-btn" id="add-bookmark">
+                <button class="feature-btn" id="volume-control-btn" showContent="0">
+                    <i class="fa-solid fa-volume-low"></i>
+                    <div class="feature-range-container">
+                        <div class="feature-range-bg">
+                            <input type="range" id="volume-bar" class="feature-range" orient="vertical" min="0" max="100" value="50">
+                        </div>
+                    </div>
+                </button>
+
+                <button class="feature-btn" id="add-bookmark">
                     <i class="fa-solid fa-bookmark"></i>
                 </button>
             </div>
