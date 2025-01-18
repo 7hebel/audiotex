@@ -1,4 +1,5 @@
 const playBar = document.getElementById("play-bar");
+const timeHint = document.getElementById("play-bar-hint");
 const audioPlayer = document.getElementById("audio-player");
 const volumeControl = document.getElementById("volume-bar");
 const speedControl = document.getElementById("speed-bar");
@@ -23,6 +24,8 @@ Array.from(document.getElementsByClassName("feature-btn")).forEach(el => {
     el.addEventListener("mouseenter", e => {el.setAttribute("showContent", "1")})
     el.addEventListener("mouseleave", e => {
         const contentElement = el.querySelector(".feature-range-container");
+        if (contentElement === null) return;
+
         const checkInterval = setInterval(() => {
             if (!el.matches(":hover") && !contentElement.matches(":hover")) {
                 contentElement.style.opacity = 0;
@@ -49,6 +52,22 @@ playBar.addEventListener("input", (e) => {
     updatePlayTime(newTime, audioPlayer.duration);
     seekAudioAt(newTime);
 });
+
+document.addEventListener('mousemove', (e) => {
+    if (!playBar.matches(":hover")) return;
+    
+    const barRect = playBar.getBoundingClientRect();
+    const mx = e.clientX;
+    timeHint.style.left = `${mx - 20}px`;
+    
+    const point = mx - barRect.x;
+    const progress = point / barRect.width;
+    if (progress < 0) progress = 0;
+    if (progress > 1) progress = 1;
+
+    const time_s = audioPlayer.duration * progress;
+    timeHint.textContent = secondsToReadable(time_s);
+});    
 
 audioPlayer.addEventListener("timeupdate", (e) => {
     const current = audioPlayer.currentTime;
