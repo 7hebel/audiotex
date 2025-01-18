@@ -44,9 +44,19 @@ function cancelInfoEdit() {
     tracksTable.innerHTML = _preEditTableCopy;
 }
 
+function __recalculateTableIndexes() {
+    let i = 1;
+    Array.from(tracksTable.children).slice(1).forEach(tr => {
+        tr.children[0].innerHTML = i;
+        i++;
+    })
+}
+
 function acceptInfoEditChanges() {
     exitInfoEditMode();
     _preEditTableCopy = "";
+
+    __recalculateTableIndexes();
 }
 
 const tableBody = document.querySelector('#info-tracks-table tbody');
