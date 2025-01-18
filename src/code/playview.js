@@ -1,6 +1,7 @@
 const playBar = document.getElementById("play-bar");
 const audioPlayer = document.getElementById("audio-player");
 const volumeControl = document.getElementById("volume-bar");
+const speedControl = document.getElementById("speed-bar");
 
 volumeControl.addEventListener("input", (e) => {
     const value = parseInt(volumeControl.value);
@@ -8,9 +9,12 @@ volumeControl.addEventListener("input", (e) => {
     setAudioVolume(value / 100);
 })
 
-function isMouseHovering(element) {
-    return element;
-}
+speedControl.addEventListener("input", (e) => {
+    const value = ((speedControl.value - speedControl.min) / (speedControl.max - speedControl.min)) * 100;
+    speedControl.style.setProperty('--speed-bar-value', `${value}%`);
+    setPlaybackRate(parseFloat(speedControl.value));
+})
+
 
 Array.from(document.getElementsByClassName("feature-btn")).forEach(el => {
     el.addEventListener("mouseenter", e => {el.setAttribute("showContent", "1")})

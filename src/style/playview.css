@@ -1,6 +1,7 @@
 :root {
     --play-bar-value: 0%;
     --volume-bar-value: 50%;
+    --speed-bar-value: 50%;
 }
 
 input[type="range"]::-webkit-slider-thumb {
@@ -192,6 +193,10 @@ input[type="range"]::-moz-range-thumb {
 
 #volume-bar {
     background: linear-gradient(to top, #444e5f 0%, #94a5c4 var(--volume-bar-value), #323a49 var(--volume-bar-value), #323a49 100%);
+}
+
+#speed-bar {
+    background: linear-gradient(to top, #444e5f 0%, #94a5c4 var(--speed-bar-value), #323a49 var(--speed-bar-value), #323a49 100%);
 }
 
 .feature-btn[showContent="0"] > .feature-range-container {
