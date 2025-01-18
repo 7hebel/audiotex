@@ -11,5 +11,6 @@ contextBridge.exposeInMainWorld('electron', {
     getAudiobookData: (ab_id) => ipcRenderer.invoke("get-audiobook-data", ab_id),
     getTracks: (ab_id) => ipcRenderer.invoke("get-tracks", ab_id),
     deleteAudiobook: (ab_id) => ipcRenderer.invoke("delete-audiobook", ab_id),
+    playAudiobook: (ab_id) => ipcRenderer.invoke("play-audiobook", ab_id),
     updateAudiobookMeta: (ab_id, title, author, tracks) => ipcRenderer.invoke("update-audiobook-meta", ab_id, title, author, tracks),
 });

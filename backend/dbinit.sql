@@ -6,8 +6,10 @@ CREATE TABLE IF NOT EXISTS audiobooks (
     total_time TEXT NOT NULL, -- Total audiobook time in the HH: MM format
     total_tracks INTEGER NOT NULL,
     cover_src TEXT NOT NULL,
-    curr_track INTEGER NOT NULL DEFAULT 0,
+    curr_track INTEGER NOT NULL DEFAULT 1,
     curr_moment_s INTEGER NOT NULL DEFAULT 0,
+    play_speed REAL NOT NULL DEFAULT 1,
+    progress REAL NOT NULL DEFAULT 0,
     last_listened TEXT NOT NULL
 );
 

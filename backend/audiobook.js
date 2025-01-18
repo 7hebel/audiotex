@@ -74,12 +74,11 @@ async function importAudiobook(dirpath) {
                 SET cover_src = '${coverPath}'
                 WHERE id = ${AB_ID}
             `);
-            console.log(db.getAudiobook(AB_ID));
         }
         
         console.log(`Inserted all contents of: ${TITLE} into the DB.`);
         msg.displayInfo(`Imported: ${TITLE}`)
-        return [AB_ID, TITLE, AUTHOR, coverPath, TOTAL_TIME, "0%"];
+        return [AB_ID, TITLE, AUTHOR, coverPath, TOTAL_TIME, "0"];
         
     } catch (err) {
         console.error(`Error reading directory ${dirpath}:`, err);

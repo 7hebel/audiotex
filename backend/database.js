@@ -26,7 +26,7 @@ function getAudiobook(ab_id) {
         `);
         return stmt.all()[0];
     } catch (err) {
-        console.error('Error fetching audiobooks:', err);
+        console.error('Error fetching audiobook:', err);
         return [];
     }
 }
@@ -55,6 +55,22 @@ function getTracks(ab_id) {
         return [];
     }
 }
+
+function getIndexedTrack(ab_id, index) {
+    try {
+        const stmt = db.prepare(`
+            SELECT *
+            FROM tracks
+            WHERE audiobook_id = ${ab_id}
+                AND idx = ${index}
+        `);
+        return stmt.all()[0];
+    } catch (err) {
+        console.error(`Error fetching tracks for ${ab_id}:`, err);
+        return [];
+    }
+}
+
 function insertAudiobook(title, author, total_time, dirpath, total_items, cover_src) {
     try {
         const stmt = db.prepare(`INSERT INTO audiobooks (title, author, dirpath, total_time, total_tracks, cover_src, last_listened) VALUES (?, ?, ?, ?, ?, ?, '-')`);
@@ -114,6 +130,7 @@ module.exports = {
     getAudiobook,
     getAllAudiobooks,
     getTracks,
+    getIndexedTrack,
     deleteAudiobookRelated,
     closeDatabase,
 };

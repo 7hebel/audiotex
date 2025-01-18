@@ -21,7 +21,7 @@ function addAudiobookToShelf(ab_id, title, author, cover_src, duration, progress
 
     const metaProgress = document.createElement("span");
     metaProgress.className = "ab-meta";
-    metaProgress.innerText = progress;
+    metaProgress.innerText = progress + "%";
     abCover.appendChild(metaProgress);
 
     abEntry.appendChild(abCover);
@@ -49,7 +49,7 @@ function populateInfoPopup(ab_id) {
         document.getElementById("info-duration").textContent = ab.total_time;
         document.getElementById("info-path").textContent = ab.dirpath;
         document.getElementById("info-items").textContent = ab.total_tracks + " items";
-        document.getElementById("info-progress").textContent = ab.curr_track + "/" + ab.total_tracks + "  " + ((ab.curr_track / ab.total_tracks) * 100) + "%";
+        document.getElementById("info-progress").textContent = ab.curr_track + "/" + ab.total_tracks + " - " + ab.progress + "%";
         document.getElementById("info-recent").textContent = ab.last_listened;
         document.getElementById("info-bookmarks").textContent = "0 bookmarks";
     })

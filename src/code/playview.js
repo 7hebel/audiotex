@@ -3,7 +3,7 @@ const timeHint = document.getElementById("play-bar-hint");
 const audioPlayer = document.getElementById("audio-player");
 const volumeControl = document.getElementById("volume-bar");
 const speedControl = document.getElementById("speed-bar");
-
+const stateIcon = document.getElementById("play-state-icon");
 
 volumeControl.addEventListener("input", (e) => {
     const value = parseInt(volumeControl.value);
@@ -21,7 +21,7 @@ speedControl.addEventListener("input", (e) => {
 
 
 Array.from(document.getElementsByClassName("feature-btn")).forEach(el => {
-    el.addEventListener("mouseenter", e => {el.setAttribute("showContent", "1")})
+    el.addEventListener("mouseenter", e => { el.setAttribute("showContent", "1"); })
     el.addEventListener("mouseleave", e => {
         const contentElement = el.querySelector(".feature-range-container");
         if (contentElement === null) return;
@@ -94,17 +94,33 @@ function setAudioSource(src) {
     audioPlayer.src = src;
 }
 
+function switchPlayState() {
+    audioPlayer.paused ? playAudio() : pauseAudio()
+}
+
 function playAudio() {
+    stateIcon.className = "fa-solid fa-pause";
     audioPlayer.play();
 }
 
 function pauseAudio() {
+    stateIcon.className = "fa-solid fa-play";
     audioPlayer.pause();
 }
 
 function setAudioVolume(volume) {
-    // voulme: [0, 1]
     audioPlayer.volume = volume;
+
+    const iconEl = document.getElementById("volume-icon");
+    if (volume == 0) {
+        iconEl.className = "fa-solid fa-volume-xmark";
+    } else if (volume <= 0.33) {
+        iconEl.className = "fa-solid fa-volume-off";
+    } else if (volume <= 0.75) {
+        iconEl.className = "fa-solid fa-volume-low";
+    } else {
+        iconEl.className = "fa-solid fa-volume-high";
+    }
 }
 
 function seekAudioAt(secs) {
@@ -113,5 +129,8 @@ function seekAudioAt(secs) {
 
 function setPlaybackRate(rate) {
     audioPlayer.playbackRate = rate;
+    document.getElementById("speed-info-value").textContent = `${rate}x`;
+    const value = ((rate - speedControl.min) / (speedControl.max - speedControl.min)) * 100;
+    speedControl.style.setProperty('--speed-bar-value', `${value}%`);
 }
 

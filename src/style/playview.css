@@ -241,3 +241,11 @@ input[type="range"]::-moz-range-thumb {
 .feature-btn[showContent="0"] > .feature-range-container {
     display: none;
 }
+
+#volume-icon {
+    min-width: 26px;
+}
+
+#play-state-icon {
+    min-width: 18px;
+}

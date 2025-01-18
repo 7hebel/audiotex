@@ -51,7 +51,20 @@ ipcMain.handle('get-tracks', async (ev, ab_id) => {
 });
 
 ipcMain.handle('delete-audiobook', async (ev, ab_id) => {
+    audibook.removeCover(ab_id);
     return db.deleteAudiobookRelated(ab_id);
+});
+
+ipcMain.handle('play-audiobook', async (ev, ab_id) => {
+    const audiobook = db.getAudiobook(ab_id);
+    const currTrackIndex = audiobook.curr_track;
+    const currentTrack = db.getIndexedTrack(ab_id, currTrackIndex);
+    console.log(currTrackIndex, currentTrack)
+
+    return {
+        audiobook: db.getAudiobook(ab_id),
+        track: currentTrack
+    }
 });
 
 ipcMain.handle('update-audiobook-meta', async (ev, ab_id, title, author, tracks) => {
