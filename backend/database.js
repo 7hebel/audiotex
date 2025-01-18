@@ -54,9 +54,7 @@ function getTracks(ab_id) {
         console.error(`Error fetching tracks for ${ab_id}:`, err);
         return [];
     }
-    
 }
-
 function insertAudiobook(title, author, total_time, dirpath, total_items, cover_src) {
     try {
         const stmt = db.prepare(`INSERT INTO audiobooks (title, author, dirpath, total_time, total_tracks, cover_src, last_listened) VALUES (?, ?, ?, ?, ?, ?, '-')`);
@@ -104,22 +102,10 @@ function deleteAudiobookRelated(ab_id) {
     }
 }
 
-// Function to delete a user
-function deleteUser(id) {
-    try {
-        const stmt = db.prepare('DELETE FROM users WHERE id = ?');
-        stmt.run(id);
-        console.log(`User with ID ${id} deleted.`);
-    } catch (err) {
-        console.error('Error deleting user:', err);
-    }
-}
-
 function closeDatabase() {
     db.close();
 }
 
-// Export database functions
 module.exports = {
     db,
     initializeDatabase,

@@ -51,6 +51,32 @@ ipcMain.handle('delete-audiobook', async (ev, ab_id) => {
     return db.deleteAudiobookRelated(ab_id);
 });
 
+ipcMain.handle('update-audiobook-meta', async (ev, ab_id, title, author, tracks) => {
+    db.db.exec(`
+        UPDATE audiobooks
+        SET title = '${title}', author = '${author}'
+        WHERE id = ${ab_id}    
+    `)
+
+    let index = 1;
+    for (const track of tracks) {
+        const trackId = track[0];
+        const currIndex = track[1];
+
+        if (currIndex != index) {
+            db.db.exec(`
+                UPDATE tracks
+                SET idx = ${index}
+                WHERE id = ${trackId}
+            `)
+        }
+
+        index++;
+    }
+
+    console.log(`Saved changes in audiobook: ${ab_id}`)
+});
+
 
 app.whenReady().then(() => {
     createWindow();

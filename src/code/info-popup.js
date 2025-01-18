@@ -11,8 +11,8 @@ infoPopupContainer.onclick = (ev) => {
 
 function closeInfoPopup() {
     infoPopupContainer.setAttribute("show", "0");
-    infoPopupContainer.setAttribute("edit", "0");
     infoPopupContainer.setAttribute("target", "-1")
+    exitInfoEditMode();
 }
 
 function openInfoPopup(ab_id) {
@@ -44,8 +44,9 @@ function cancelInfoEdit() {
     tracksTable.innerHTML = _preEditTableCopy;
 }
 
-function saveInfoEdit() {
-
+function acceptInfoEditChanges() {
+    exitInfoEditMode();
+    _preEditTableCopy = "";
 }
 
 const tableBody = document.querySelector('#info-tracks-table tbody');
@@ -63,6 +64,8 @@ tableBody.addEventListener('dragover', (e) => {
     if (infoPopupContainer.getAttribute("edit") == "0") return;
     
     const afterElement = getDragAfterElement(tableBody, e.clientY);
+    if (afterElement?.id == "info-table-header") return;
+
     if (afterElement == null) {
         tableBody.appendChild(draggingRow);
     } else {

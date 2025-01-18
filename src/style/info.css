@@ -74,9 +74,9 @@
 .meta-entry-icon {
     min-width: 20px;
     height: 20px;
-    background-color: #363636;
+    background-color: #333232;
     border-radius: 4px;
-    border: 1px solid #6f6f6f26;
+    border: 1px solid #5959591a;
     display: flex;
     justify-content: center;
     align-items: center;

@@ -48,7 +48,7 @@ function populateInfoPopup(ab_id) {
         document.getElementById("info-title").textContent = ab.title;
         document.getElementById("info-duration").textContent = ab.total_time;
         document.getElementById("info-path").textContent = ab.dirpath;
-        document.getElementById("info-items").textContent = ab.total_tracks;
+        document.getElementById("info-items").textContent = ab.total_tracks + " items";
         document.getElementById("info-progress").textContent = ab.curr_track + "/" + ab.total_tracks + "  " + ((ab.curr_track / ab.total_tracks) * 100) + "%";
         document.getElementById("info-recent").textContent = ab.last_listened;
         document.getElementById("info-bookmarks").textContent = "0 bookmarks";

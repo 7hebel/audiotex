@@ -8,10 +8,12 @@
     
     <script defer src="src/code/generators.js"></script>
     <script defer src="src/code/info-popup.js"></script>
+    <script defer src="src/code/playview.js"></script>
     <script defer src="backend/timeutils.js"></script>
     <link rel="stylesheet" href="src/style/main.css">
     <link rel="stylesheet" href="src/style/shelf.css">
     <link rel="stylesheet" href="src/style/info.css">
+    <link rel="stylesheet" href="src/style/playview.css">
     <title>AudioTex</title>
 </head>
 
@@ -83,7 +85,7 @@
                     <button class="info-btn-secondary" onclick="cancelInfoEdit()">
                         <i class="fa-solid fa-xmark"></i>
                     </button>
-                    <button class="info-btn-primary" onclick="saveInfoEdit()">
+                    <button class="info-btn-primary" id="save-ab-btn">
                         <i class="fa-solid fa-floppy-disk"></i>
                     </button>
                     <button class="info-btn-secondary" id="delete-ab-btn">
@@ -91,6 +93,24 @@
                     </button>
 
                     <script>
+                        const saveAudiobookBtn = document.getElementById("save-ab-btn");
+                        saveAudiobookBtn.addEventListener('click', async () => {
+                            const ab_id = parseInt(document.getElementById("ab-info-popup").getAttribute("target"));
+                            const newTitle = document.getElementById("info-title").textContent;
+                            const newAuthor = document.getElementById("info-author").textContent;
+
+                            let newTracksOrder = []
+                            Array.from(document.getElementById("info-tracks").children).slice(1).forEach((trackEl) => {
+                                newTracksOrder.push([
+                                    parseInt(trackEl.getAttribute("track-id")), 
+                                    parseInt(trackEl.children[0].textContent)
+                                ])
+                            });
+                            
+                            await window.electron.updateAudiobookMeta(ab_id, newTitle, newAuthor, newTracksOrder);                            
+                            acceptInfoEditChanges();
+                        })
+
                         const deleteAudiobookBtn = document.getElementById('delete-ab-btn');
                         deleteAudiobookBtn.addEventListener('click', async () => {
                             const ab_id = parseInt(document.getElementById("ab-info-popup").getAttribute("target"));
@@ -136,8 +156,35 @@
         </div>
     </div>
 
-    <div class="playback">
-
+    <div class="playview-container">
+        <input type="range" id="play-bar" min="0" max="1000" value="0">
+        <div class="pv-cover-container">
+            <img id="pv-cover" src="./src/default-cover.png">
+        </div>
+        <div class="playview">
+            <div class="flow-controls-group">
+                <button class="flow-ctrl-btn" id="previous-track-btn">
+                    <i class="fa-solid fa-backward-step"></i>
+                </button>
+                <button class="flow-ctrl-btn" id="pause-track-btn">
+                    <i class="fa-solid fa-pause"></i>
+                </button>
+                <button class="flow-ctrl-btn" id="next-track-btn">
+                    <i class="fa-solid fa-forward-step"></i>
+                </button>
+            </div>
+            
+            <div class="current-info-group">
+                <span id="pv-curr-track">track name</span>
+                <span id="pv-curr-audiobook">audiobook name</span>
+            </div>
+            
+            <div class="features-group">
+                <button class="flow-ctrl-btn" id="add-bookmark">
+                    <i class="fa-solid fa-bookmark"></i>
+                </button>
+            </div>
+        </div>
     </div>
 
     <script>
