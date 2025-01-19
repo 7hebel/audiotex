@@ -6,11 +6,23 @@ const timeHint = document.getElementById("play-bar-hint");
 const playBar = document.getElementById("play-bar");
 
 
+/// Load saved volume level.
+window.state.get().then((state) => {
+    const value = state.volume * 100;
+    volumeControl.value = value;
+    volumeControl.style.setProperty('--volume-bar-value', `${value}%`);
+    document.getElementById("volume-info-value").textContent = `${value}%`
+})
+
 /// Volume range input -- update style and apply change.
-volumeControl.addEventListener("input", (e) => {
+volumeControl.addEventListener("input", async (e) => {
     const value = parseInt(volumeControl.value);
     volumeControl.style.setProperty('--volume-bar-value', `${value}%`);
     document.getElementById("volume-info-value").textContent = `${value}%`
+
+    const state = await window.state.get();
+    state.volume = volumeControl.value / 100;
+    window.state.set(state);
 
     setAudioVolume(value / 100);
 })
@@ -178,6 +190,9 @@ async function setupAudiobookPlay(ab_id, track_id = null) {
         playBar.style.setProperty('--play-bar-value', `0%`);
         document.getElementById("pv-track-time").textContent = "00:00 / " + track.total_time;
     }
+
+    const state = await window.state.get();
+    setAudioVolume(state.volume);
 }
 
 /// Button: Play next track
@@ -201,4 +216,3 @@ document.getElementById("previous-track-btn").addEventListener('click', async ()
 
     setupAudiobookPlay(ab_id, nextTrack.id).then(() => { playAudio() });
 })
-

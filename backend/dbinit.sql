@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS tracks (
     filepath TEXT NOT NULL, -- Filename of the audio file (rel. to the dirpath)
     idx INTEGER NOT NULL, -- Index of the track in the audiobook
     total_time TEXT NOT NULL,
+    total_seconds INTEGER NOT NULL,
     audiobook_id INTEGER NOT NULL,
     FOREIGN KEY (audiobook_id) REFERENCES audiobooks (id) ON DELETE CASCADE
 );

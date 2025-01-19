@@ -49,6 +49,7 @@ async function importAudiobook(dirpath) {
                 filepath: filePath,
                 trackNumber: isCorrectlyIndexed ? audioMetadata.common.track.no : index,
                 length: secondsToReadable(audioMetadata.format.duration),
+                seconds: audioMetadata.format.duration,
             };
 
             tracks.push(metadata);
@@ -63,7 +64,7 @@ async function importAudiobook(dirpath) {
         if (AB_ID == -1) return msg.displayError(`Failed to save: ${TITLE}`);
         
         for (let track of tracks) {
-            db.insertTrack(track.name, track.filepath, track.trackNumber, track.length, AB_ID);
+            db.insertTrack(track.name, track.filepath, track.trackNumber, track.length, track.seconds, AB_ID);
         }
 
         let coverPath = null;

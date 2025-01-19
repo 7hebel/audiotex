@@ -16,3 +16,8 @@ contextBridge.exposeInMainWorld('electron', {
     updateAudiobookState: (ab_id, track_id, curr_moment_s, speed) => ipcRenderer.invoke("update-ab-state", ab_id, track_id, curr_moment_s, speed),
     updateAudiobookMeta: (ab_id, title, author, tracks) => ipcRenderer.invoke("update-audiobook-meta", ab_id, title, author, tracks),
 });
+
+contextBridge.exposeInMainWorld('state', {
+    get: () => ipcRenderer.invoke("get-state"),
+    set: (state) => ipcRenderer.invoke("set-state", state)
+})

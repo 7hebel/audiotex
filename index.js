@@ -1,9 +1,9 @@
-const { app, BrowserWindow, dialog, ipcMain } = require('electron');
+const { app, BrowserWindow, dialog, ipcMain, nativeImage } = require('electron');
 const audibook = require('./backend/audiobook');
 const msg = require('./backend/messages');
 const db = require('./backend/database');
+const state = require("./backend/state");
 const path = require('path');
-
 
 let ROOT_WIN = null;
 
@@ -14,7 +14,7 @@ const createWindow = () => {
         backgroundColor: '#0f0e11',
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
-            nodeIntegration: false,
+            nodeIntegration: true,
             contextIsolation: true,
         }
     });
@@ -71,6 +71,9 @@ ipcMain.handle('play-audiobook', async (ev, ab_id, track_id = null) => {
         currentTrack = db.getTrackById(track_id);
     }
 
+    state.STATE.recentAudiobook = parseInt(ab_id);
+    state.saveState(state.STATE);
+
     return {
         audiobook: db.getAudiobook(ab_id),
         track: currentTrack
@@ -84,11 +87,14 @@ ipcMain.handle('update-ab-state', async (ev, ab_id, track_id, curr_moment_s, spe
     const day = currentDateParts[2];
     const lastPlayed = `${day}/${month}/${year}`;
 
-    const trackIndex = db.getTrackById(parseInt(track_id)).idx;
+    const track = db.getTrackById(parseInt(track_id));
+    const trackIndex = track.idx;
+    const trackTotalSeconds = track.total_seconds;
     const abTotalTracks = db.getAudiobook(ab_id).total_tracks;
     const progress = Math.round(trackIndex / abTotalTracks);
-
-    db.updatePlayState(ab_id, trackIndex, curr_moment_s, lastPlayed, progress, speed)
+    
+    db.updatePlayState(ab_id, trackIndex, curr_moment_s, lastPlayed, progress, speed);
+    ROOT_WIN.setProgressBar(curr_moment_s / trackTotalSeconds, { mode: "normal" });
 });
 
 ipcMain.handle('update-audiobook-meta', async (ev, ab_id, title, author, tracks) => {
@@ -116,6 +122,14 @@ ipcMain.handle('update-audiobook-meta', async (ev, ab_id, title, author, tracks)
 
     console.log(`Saved changes in audiobook: ${ab_id}`)
 });
+
+ipcMain.handle('get-state', async () => {
+    return state.STATE;
+})
+
+ipcMain.handle('set-state', async (e, newState) => {
+    state.saveState(newState);
+})
 
 
 app.whenReady().then(() => {

@@ -2,7 +2,9 @@ const Database = require('better-sqlite3');
 const path = require('path');
 const fs = require('fs');
 
-const dbPath = path.join(require('electron').app.getPath('userData'), 'app.db');
+
+const appdataPath = require('electron').app.getPath('userData');
+const dbPath = path.join(appdataPath, 'app.db');
 const db = new Database(dbPath);
 
 
@@ -99,14 +101,14 @@ function insertAudiobook(title, author, total_time, total_seconds, dirpath, tota
     }
 }
 
-function insertTrack(title, filepath, index, total_time, audiobook_id) {
+function insertTrack(title, filepath, index, total_time, total_seconds, audiobook_id) {
     try {
         db.prepare(`
             INSERT INTO tracks
-                (title, filepath, idx, total_time, audiobook_id)
+                (title, filepath, idx, total_time, total_seconds, audiobook_id)
             VALUES
-                (?, ?, ?, ?, ?)
-        `).run(title, filepath, index, total_time, audiobook_id);
+                (?, ?, ?, ?, ?, ?)
+        `).run(title, filepath, index, total_time, total_seconds, audiobook_id);
 
         console.log(`Inserted track ${title} into DB.`);
     } catch (err) { console.error(`Error inserting track ${title}:`, err); }
