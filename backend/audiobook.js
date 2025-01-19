@@ -33,7 +33,7 @@ async function importAudiobook(dirpath) {
         const AUTHOR = albumMetadata.common.artist || 'Unknown';
         const COVER = albumMetadata.common.picture;
         const TOTAL_ITEMS = files.length;
-        let TOTAL_TIME = 0;
+        let TOTAL_SECONDS = 0;
 
         let correctlyIndexed = albumMetadata.common.track.no != 32;
 
@@ -51,15 +51,15 @@ async function importAudiobook(dirpath) {
                 };
 
                 tracks.push(metadata);
-                TOTAL_TIME += audioMetadata.format.duration;
+                TOTAL_SECONDS += audioMetadata.format.duration;
                 index++;
             }
         }
 
-        TOTAL_TIME = secondsToReadable(TOTAL_TIME);
+        const TOTAL_TIME = secondsToReadable(TOTAL_SECONDS);
         console.log("Successfuly parsed directory.");
 
-        const AB_ID = db.insertAudiobook(TITLE, AUTHOR, TOTAL_TIME, dirpath, TOTAL_ITEMS, "");
+        const AB_ID = db.insertAudiobook(TITLE, AUTHOR, TOTAL_TIME, TOTAL_SECONDS, dirpath, TOTAL_ITEMS, "");
         if (AB_ID == -1) return msg.displayError(`Failed to save: ${TITLE}`);
         
         for (let track of tracks) {

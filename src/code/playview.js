@@ -76,6 +76,11 @@ audioPlayer.addEventListener("timeupdate", (e) => {
     updatePlayTime(current, total);
 })
 
+function setTrackMeta(trackId, abId) {
+    audioPlayer.setAttribute("track-id", trackId);
+    audioPlayer.setAttribute("ab-id", abId);
+}
+
 function setTrackData(trackName, abName) {
     document.getElementById("pv-curr-track").textContent = trackName;
     document.getElementById("pv-curr-audiobook").textContent = abName;
@@ -99,13 +104,13 @@ function switchPlayState() {
 }
 
 function playAudio() {
-    stateIcon.className = "fa-solid fa-pause";
     audioPlayer.play();
+    if (!audioPlayer.paused) stateIcon.className = "fa-solid fa-pause";
 }
 
 function pauseAudio() {
-    stateIcon.className = "fa-solid fa-play";
     audioPlayer.pause();
+    if (audioPlayer.paused) stateIcon.className = "fa-solid fa-play";
 }
 
 function setAudioVolume(volume) {
@@ -133,4 +138,21 @@ function setPlaybackRate(rate) {
     const value = ((rate - speedControl.min) / (speedControl.max - speedControl.min)) * 100;
     speedControl.style.setProperty('--speed-bar-value', `${value}%`);
 }
+
+function sendStateUpdate() {
+    const abId = audioPlayer.getAttribute("ab-id");
+    const trackId = audioPlayer.getAttribute("track-id");
+    if (!abId || !trackId) return;
+
+    const currentMoment_s = audioPlayer.currentTime;
+    window.electron.updateAudiobookState(abId, trackId, currentMoment_s, speedControl.value);
+}
+
+
+setInterval(() => {
+    if (!audioPlayer.paused) {
+        sendStateUpdate();
+        console.log("updated")
+    }
+}, 5000)
 

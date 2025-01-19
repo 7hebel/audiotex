@@ -118,6 +118,7 @@ document.getElementById("play-selected-ab-btn").addEventListener('click', async 
         document.getElementById("pv-cover").src = ab.cover_src;
     }
 
+    setTrackMeta(track.id, ab.id);
     setTrackData(track.title, ab.title);
     setAudioSource(track.filepath);
     seekAudioAt(ab.curr_moment_s);

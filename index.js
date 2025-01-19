@@ -59,12 +59,25 @@ ipcMain.handle('play-audiobook', async (ev, ab_id) => {
     const audiobook = db.getAudiobook(ab_id);
     const currTrackIndex = audiobook.curr_track;
     const currentTrack = db.getIndexedTrack(ab_id, currTrackIndex);
-    console.log(currTrackIndex, currentTrack)
 
     return {
         audiobook: db.getAudiobook(ab_id),
         track: currentTrack
     }
+});
+
+ipcMain.handle('update-ab-state', async (ev, ab_id, track_id, curr_moment_s, speed) => {
+    const currentDateParts = new Date().toISOString().split("T")[0].split("-");
+    const year = currentDateParts[0];
+    const month = currentDateParts[1];
+    const day = currentDateParts[2];
+    const lastPlayed = `${day}/${month}/${year}`;
+
+    const trackIndex = db.getTrackById(ab_id, parseInt(track_id)).idx;
+    const abTotalTracks = db.getAudiobook(ab_id).total_tracks;
+    const progress = Math.round(trackIndex / abTotalTracks);
+
+    db.updatePlayState(ab_id, trackIndex, curr_moment_s, lastPlayed, progress, speed)
 });
 
 ipcMain.handle('update-audiobook-meta', async (ev, ab_id, title, author, tracks) => {

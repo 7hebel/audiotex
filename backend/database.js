@@ -31,6 +31,19 @@ function getAudiobook(ab_id) {
     }
 }
 
+function updatePlayState(ab_id, curr_track_idx, curr_moment_s, curr_date, progress, speed) {
+    try {
+        db.exec(`
+            UPDATE audiobooks
+            SET curr_track=${curr_track_idx}, curr_moment_s=${curr_moment_s}, last_listened='${curr_date}', progress=${progress}, play_speed=${speed}
+            WHERE id = ${ab_id}
+        `);
+    } catch (err) {
+        console.error(`Error updating audiobook ${ab_id} state :`, err);
+        return [];
+    }
+}
+
 function getAllAudiobooks() {
     try {
         const stmt = db.prepare('SELECT * FROM audiobooks');
@@ -56,6 +69,21 @@ function getTracks(ab_id) {
     }
 }
 
+function getTrackById(ab_id, track_id) {
+    try {
+        const stmt = db.prepare(`
+            SELECT *
+            FROM tracks
+            WHERE audiobook_id = ${ab_id}
+                AND id = ${track_id}
+        `);
+        return stmt.all()[0];
+    } catch (err) {
+        console.error(`Error fetching track ${ab_id} - ${track_id}:`, err);
+        return [];
+    }
+}
+
 function getIndexedTrack(ab_id, index) {
     try {
         const stmt = db.prepare(`
@@ -71,10 +99,10 @@ function getIndexedTrack(ab_id, index) {
     }
 }
 
-function insertAudiobook(title, author, total_time, dirpath, total_items, cover_src) {
+function insertAudiobook(title, author, total_time, total_seconds, dirpath, total_items, cover_src) {
     try {
-        const stmt = db.prepare(`INSERT INTO audiobooks (title, author, dirpath, total_time, total_tracks, cover_src, last_listened) VALUES (?, ?, ?, ?, ?, ?, '-')`);
-        let res = stmt.run(title, author? author : 'unknown', dirpath, total_time, total_items, cover_src);
+        const stmt = db.prepare(`INSERT INTO audiobooks (title, author, dirpath, total_time, total_seconds, total_tracks, cover_src, last_listened) VALUES (?, ?, ?, ?, ?, ?, ?, '-')`);
+        let res = stmt.run(title, author ? author : 'unknown', dirpath, total_time, total_seconds, total_items, cover_src);
         console.log(`Inserted audiobook ${title} into DB.`);
         return res.lastInsertRowid;
     } catch (err) {
@@ -130,7 +158,9 @@ module.exports = {
     getAudiobook,
     getAllAudiobooks,
     getTracks,
+    getTrackById,
     getIndexedTrack,
     deleteAudiobookRelated,
+    updatePlayState,
     closeDatabase,
 };
