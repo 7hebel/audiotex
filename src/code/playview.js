@@ -21,7 +21,7 @@ volumeControl.addEventListener("input", async (e) => {
     document.getElementById("volume-info-value").textContent = `${value}%`
 
     const state = await window.state.get();
-    state.volume = Math.round(volumeControl.value / 100);
+    state.volume = parseFloat((volumeControl.value / 100).toFixed(2));
     window.state.set(state);
 
     setAudioVolume(value / 100);
@@ -163,7 +163,7 @@ function setPlaySpeed(rate) {
     speedControl.style.setProperty('--speed-bar-value', `${valuePercentage}%`);
 }
 
-/// Save play state into the DB every 5 seconds.
+/// Save play state into the DB every second.
 setInterval(() => {
     if (!audioPlayer.paused) {
         const abId = audioPlayer.getAttribute("ab-id");
@@ -173,7 +173,7 @@ setInterval(() => {
         const currentMoment_s = audioPlayer.currentTime;
         window.electron.updateAudiobookState(abId, trackId, currentMoment_s, speedControl.value);
     }
-}, 5000)
+}, 1000)
 
 async function setupAudiobookPlay(ab_id, track_id = null) {
     // If track-id is null, resume from the latest session.
