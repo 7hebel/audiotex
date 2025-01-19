@@ -202,3 +202,8 @@
     text-decoration: underline;
     cursor: pointer;
 }
+
+#ab-info-popup[edit="1"] .info-list-title {
+    text-decoration: none;
+    cursor: row-resize;
+}

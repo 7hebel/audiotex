@@ -1,31 +1,29 @@
-const infoPopupContainer = document.getElementById("ab-info-popup");
 const editableElements = Array.from(document.getElementsByClassName("info-editable"));
 const tracksTable = document.getElementById("info-tracks-table").children[0];
-let _preEditTableCopy = "";
+const tableBody = document.querySelector('#info-tracks-table tbody');
+const infoPopupContainer = document.getElementById("ab-info-popup");
+let tableBackupCopy = "";  // Backup for the tracks table. Used when changes are canceled.
 
-infoPopupContainer.onclick = (ev) => {
-    if (ev.target.id === "ab-info-popup") {
-        closeInfoPopup();
-    }
-}
+
+/// Close the pop-up whenever user clicks outside it.
+infoPopupContainer.onclick = (ev) => { if (ev.target.id === "ab-info-popup") closeInfoPopup(); }
+
+function openInfoPopup() { infoPopupContainer.setAttribute("show", "1"); }
 
 function closeInfoPopup() {
     infoPopupContainer.setAttribute("show", "0");
-    infoPopupContainer.setAttribute("target", "-1")
+    infoPopupContainer.setAttribute("target", "-1");
+
     exitInfoEditMode();
 }
 
-function openInfoPopup() {
-    infoPopupContainer.setAttribute("show", "1");
-}
-
 function enterInfoEditMode() {
+    tableBackupCopy = tracksTable.innerHTML;
     infoPopupContainer.setAttribute("edit", "1");
     editableElements.forEach(el => {
         el.setAttribute("contenteditable", "");
         el.setAttribute("_bak", el.textContent);
     });
-    _preEditTableCopy = tracksTable.innerHTML;
 }
 
 function exitInfoEditMode() {
@@ -37,29 +35,35 @@ function exitInfoEditMode() {
 }
 
 function cancelInfoEdit() {
-    editableElements.forEach(el => {
-        el.textContent = el.getAttribute("_bak");
-    })
-    exitInfoEditMode();
-    tracksTable.innerHTML = _preEditTableCopy;
-}
+    editableElements.forEach(el => { el.textContent = el.getAttribute("_bak"); })
+    tracksTable.innerHTML = tableBackupCopy;
 
-function __recalculateTableIndexes() {
-    let i = 1;
-    Array.from(tracksTable.children).slice(1).forEach(tr => {
-        tr.children[0].innerHTML = i;
-        i++;
-    })
+    exitInfoEditMode();
 }
 
 function acceptInfoEditChanges() {
-    exitInfoEditMode();
-    _preEditTableCopy = "";
+    tableBackupCopy = "";
+    
+    let index = 0;
+    Array.from(tracksTable.children).slice(1).forEach(tr => { 
+        tr.children[0].innerHTML = ++index; 
+    })
 
-    __recalculateTableIndexes();
+    exitInfoEditMode();
 }
 
-const tableBody = document.querySelector('#info-tracks-table tbody');
+/// Button: Play audiobook.
+document.getElementById("play-selected-ab-btn").addEventListener('click', async () => {
+    const ab_id = infoPopupContainer.getAttribute("target");
+    if (ab_id == "-1") return;
+
+    await setupAudiobookPlay(ab_id);
+    playAudio();
+    closeInfoPopup();
+})
+
+
+/// Edit mode table dragging handling.
 let draggingRow = null;
 
 tableBody.addEventListener('dragstart', (e) => {
@@ -76,11 +80,8 @@ tableBody.addEventListener('dragover', (e) => {
     const afterElement = getDragAfterElement(tableBody, e.clientY);
     if (afterElement?.id == "info-table-header") return;
 
-    if (afterElement == null) {
-        tableBody.appendChild(draggingRow);
-    } else {
-        tableBody.insertBefore(draggingRow, afterElement);
-    }
+    if (afterElement == null) tableBody.appendChild(draggingRow)
+    else tableBody.insertBefore(draggingRow, afterElement)
 });
 
 tableBody.addEventListener('dragend', (e) => {
@@ -103,13 +104,3 @@ function getDragAfterElement(container, y) {
         { offset: Number.NEGATIVE_INFINITY }
     ).element;
 }
-
-/// PLAY AUDIOBOOK BUTTON
-document.getElementById("play-selected-ab-btn").addEventListener('click', async () => {
-    const ab_id = infoPopupContainer.getAttribute("target");
-    if (ab_id == "-1") return;
-
-    await setupAudiobookPlay(ab_id);
-    playAudio();
-    closeInfoPopup();
-})

@@ -1,4 +1,4 @@
-const SHELF_AB_CONTAINER = document.getElementById("audiobooks-container");
+const shelfContainer = document.getElementById("audiobooks-container");
 
 
 function addAudiobookToShelf(ab_id, title, author, cover_src, duration, progress) {
@@ -36,7 +36,7 @@ function addAudiobookToShelf(ab_id, title, author, cover_src, duration, progress
     abAuthor.innerText = author;
     abEntry.appendChild(abAuthor);
 
-    SHELF_AB_CONTAINER.appendChild(abEntry);
+    shelfContainer.appendChild(abEntry);
 }
 
 function populateInfoPopup(ab_id) {
@@ -61,7 +61,7 @@ function populateInfoPopup(ab_id) {
         }
     }
 
-    window.electron.getTracks(ab_id).then((tracks) => {
+    window.electron.getAllTracks(ab_id).then((tracks) => {
         for (const track of tracks) {
             const tr = document.createElement("tr");
             tr.setAttribute("draggable", "true");

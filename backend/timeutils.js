@@ -25,8 +25,4 @@ function secondsToReadable(s) {
 }
 
 
-try {
-    module.exports = {
-        secondsToReadable
-    }
-} catch {}
+try { module.exports = { secondsToReadable }} catch {}

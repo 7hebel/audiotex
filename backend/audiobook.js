@@ -7,20 +7,19 @@ const fs = require('fs');
 
 
 function __isDirpathInitialized(dirpath) {
-    const stmt = db.db.prepare(`SELECT * FROM audiobooks WHERE dirpath = '${dirpath}'`);
-    console.log(stmt.all())
+    const stmt = db.db.prepare(`
+        SELECT * 
+        FROM audiobooks 
+        WHERE dirpath = '${dirpath}'
+    `);
     return stmt.all().length > 0;
 }
 
-
 async function importAudiobook(dirpath) {
-    dirpath = dirpath.replaceAll("\\", "/")
+    dirpath = dirpath.replaceAll("\\", "/");
     
     try {
-        if (__isDirpathInitialized(dirpath)) {
-            console.error("Audiobook already initialized in this path.");
-            return msg.displayError("This audiobook is already imported.");
-        }
+        if (__isDirpathInitialized(dirpath)) return msg.displayError("This audiobook is already imported.");
 
         const TITLE = path.basename(dirpath);
         const files = await fs.promises.readdir(dirpath, { withFileTypes: true });
@@ -33,27 +32,28 @@ async function importAudiobook(dirpath) {
         const AUTHOR = albumMetadata.common.artist || 'Unknown';
         const COVER = albumMetadata.common.picture;
         const TOTAL_ITEMS = files.length;
+        
+        let isCorrectlyIndexed = albumMetadata.common.track.no != 32;
+        
         let TOTAL_SECONDS = 0;
-
-        let correctlyIndexed = albumMetadata.common.track.no != 32;
-
-        const tracks = [];
         let index = 1;
-        for (const file of files) {
-            if (file.isFile()) {
-                const filePath = path.join(dirpath, file.name);
-                const audioMetadata = await mm.parseFile(filePath);
-                const metadata = {
-                    name: file.name.split(".")[0],
-                    filepath: filePath,
-                    trackNumber: correctlyIndexed? audioMetadata.common.track.no : index,
-                    length: secondsToReadable(audioMetadata.format.duration),
-                };
+        const tracks = [];
 
-                tracks.push(metadata);
-                TOTAL_SECONDS += audioMetadata.format.duration;
-                index++;
-            }
+        for (const file of files) {
+            if (!file.isFile()) continue;
+
+            const filePath = path.join(dirpath, file.name);
+            const audioMetadata = await mm.parseFile(filePath);
+            const metadata = {
+                name: file.name.split(".")[0],
+                filepath: filePath,
+                trackNumber: isCorrectlyIndexed ? audioMetadata.common.track.no : index,
+                length: secondsToReadable(audioMetadata.format.duration),
+            };
+
+            tracks.push(metadata);
+            TOTAL_SECONDS += audioMetadata.format.duration;
+            index++;
         }
 
         const TOTAL_TIME = secondsToReadable(TOTAL_SECONDS);
@@ -71,8 +71,8 @@ async function importAudiobook(dirpath) {
             coverPath = saveCover(AB_ID, COVER[0]);
             db.db.exec(`
                 UPDATE audiobooks
-                SET cover_src = '${coverPath}'
-                WHERE id = ${AB_ID}
+                SET cover_src='${coverPath}'
+                WHERE id=${AB_ID}
             `);
         }
         
@@ -86,35 +86,25 @@ async function importAudiobook(dirpath) {
     }
 };
 
+
+/// Covers related stuff
+
 const COVERS_PATH = path.join(require('electron').app.getPath('userData'), 'covers')
 if (!fs.existsSync(COVERS_PATH)) fs.mkdirSync(COVERS_PATH, { recursive: true });
 
-
 function saveCover(ab_id, cover_arr) {
     const coverFilePath = path.join(COVERS_PATH, `${ab_id}.jpg`);
-    fs.writeFile(coverFilePath, Buffer.from(cover_arr.data), (err) => {
-        if (err) {
-            console.error('Error saving cover image:', err);
-        } else {
-            console.log(`Cover image saved successfully at ${coverFilePath}`);
-        }
-    });
-
+    fs.writeFile(coverFilePath, Buffer.from(cover_arr.data), () => {});
     return coverFilePath.replaceAll("\\", "/");
 }
 
 function removeCover(ab_id) {
     const coverFilePath = path.join(COVERS_PATH, `${ab_id}.jpg`);
-    if (fs.existsSync(coverFilePath)) {
-        fs.unlinkSync(coverFilePath);
-    }
+    if (fs.existsSync(coverFilePath)) fs.unlinkSync(coverFilePath);
 }
-
-
 
 module.exports = {
     importAudiobook,
     saveCover,
     removeCover,
 }
-

@@ -19,7 +19,8 @@ const createWindow = () => {
         }
     });
 
-    msg._setWin(ROOT_WIN);
+    msg.setupWindow(ROOT_WIN);
+
     ROOT_WIN.setMenu(null);
     ROOT_WIN.loadFile('index.html');
     ROOT_WIN.webContents.openDevTools();
@@ -47,7 +48,7 @@ ipcMain.handle('get-audiobook-data', async (ev, ab_id) => {
 });
 
 ipcMain.handle('get-tracks', async (ev, ab_id) => {
-    return db.getTracks(ab_id);
+    return db.getAllTracks(ab_id);
 });
 
 ipcMain.handle('delete-audiobook', async (ev, ab_id) => {
@@ -123,7 +124,7 @@ app.whenReady().then(() => {
 })
 
 app.on('window-all-closed', () => {
-    db.closeDatabase();
+    db.db.close();
     if (process.platform !== 'darwin') {
         app.quit();
     }

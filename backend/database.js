@@ -11,24 +11,17 @@ function initializeDatabase() {
         const initContentPath = path.join(__dirname, 'dbinit.sql');
         const dbInitContent = fs.readFileSync(initContentPath, 'utf8');
         db.exec(dbInitContent);
-        console.log('Database initialized.');
-    } catch (err) {
-        console.error('Failed to initialize the database:', err);
-    }
+    } catch (err) { console.error('Failed to initialize the database:', err); }
 }
 
 function getAudiobook(ab_id) {
     try {
-        const stmt = db.prepare(`
+        return db.prepare(`
             SELECT * 
             FROM audiobooks 
             WHERE id = ${ab_id}
-        `);
-        return stmt.all()[0];
-    } catch (err) {
-        console.error('Error fetching audiobook:', err);
-        return [];
-    }
+        `).all()[0];
+    } catch (err) { console.error(`Error fetching audiobook ${ab_id}:`, err); }
 }
 
 function updatePlayState(ab_id, curr_track_idx, curr_moment_s, curr_date, progress, speed) {
@@ -38,31 +31,29 @@ function updatePlayState(ab_id, curr_track_idx, curr_moment_s, curr_date, progre
             SET curr_track=${curr_track_idx}, curr_moment_s=${curr_moment_s}, last_listened='${curr_date}', progress=${progress}, play_speed=${speed}
             WHERE id = ${ab_id}
         `);
-    } catch (err) {
-        console.error(`Error updating audiobook ${ab_id} state :`, err);
-        return [];
-    }
+    } catch (err) { console.error(`Error updating audiobook ${ab_id} state :`, err); }
 }
 
 function getAllAudiobooks() {
     try {
-        const stmt = db.prepare('SELECT * FROM audiobooks');
-        return stmt.all();
+        return db.prepare(`
+            SELECT *
+            FROM audiobooks
+        `).all();
     } catch (err) {
         console.error('Error fetching audiobooks:', err);
         return [];
     }
 }
 
-function getTracks(ab_id) {
+function getAllTracks(ab_id) {
     try {
-        const stmt = db.prepare(`
+        return db.prepare(`
             SELECT *
             FROM tracks
             WHERE audiobook_id = ${ab_id}
             ORDER BY idx ASC
-        `);
-        return stmt.all();
+        `).all();
     } catch (err) {
         console.error(`Error fetching tracks for ${ab_id}:`, err);
         return [];
@@ -71,55 +62,54 @@ function getTracks(ab_id) {
 
 function getTrackById(track_id) {
     try {
-        const stmt = db.prepare(`
+        return db.prepare(`
             SELECT *
             FROM tracks
             WHERE id = ${track_id}
-        `);
-        return stmt.all()[0];
-    } catch (err) {
-        console.error(`Error fetching track ${track_id}:`, err);
-        return [];
-    }
+        `).all()[0];
+    } catch (err) { console.error(`Error fetching track ${track_id}:`, err); }
 }
 
 function getIndexedTrack(ab_id, index) {
     try {
-        const stmt = db.prepare(`
+        return db.prepare(`
             SELECT *
             FROM tracks
             WHERE audiobook_id = ${ab_id}
                 AND idx = ${index}
-        `);
-        return stmt.all()[0];
-    } catch (err) {
-        console.error(`Error fetching tracks for ${ab_id}:`, err);
-        return [];
-    }
+        `).all()[0];
+    } catch (err) { console.error(`Error fetching tracks for ${ab_id}:`, err); }
 }
 
 function insertAudiobook(title, author, total_time, total_seconds, dirpath, total_items, cover_src) {
     try {
-        const stmt = db.prepare(`INSERT INTO audiobooks (title, author, dirpath, total_time, total_seconds, total_tracks, cover_src, last_listened) VALUES (?, ?, ?, ?, ?, ?, ?, '-')`);
-        let res = stmt.run(title, author ? author : 'unknown', dirpath, total_time, total_seconds, total_items, cover_src);
-        console.log(`Inserted audiobook ${title} into DB.`);
+        const stmt = db.prepare(`
+            INSERT INTO audiobooks
+                (title, author, dirpath, total_time, total_seconds, total_tracks, cover_src)
+            VALUES
+                (?, ?, ?, ?, ?, ?, ?)
+        `);
+        
+        const res = stmt.run(title, author ? author : 'unknown', dirpath, total_time, total_seconds, total_items, cover_src);
+        console.log(`Inserted audiobook ${title} into the DB.`);
         return res.lastInsertRowid;
     } catch (err) {
         console.error(`Error inserting audibook ${title}:`, err);
-        return -1
+        return -1;
     }
 }
 
 function insertTrack(title, filepath, index, total_time, audiobook_id) {
     try {
-        const stmt = db.prepare(`INSERT INTO tracks (title, filepath, idx, total_time, audiobook_id) VALUES (?, ?, ?, ?, ?)`);
-        let res = stmt.run(title, filepath, index, total_time, audiobook_id);
+        db.prepare(`
+            INSERT INTO tracks
+                (title, filepath, idx, total_time, audiobook_id)
+            VALUES
+                (?, ?, ?, ?, ?)
+        `).run(title, filepath, index, total_time, audiobook_id);
+
         console.log(`Inserted track ${title} into DB.`);
-        return res.lastInsertRowid;
-    } catch (err) {
-        console.error(`Error inserting track ${title}:`, err);
-        return -1
-    }
+    } catch (err) { console.error(`Error inserting track ${title}:`, err); }
 }
 
 function deleteAudiobookRelated(ab_id) {
@@ -145,10 +135,6 @@ function deleteAudiobookRelated(ab_id) {
     }
 }
 
-function closeDatabase() {
-    db.close();
-}
-
 module.exports = {
     db,
     initializeDatabase,
@@ -156,10 +142,9 @@ module.exports = {
     insertTrack,
     getAudiobook,
     getAllAudiobooks,
-    getTracks,
+    getAllTracks,
     getTrackById,
     getIndexedTrack,
     deleteAudiobookRelated,
     updatePlayState,
-    closeDatabase,
 };

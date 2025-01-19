@@ -186,7 +186,7 @@
                 <button class="flow-ctrl-btn" id="previous-track-btn">
                     <i class="fa-solid fa-backward-step"></i>
                 </button>
-                <button class="flow-ctrl-btn" id="play-state-track-btn" onclick="switchPlayState()">
+                <button class="flow-ctrl-btn" id="play-state-track-btn" onclick="audioPlayer.paused ? playAudio() : pauseAudio()">
                     <i id="play-state-icon" class="fa-solid fa-play"></i>
                 </button>
                 <button class="flow-ctrl-btn" id="next-track-btn">

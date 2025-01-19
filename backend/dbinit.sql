@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS audiobooks (
     curr_moment_s INTEGER NOT NULL DEFAULT 0,
     play_speed REAL NOT NULL DEFAULT 1,
     progress REAL NOT NULL DEFAULT 0,
-    last_listened TEXT NOT NULL
+    last_listened TEXT NOT NULL DEFAULT '-'
 );
 
 CREATE TABLE IF NOT EXISTS tracks (

@@ -1,29 +1,17 @@
-let current_win = null;
+let mainWindow = null;
 
-
-function _setWin(win) {
-    current_win = win;
-}
+function setupWindow(win) { mainWindow = win; }
 
 function displayInfo(message) {
-    if (current_win) {
-        current_win.webContents.send('msg-info', message)
-    } else {
-        console.error(`Failed to send message (win not initalized): ${message}`)
-    }
+    if (mainWindow) mainWindow.webContents.send('msg-info', message);
 }
 
 function displayError(message) {
-    if (current_win) {
-        current_win.webContents.send('msg-error', message)
-    } else {
-        console.error(`Failed to send error (win not initalized): ${message}`)
-    }
+    if (mainWindow) mainWindow.webContents.send('msg-error', message)
 }
 
-
 module.exports = {
-    _setWin,
+    setupWindow,
     displayInfo,
     displayError
 }
