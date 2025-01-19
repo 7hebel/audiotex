@@ -71,7 +71,14 @@ function populateInfoPopup(ab_id) {
             tdIndex.textContent = track.idx;
             
             const tdTitle = document.createElement("td");
+            tdTitle.className = "info-list-title";
             tdTitle.textContent = track.title;
+            tdTitle.onclick = () => {
+                setupAudiobookPlay(ab_id, track.id).then(() => {
+                    playAudio();
+                    closeInfoPopup();
+                });
+            }
             
             const tdTime = document.createElement("td");
             tdTime.textContent = track.total_time;

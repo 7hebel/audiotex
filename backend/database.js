@@ -69,17 +69,16 @@ function getTracks(ab_id) {
     }
 }
 
-function getTrackById(ab_id, track_id) {
+function getTrackById(track_id) {
     try {
         const stmt = db.prepare(`
             SELECT *
             FROM tracks
-            WHERE audiobook_id = ${ab_id}
-                AND id = ${track_id}
+            WHERE id = ${track_id}
         `);
         return stmt.all()[0];
     } catch (err) {
-        console.error(`Error fetching track ${ab_id} - ${track_id}:`, err);
+        console.error(`Error fetching track ${track_id}:`, err);
         return [];
     }
 }

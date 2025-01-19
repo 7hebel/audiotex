@@ -72,7 +72,7 @@ document.addEventListener('mousemove', (e) => {
 audioPlayer.addEventListener("timeupdate", (e) => {
     const current = audioPlayer.currentTime;
     const total = audioPlayer.duration;
-
+    if (!current || !total) return;
     updatePlayTime(current, total);
 })
 

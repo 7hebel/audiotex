@@ -105,25 +105,35 @@ function getDragAfterElement(container, y) {
 }
 
 
+async function setupAudiobookPlay(ab_id, track_id = null) {
+    // If track-id is null, resume from latest session.
+    const data = await window.electron.playAudiobook(ab_id, track_id);
+
+    const ab = data.audiobook;
+    const track = data.track;
+    
+    if (ab.cover_src) document.getElementById("pv-cover").src = ab.cover_src;
+    
+    setTrackMeta(track.id, ab.id);
+    setTrackData(track.title, ab.title);
+    setAudioSource(track.filepath);
+    setPlaybackRate(ab.play_speed);
+
+    if (track_id === null) {
+        seekAudioAt(ab.curr_moment_s);
+    } else {
+        playBar.value = 0;
+        playBar.style.setProperty('--play-bar-value', `0%`);
+        document.getElementById("pv-track-time").textContent = "00:00 / " + track.total_time;
+    }
+}
+
 /// PLAY AUDIOBOOK BUTTON
 document.getElementById("play-selected-ab-btn").addEventListener('click', async () => {
     const ab_id = infoPopupContainer.getAttribute("target");
     if (ab_id == "-1") return;
 
-    const data = await window.electron.playAudiobook(ab_id);
-    const ab = data.audiobook;
-    const track = data.track;
-
-    if (ab.cover_src) {
-        document.getElementById("pv-cover").src = ab.cover_src;
-    }
-
-    setTrackMeta(track.id, ab.id);
-    setTrackData(track.title, ab.title);
-    setAudioSource(track.filepath);
-    seekAudioAt(ab.curr_moment_s);
-    setPlaybackRate(ab.play_speed);
+    await setupAudiobookPlay(ab_id);
     playAudio();
-
     closeInfoPopup();
 })

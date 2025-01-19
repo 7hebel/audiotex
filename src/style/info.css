@@ -197,3 +197,8 @@
 .dragging {
     background-color: #f0f0f071;
 }
+
+.info-list-title {
+    text-decoration: underline;
+    cursor: pointer;
+}

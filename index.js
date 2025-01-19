@@ -55,10 +55,16 @@ ipcMain.handle('delete-audiobook', async (ev, ab_id) => {
     return db.deleteAudiobookRelated(ab_id);
 });
 
-ipcMain.handle('play-audiobook', async (ev, ab_id) => {
+ipcMain.handle('play-audiobook', async (ev, ab_id, track_id = null) => {
     const audiobook = db.getAudiobook(ab_id);
-    const currTrackIndex = audiobook.curr_track;
-    const currentTrack = db.getIndexedTrack(ab_id, currTrackIndex);
+
+    let currentTrack = null;
+    if (track_id === null) {
+        const currTrackIndex = audiobook.curr_track;
+        currentTrack = db.getIndexedTrack(ab_id, currTrackIndex);
+    } else {
+        currentTrack = db.getTrackById(track_id);
+    }
 
     return {
         audiobook: db.getAudiobook(ab_id),
@@ -73,7 +79,7 @@ ipcMain.handle('update-ab-state', async (ev, ab_id, track_id, curr_moment_s, spe
     const day = currentDateParts[2];
     const lastPlayed = `${day}/${month}/${year}`;
 
-    const trackIndex = db.getTrackById(ab_id, parseInt(track_id)).idx;
+    const trackIndex = db.getTrackById(parseInt(track_id)).idx;
     const abTotalTracks = db.getAudiobook(ab_id).total_tracks;
     const progress = Math.round(trackIndex / abTotalTracks);
 
