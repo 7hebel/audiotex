@@ -74,8 +74,18 @@ ipcMain.handle('play-audiobook', async (ev, ab_id, track_id = null) => {
     state.STATE.recentAudiobook = parseInt(ab_id);
     state.saveState(state.STATE);
 
+    const trackIndex = currentTrack.idx;
+    const totalTracks = audiobook.total_tracks;
+    const abProgress = Math.round((trackIndex / totalTracks) * 100);
+    
+    db.db.exec(`
+        UPDATE audiobooks
+        SET progress=${abProgress}
+        WHERE id=${ab_id}    
+    `)
+
     return {
-        audiobook: db.getAudiobook(ab_id),
+        audiobook: audiobook,
         track: currentTrack
     }
 });

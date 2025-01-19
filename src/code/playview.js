@@ -184,6 +184,9 @@ async function setupAudiobookPlay(ab_id, track_id = null) {
 
     if (ab.cover_src) document.getElementById("pv-cover").src = ab.cover_src;
 
+    const progress = Math.round((track.idx / ab.total_tracks) * 100) + "%";
+    document.getElementById(String(ab_id)).querySelectorAll(".ab-meta")[1].textContent = progress;
+
     audioPlayer.src = track.filepath;
     setTrackMeta(track.id, track.idx, ab.id);
     setTrackData(track.title, ab.title);
@@ -209,10 +212,6 @@ async function playNextTrack() {
     
     setupAudiobookPlay(ab_id, nextTrack.id).then(() => { playAudio() });
 }
-
-document.getElementById("next-track-btn").addEventListener('click', async () => {
-    await playNextTrack();
-})
 
 /// Button: Play previous track
 document.getElementById("previous-track-btn").addEventListener('click', async () => {
