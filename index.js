@@ -55,6 +55,10 @@ ipcMain.handle('delete-audiobook', async (ev, ab_id) => {
     return db.deleteAudiobookRelated(ab_id);
 });
 
+ipcMain.handle('get-track-index', async (ev, ab_id, track_index) => {
+    return db.getIndexedTrack(ab_id, track_index);
+});
+
 ipcMain.handle('play-audiobook', async (ev, ab_id, track_id = null) => {
     const audiobook = db.getAudiobook(ab_id);
 

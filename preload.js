@@ -9,6 +9,7 @@ contextBridge.exposeInMainWorld('electron', {
     importNewAudiobook: () => ipcRenderer.invoke("import-new-ab"),
     getAllAudiobooks: () => ipcRenderer.invoke("get-all-audiobooks"),
     getAudiobookData: (ab_id) => ipcRenderer.invoke("get-audiobook-data", ab_id),
+    getIrackByIndex: (ab_id, track_index) => ipcRenderer.invoke("get-track-index", ab_id, track_index),
     getTracks: (ab_id) => ipcRenderer.invoke("get-tracks", ab_id),
     deleteAudiobook: (ab_id) => ipcRenderer.invoke("delete-audiobook", ab_id),
     playAudiobook: (ab_id, track_id = null) => ipcRenderer.invoke("play-audiobook", ab_id, track_id),

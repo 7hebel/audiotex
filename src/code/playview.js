@@ -76,8 +76,9 @@ audioPlayer.addEventListener("timeupdate", (e) => {
     updatePlayTime(current, total);
 })
 
-function setTrackMeta(trackId, abId) {
+function setTrackMeta(trackId, trackIndex, abId) {
     audioPlayer.setAttribute("track-id", trackId);
+    audioPlayer.setAttribute("track-index", trackIndex);
     audioPlayer.setAttribute("ab-id", abId);
 }
 
@@ -155,4 +156,50 @@ setInterval(() => {
         console.log("updated")
     }
 }, 5000)
+
+
+async function setupAudiobookPlay(ab_id, track_id = null) {
+    // If track-id is null, resume from latest session.
+    const data = await window.electron.playAudiobook(ab_id, track_id);
+
+    const ab = data.audiobook;
+    const track = data.track;
+
+    if (ab.cover_src) document.getElementById("pv-cover").src = ab.cover_src;
+
+    setTrackMeta(track.id, track.idx, ab.id);
+    setTrackData(track.title, ab.title);
+    setAudioSource(track.filepath);
+    setPlaybackRate(ab.play_speed);
+
+    if (track_id === null) {
+        seekAudioAt(ab.curr_moment_s);
+    } else {
+        playBar.value = 0;
+        playBar.style.setProperty('--play-bar-value', `0%`);
+        document.getElementById("pv-track-time").textContent = "00:00 / " + track.total_time;
+    }
+}
+
+/// NEXT TRACK BUTTON
+document.getElementById("next-track-btn").addEventListener('click', async () => {
+    const ab_id = audioPlayer.getAttribute("ab-id");
+    const nextIndex = parseInt(audioPlayer.getAttribute("track-index")) + 1;
+    const nextTrack = await window.electron.getIrackByIndex(ab_id, nextIndex);
+    if (nextTrack === undefined) return;
+
+    setupAudiobookPlay(ab_id, nextTrack.id).then(() => { playAudio() });  
+})
+
+/// PREVIOUS TRACK BUTTON
+document.getElementById("previous-track-btn").addEventListener('click', async () => {
+    const ab_id = audioPlayer.getAttribute("ab-id");
+    const nextIndex = parseInt(audioPlayer.getAttribute("track-index")) - 1;
+    if (nextIndex < 1) { return; }
+
+    const nextTrack = await window.electron.getIrackByIndex(ab_id, nextIndex);
+    if (nextTrack === undefined) return;
+
+    setupAudiobookPlay(ab_id, nextTrack.id).then(() => { playAudio() });  
+})
 
