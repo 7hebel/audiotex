@@ -235,16 +235,11 @@
             }
         })
 
-        // window.taskbarApi.onRemoteControlExecute((_event, command) => {
-        //     console.log(command);
-        //     if (command === "previous") {
-        //         console.log("Previous track");
-        //     } else if (command === "playPause") {
-        //         console.log("Play/Pause toggle");
-        //     } else if (command === "next") {
-        //         console.log("Next track");
-        //     }
-        // });
+        window.state.get().then(async (state) => {
+            const recentAb = state.recentAudiobook;
+            if (recentAb == null) return;
+            setupAudiobookPlay(recentAb);
+        })
 
        
     </script>

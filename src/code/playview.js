@@ -21,7 +21,7 @@ volumeControl.addEventListener("input", async (e) => {
     document.getElementById("volume-info-value").textContent = `${value}%`
 
     const state = await window.state.get();
-    state.volume = volumeControl.value / 100;
+    state.volume = Math.round(volumeControl.value / 100);
     window.state.set(state);
 
     setAudioVolume(value / 100);
@@ -38,6 +38,7 @@ speedControl.addEventListener("input", (e) => {
 
 /// Manage feature buttons visibility on hover.
 Array.from(document.getElementsByClassName("feature-btn")).forEach(el => {
+    el.addEventListener("click", e => { el.setAttribute("showContent", "1"); })
     el.addEventListener("mouseenter", e => { el.setAttribute("showContent", "1"); })
     el.addEventListener("mouseleave", e => {
         const contentElement = el.querySelector(".feature-range-container");
@@ -68,7 +69,7 @@ playBar.addEventListener("input", (e) => {
 
 /// Track mouse movement to display time hint on playbar.
 document.addEventListener('mousemove', (e) => {
-    if (!playBar.matches(":hover")) return;
+    if (!playBar.matches(":hover") || isNaN(audioPlayer.duration)) return;
 
     const barRect = playBar.getBoundingClientRect();
     const mx = e.clientX;
@@ -83,11 +84,15 @@ document.addEventListener('mousemove', (e) => {
     timeHint.textContent = secondsToReadable(time_s);
 });
 
-/// Automatically alter play time information.
+/// Automatically alter play time information. Play next track if ended.
 audioPlayer.addEventListener("timeupdate", (e) => {
     const current = audioPlayer.currentTime;
     const total = audioPlayer.duration;
     if (!current || !total) return;
+
+    if (current == total) {
+        playNextTrack();
+    }
 
     updateTimeInformation(current, total);
 })
@@ -196,13 +201,17 @@ async function setupAudiobookPlay(ab_id, track_id = null) {
 }
 
 /// Button: Play next track
-document.getElementById("next-track-btn").addEventListener('click', async () => {
+async function playNextTrack() {
     const ab_id = audioPlayer.getAttribute("ab-id");
     const nextIndex = parseInt(audioPlayer.getAttribute("track-index")) + 1;
     const nextTrack = await window.electron.getIrackByIndex(ab_id, nextIndex);
     if (nextTrack === undefined) return;
-
+    
     setupAudiobookPlay(ab_id, nextTrack.id).then(() => { playAudio() });
+}
+
+document.getElementById("next-track-btn").addEventListener('click', async () => {
+    await playNextTrack();
 })
 
 /// Button: Play previous track
