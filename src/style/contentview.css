@@ -1,0 +1,144 @@
+:root {
+    --cover-src: url("https://upload.wikimedia.org/wikipedia/en/7/74/Pink_Floyd-Animals-Frontal.jpg");
+    /* --cover-src: url("https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTA1L3BmLXMxMjQtYWstMjYxNV8yLmpwZw.jpg"); */
+    /* --cover-src: url("../default-cover.png"); */
+}
+
+.contentview {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    transition: top .6s, opacity .6s;
+}
+
+.contentview[show="0"] {
+    display: none;
+}
+
+.contentview:before {
+    content: '';
+    position: absolute;
+    top: -30px;
+    height: 100%;
+    width: 100%;
+    background-image: var(--cover-src);
+    background-repeat: repeat;
+    background-position: center;
+    background-size: cover;
+    filter: blur(30px) brightness(0.26);
+    z-index: 2;
+}
+
+.contentview-container > * {
+    z-index: 3;
+}
+
+.contentview-container {
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 150px);
+    width: 100%;
+    align-items: center;
+    padding-top: 48px;
+}
+
+#cv-title {
+    font-family: 'ClashDisplay';
+    color: white;
+    font-size: 22px;
+    font-weight: 500;
+    text-shadow: 0px 0px 50px #ffffff57;
+    word-wrap: break-word;
+    text-align: center;
+}
+
+#cv-author {
+    font-family: 'ClashDisplay';
+    color: #c7c9d1;
+    font-size: 16px;
+    font-weight: 400;
+    word-wrap: break-word;
+    text-align: center;
+    margin-top: 8px;
+}
+
+.cv-tracks-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 80px;
+    width: 100%;
+    gap: 4px;
+    overflow-y: scroll;
+}
+
+.cv-track-item {
+    width: 40%;
+    min-width: 600px;
+    min-height: 40px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Code';
+    color: white;
+    padding-block: 2px;
+    padding-inline: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color .2s;
+}
+
+.cv-track-item[active] {
+    background-color: #33385063;
+    border: 1px solid #ffffff08;
+    box-shadow: 0px 0px 28px 0px #2e323cbf;
+}
+
+.cv-track-item:not([active]):hover {
+    background-color: #43434629;
+}
+
+.cv-item-index {
+    width: 60px;
+    font-family: 'ClashDisplay';
+    font-size: 20px;
+}
+
+.cv-item-bookmark {
+    font-size: 12px;
+    color: #a2a9e3;
+}
+
+.cv-item-title {
+    color: white;
+    width: 100%;
+    font-size: 16px;
+    word-wrap: break-word;
+}
+
+.cv-item-time {
+    color: rgba(255, 255, 255, 0.671);
+    width: 60px;
+    font-size: 14px;
+    text-align: end;
+}
+
+#cv-hide {
+    position: absolute;
+    top: 10px;
+    left: 0px;
+    color: rgba(255, 255, 255, 0.23);
+    font-size: 18px;
+    z-index: 2;
+    padding: 20px;
+    cursor: pointer;
+    transition: color .4s;
+}
+
+#cv-hide:hover {
+    color: rgba(255, 255, 255, 0.6)
+}
