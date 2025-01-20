@@ -44,7 +44,9 @@ ipcMain.handle('get-all-audiobooks', async () => {
 });
 
 ipcMain.handle('get-audiobook-data', async (ev, ab_id) => {
-    return db.getAudiobook(ab_id);
+    const abData = db.getAudiobook(ab_id);
+    abData.bookmarksCount = db.countBookmarksInAudiobook(ab_id);
+    return abData;
 });
 
 ipcMain.handle('get-tracks', async (ev, ab_id) => {
@@ -70,6 +72,8 @@ ipcMain.handle('play-audiobook', async (ev, ab_id, track_id = null) => {
     } else {
         currentTrack = db.getTrackById(track_id);
     }
+
+    currentTrack.bookmarks = db.getBookmarksForTrack(currentTrack.id);
 
     state.STATE.recentAudiobook = parseInt(ab_id);
     state.saveState(state.STATE);

@@ -203,6 +203,11 @@ input[type="range"]::-moz-range-thumb {
     padding: 4px;
     border-radius: 12px;
     box-shadow: 0px 0px 20px 0px #0000005e;
+    transition: background-color .4s;
+}
+
+.feature-range-bg:hover {
+    background-color: #2e2f38;
 }
 
 .feature-range[orient=vertical] {
@@ -251,3 +256,70 @@ input[type="range"]::-moz-range-thumb {
 #play-state-icon {
     min-width: 18px;
 }
+
+#bar-bookmarks {
+    position: absolute;
+    margin-left: 180px;
+    width: calc(100% - 180px);
+    bottom: 98px;
+}
+
+.on-bar-bookmark {
+    position: absolute;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    transform: translateX(-50%);
+    z-index: 4;
+}
+
+.on-bar-bookmark > i {
+    color: #a2a9e3;
+    text-shadow: 0px 0px 6px #0000009c;
+    font-size: 12px;
+}
+
+.on-bar-bookmark[hovered="0"] > .bookmark-comment {
+    display: none;
+}
+
+.bookmark-comment {
+    font-family: 'Code';
+    font-size: 14px;
+    color: rgb(209, 214, 224);
+    background-color: #2a2f3a;
+    padding-inline: 8px;
+    padding-block: 2px;
+    border-radius: 4px;
+    border: 1px solid #ffffff1c;
+    box-shadow: 0px 0px 20px 0px #0000009c;
+    opacity: 1;
+    max-width: 400px;
+    word-wrap: break-word;
+    position: absolute;
+    width: max-content;
+    bottom: 20px;
+    font-style: italic;
+    text-align: center;
+    opacity: 0;
+    transition: opacity .4s;
+}
+
+.bookmark-meta {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding-block: 4px;
+    gap: 16px;
+}
+
+.bookmark-meta-info {
+    font-size: 12px;
+    text-align: center;
+    color: #99a0ad;
+    font-style: normal;
+}
+
+

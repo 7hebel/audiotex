@@ -50,15 +50,38 @@ function getAllAudiobooks() {
 
 function getAllTracks(ab_id) {
     try {
-        return db.prepare(`
+        const tracks = db.prepare(`
             SELECT *
             FROM tracks
             WHERE audiobook_id = ${ab_id}
             ORDER BY idx ASC
         `).all();
+
+        tracks.forEach((track) => {
+            track.bookmarks = getBookmarksForTrack(track.id);
+        })
+
+        return tracks;
     } catch (err) {
         console.error(`Error fetching tracks for ${ab_id}:`, err);
         return [];
+    }
+}
+
+function countBookmarksInAudiobook(ab_id) {
+    try {
+        return db.prepare(`
+            SELECT Count(*) as count
+            FROM bookmarks
+            WHERE track_id IN (
+                SELECT id
+                FROM tracks
+                WHERE audiobook_id=${ab_id}
+            )
+        `).get().count;
+    } catch (err) {
+        console.error(`Error counting bookmarks for ${ab_id}:`, err);
+        return 0;
     }
 }
 
@@ -114,6 +137,37 @@ function insertTrack(title, filepath, index, total_time, total_seconds, audioboo
     } catch (err) { console.error(`Error inserting track ${title}:`, err); }
 }
 
+function insertBookmark(track_id, curr_moment_s, comment) {
+    const currentDateParts = new Date().toISOString().split("T")[0].split("-");
+    const year = currentDateParts[0];
+    const month = currentDateParts[1];
+    const day = currentDateParts[2];
+    const dateAdd = `${day}/${month}/${year}`;
+
+    try {
+        db.prepare(`
+            INSERT INTO bookmarks
+                (comment, moment_s, track_id, date_add)
+            VALUES
+                (?, ?, ?, ?)    
+        `).run(comment, curr_moment_s, track_id, dateAdd);
+    } catch (err) { console.error(`Error inserting bookmark to: ${track_id}`, err); }
+
+}
+
+function getBookmarksForTrack(track_id) {
+    try {
+        return db.prepare(`
+            SELECT *
+            FROM bookmarks
+            WHERE track_id=${track_id}    
+        `).all()
+    } catch (err) {
+        console.error(`Failed to fetch bookmarks for track: ${track_id}`, err);
+        return [];
+    }
+}
+
 function deleteAudiobookRelated(ab_id) {
     try {
         db.exec(`
@@ -148,5 +202,8 @@ module.exports = {
     getTrackById,
     getIndexedTrack,
     deleteAudiobookRelated,
+    insertBookmark,
+    getBookmarksForTrack,
+    countBookmarksInAudiobook,
     updatePlayState,
 };

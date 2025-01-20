@@ -51,7 +51,7 @@ function populateInfoPopup(ab_id) {
         document.getElementById("info-items").textContent = ab.total_tracks + " items";
         document.getElementById("info-progress").textContent = ab.curr_track + "/" + ab.total_tracks + " - " + ab.progress + "%";
         document.getElementById("info-recent").textContent = ab.last_listened;
-        document.getElementById("info-bookmarks").textContent = "0 bookmarks";
+        document.getElementById("info-bookmarks").textContent = ab.bookmarksCount + " bookmarks";
     })
 
     const tbody = document.getElementById("info-tracks");

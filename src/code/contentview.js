@@ -55,7 +55,11 @@ function populateContentView(audiobook, allTracks, currTrackID) {
         itemTitle.textContent = track.title;
         trackItem.appendChild(itemTitle);
         
-        // TODO: if bookmaark in track: <i class="cv-item-bookmark fa-solid fa-bookmark"></i>
+        if (track.bookmarks.length > 0) {
+            const itemBookmark = document.createElement("i");
+            itemBookmark.className = "cv-item-bookmark fa-solid fa-bookmark";
+            trackItem.appendChild(itemBookmark);
+        }
         
         const itemTime = document.createElement("span");
         itemTime.className = "cv-item-time";

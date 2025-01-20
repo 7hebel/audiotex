@@ -8,7 +8,7 @@ const playBar = document.getElementById("play-bar");
 
 /// Load saved volume level.
 window.state.get().then((state) => {
-    const value = state.volume * 100;
+    const value = parseFloat((state.volume * 100).toFixed(2));
     volumeControl.value = value;
     volumeControl.style.setProperty('--volume-bar-value', `${value}%`);
     document.getElementById("volume-info-value").textContent = `${value}%`
@@ -39,21 +39,25 @@ speedControl.addEventListener("input", (e) => {
 /// Manage feature buttons visibility on hover.
 Array.from(document.getElementsByClassName("feature-btn")).forEach(el => {
     el.addEventListener("click", e => { el.setAttribute("showContent", "1"); })
-    el.addEventListener("mouseenter", e => { el.setAttribute("showContent", "1"); })
+    el.addEventListener("mouseenter", e => { 
+        setTimeout(() => {
+            if (!el.matches(":hover")) return;
+            const contentElement = el.querySelector(".feature-range-container");
+            el.setAttribute("showContent", "1"); 
+            setTimeout(() => { contentElement.style.opacity = "1"; }, 1);
+        }, 500)
+    
+    })
     el.addEventListener("mouseleave", e => {
         const contentElement = el.querySelector(".feature-range-container");
         if (contentElement === null) return;
 
-        const checkInterval = setInterval(() => {
-            if (!el.matches(":hover") && !contentElement.matches(":hover")) {
-                contentElement.style.opacity = 0;
-                setTimeout(() => {
-                    el.setAttribute("showContent", "0");
-                    contentElement.style.opacity = 1;
-                    clearInterval(checkInterval);
-                }, 400)
-            }
-        }, 1500)
+        setTimeout(() => {
+            if (el.matches(":hover") || contentElement.matches(":hover")) return;
+            contentElement.style.opacity = "0";
+            setTimeout(() => {el.setAttribute("showContent", "0")}, 450)
+        }, 800)
+
     })
 })
 
@@ -200,6 +204,58 @@ async function setupAudiobookPlay(ab_id, track_id = null) {
         document.getElementById("pv-track-time").textContent = "00:00 / " + track.total_time;
     }
 
+    const bookmarksContainer = document.getElementById("bar-bookmarks");
+    bookmarksContainer.innerHTML = "";
+
+    track.bookmarks.forEach((bookmark) => {
+        const timePercentage = (bookmark.moment_s / track.total_seconds) * 100;
+        
+        const bookmarkItem = document.createElement("div");
+        bookmarkItem.className = "on-bar-bookmark";
+        bookmarkItem.style = `left: calc(${timePercentage}% - 4px)`;
+        bookmarkItem.setAttribute("hovered", "0");
+        bookmarkItem.innerHTML = `<i class="fa-solid fa-bookmark"></i>`;
+        bookmarkItem.onclick = () => { seekAudioAt(bookmark.moment_s); }
+
+        const bookmarkComment = document.createElement("span");
+        bookmarkComment.className = "bookmark-comment";
+        if (bookmark.comment) bookmarkComment.textContent = bookmark.comment;
+
+        const bookmarkMeta = document.createElement("div");
+        bookmarkMeta.className = "bookmark-meta";
+
+        const bookmarkTimeInfo = document.createElement("span");
+        bookmarkTimeInfo.className = "bookmark-meta-info";
+        bookmarkTimeInfo.textContent = secondsToReadable(bookmark.moment_s);
+        bookmarkMeta.appendChild(bookmarkTimeInfo);
+        
+        const bookmarkDateInfo = document.createElement("span");
+        bookmarkDateInfo.className = "bookmark-meta-info";
+        bookmarkDateInfo.textContent = bookmark.date_add;
+        bookmarkMeta.appendChild(bookmarkDateInfo);
+        
+        bookmarkItem.addEventListener("mouseenter", () => {
+            setTimeout(() => {
+                if (!bookmarkItem.matches(":hover")) return;
+                bookmarkItem.setAttribute("hovered", "1");
+                setTimeout(() => { bookmarkComment.style.opacity = "1"; }, 1);
+            }, 600)
+        })
+        bookmarkItem.addEventListener("mouseleave", () => {
+            setTimeout(() => {
+                if (bookmarkItem.matches(":hover")) return;
+                bookmarkComment.style.opacity = "0"
+                setTimeout(() => {
+                    bookmarkItem.setAttribute("hovered", "0");
+                }, 450)
+            }, 500)
+        })
+
+        bookmarkComment.appendChild(bookmarkMeta);
+        bookmarkItem.appendChild(bookmarkComment);
+        bookmarksContainer.appendChild(bookmarkItem);
+    })
+
     const state = await window.state.get();
     setAudioVolume(state.volume);
     populateContentView(ab, allTracks, track.id);
@@ -226,3 +282,4 @@ document.getElementById("previous-track-btn").addEventListener('click', async ()
 
     setupAudiobookPlay(ab_id, nextTrack.id).then(() => { playAudio() });
 })
+

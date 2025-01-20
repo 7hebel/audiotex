@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS bookmarks (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     comment TEXT, -- Optional comment for the bookmark
     moment_s INTEGER NOT NULL, -- Moment in seconds where the bookmark is set
-    track_id INTEGER NOT NULL, -- Foreign key referencing tracks table
+    track_id INTEGER NOT NULL,
+    date_add TEXT NOT NULL,
     FOREIGN KEY (track_id) REFERENCES tracks (id) ON DELETE CASCADE
 );
