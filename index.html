@@ -241,6 +241,20 @@
                     <i class="fa-solid fa-angle-up"></i>
                 </button>
             </div>
+
+            <div class="add-bookmark-form" show="0" style="right: -400px; opacity: 0;" target-s="-1">
+                <textarea id="add-bookmark-comment" maxlength="250" placeholder="Optional comment"></textarea>
+                <div class="bookmark-form-buttons">
+                    <button class="form-btn" id="add-bookmark-btn" onclick="acceptBookmarkForm()">
+                        <i class="fa-solid fa-bookmark"></i>
+                        Bookmark <span id="add-bookmark-time"></span>
+                    </button>
+                    <button class="form-btn" id="add-bookmark-cancel-btn" onclick="cancelBookmarkForm()">
+                        <i class="fa-solid fa-xmark"></i>
+                        Cancel
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 

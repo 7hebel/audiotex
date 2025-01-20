@@ -27,7 +27,7 @@ function switchContentView() {
 function populateContentView(audiobook, allTracks, currTrackID) {
     document.getElementById("cv-title").textContent = audiobook.title;
     document.getElementById("cv-author").textContent = audiobook.author;
-    contentViewContainer.style.setProperty('--cover-src', `url("${audiobook.cover_src}")`);
+    contentViewContainer.style.setProperty('--cover-src', `url("${audiobook.cover_src ? audiobook.cover_src : '../default-cover.png'}")`);
 
     const tracksContainer = document.querySelector(".cv-tracks-container");
     let activeItem = null;
@@ -46,6 +46,7 @@ function populateContentView(audiobook, allTracks, currTrackID) {
             trackItem.setAttribute("active", "");
             activeItem = trackItem;
         }
+        
         itemIndex.className = "cv-item-index";
         itemIndex.textContent = track.idx;
         trackItem.appendChild(itemIndex);
@@ -55,11 +56,10 @@ function populateContentView(audiobook, allTracks, currTrackID) {
         itemTitle.textContent = track.title;
         trackItem.appendChild(itemTitle);
         
-        if (track.bookmarks.length > 0) {
-            const itemBookmark = document.createElement("i");
-            itemBookmark.className = "cv-item-bookmark fa-solid fa-bookmark";
-            trackItem.appendChild(itemBookmark);
-        }
+        const itemBookmark = document.createElement("i");
+        itemBookmark.className = "cv-item-bookmark fa-solid fa-bookmark";
+        trackItem.setAttribute("bookmarked", track.bookmarks.length > 0 ? "1" : "0");
+        trackItem.appendChild(itemBookmark);
         
         const itemTime = document.createElement("span");
         itemTime.className = "cv-item-time";

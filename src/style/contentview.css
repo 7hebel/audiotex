@@ -102,6 +102,10 @@
     background-color: #43434629;
 }
 
+.cv-track-item[bookmarked="0"] > i {
+    display: none;
+}
+
 .cv-item-index {
     width: 60px;
     font-family: 'ClashDisplay';

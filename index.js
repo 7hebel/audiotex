@@ -62,6 +62,12 @@ ipcMain.handle('get-track-index', async (ev, ab_id, track_index) => {
     return db.getIndexedTrack(ab_id, track_index);
 });
 
+ipcMain.handle('get-track-id', async (ev, track_id) => {
+    const trackData = db.getTrackById(track_id);
+    trackData.bookmarks = db.getBookmarksForTrack(track_id);
+    return trackData;
+});
+
 ipcMain.handle('play-audiobook', async (ev, ab_id, track_id = null) => {
     const audiobook = db.getAudiobook(ab_id);
 
@@ -136,6 +142,11 @@ ipcMain.handle('update-audiobook-meta', async (ev, ab_id, title, author, tracks)
 
     console.log(`Saved changes in audiobook: ${ab_id}`)
 });
+
+ipcMain.handle('add-bookmark', async (ev, track_id, moment_s, comment) => {
+    db.insertBookmark(track_id, moment_s, comment);
+})
+
 
 ipcMain.handle('get-state', async () => {
     return state.STATE;

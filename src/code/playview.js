@@ -1,3 +1,4 @@
+const bookmarkFormContainer = document.querySelector(".add-bookmark-form");
 const volumeControl = document.getElementById("volume-bar");
 const speedControl = document.getElementById("speed-bar");
 const audioPlayer = document.getElementById("audio-player");
@@ -42,11 +43,10 @@ Array.from(document.getElementsByClassName("feature-btn")).forEach(el => {
     el.addEventListener("mouseenter", e => { 
         setTimeout(() => {
             if (!el.matches(":hover")) return;
-            const contentElement = el.querySelector(".feature-range-container");
             el.setAttribute("showContent", "1"); 
-            setTimeout(() => { contentElement.style.opacity = "1"; }, 1);
+            const contentElement = el.querySelector(".feature-range-container");
+            if (contentElement) setTimeout(() => { contentElement.style.opacity = "1"; }, 1);
         }, 500)
-    
     })
     el.addEventListener("mouseleave", e => {
         const contentElement = el.querySelector(".feature-range-container");
@@ -57,7 +57,6 @@ Array.from(document.getElementsByClassName("feature-btn")).forEach(el => {
             contentElement.style.opacity = "0";
             setTimeout(() => {el.setAttribute("showContent", "0")}, 450)
         }, 800)
-
     })
 })
 
@@ -179,6 +178,62 @@ setInterval(() => {
     }
 }, 1000)
 
+
+function placeBarBookmarks(track) {
+    const bookmarksContainer = document.getElementById("bar-bookmarks");
+
+    bookmarksContainer.innerHTML = "";
+    track.bookmarks.forEach((bookmark) => {
+        const timePercentage = (bookmark.moment_s / track.total_seconds) * 100;
+    
+        const bookmarkItem = document.createElement("div");
+        bookmarkItem.className = "on-bar-bookmark";
+        bookmarkItem.style = `left: calc(${timePercentage}% - 4px)`;
+        bookmarkItem.setAttribute("hovered", "0");
+        bookmarkItem.innerHTML = `<i class="fa-solid fa-bookmark"></i>`;
+        bookmarkItem.onclick = () => { seekAudioAt(bookmark.moment_s); }
+    
+        const bookmarkComment = document.createElement("span");
+        bookmarkComment.className = "bookmark-comment";
+        if (bookmark.comment) bookmarkComment.textContent = bookmark.comment;
+    
+        const bookmarkMeta = document.createElement("div");
+        bookmarkMeta.className = "bookmark-meta";
+    
+        const bookmarkTimeInfo = document.createElement("span");
+        bookmarkTimeInfo.className = "bookmark-meta-info";
+        bookmarkTimeInfo.textContent = secondsToReadable(bookmark.moment_s);
+        bookmarkMeta.appendChild(bookmarkTimeInfo);
+    
+        const bookmarkDateInfo = document.createElement("span");
+        bookmarkDateInfo.className = "bookmark-meta-info";
+        bookmarkDateInfo.textContent = bookmark.date_add;
+        bookmarkMeta.appendChild(bookmarkDateInfo);
+    
+        bookmarkItem.addEventListener("mouseenter", () => {
+            setTimeout(() => {
+                if (!bookmarkItem.matches(":hover")) return;
+                bookmarkItem.setAttribute("hovered", "1");
+                setTimeout(() => { bookmarkComment.style.opacity = "1"; }, 1);
+            }, 600)
+        })
+        bookmarkItem.addEventListener("mouseleave", () => {
+            setTimeout(() => {
+                if (bookmarkItem.matches(":hover")) return;
+                bookmarkComment.style.opacity = "0"
+                setTimeout(() => {
+                    bookmarkItem.setAttribute("hovered", "0");
+                }, 450)
+            }, 500)
+        })
+    
+        bookmarkComment.appendChild(bookmarkMeta);
+        bookmarkItem.appendChild(bookmarkComment);
+        bookmarksContainer.appendChild(bookmarkItem);
+    })
+    
+}
+
 async function setupAudiobookPlay(ab_id, track_id = null) {
     // If track-id is null, resume from the latest session.
     const data = await window.electron.playAudiobook(ab_id, track_id);
@@ -204,57 +259,7 @@ async function setupAudiobookPlay(ab_id, track_id = null) {
         document.getElementById("pv-track-time").textContent = "00:00 / " + track.total_time;
     }
 
-    const bookmarksContainer = document.getElementById("bar-bookmarks");
-    bookmarksContainer.innerHTML = "";
-
-    track.bookmarks.forEach((bookmark) => {
-        const timePercentage = (bookmark.moment_s / track.total_seconds) * 100;
-        
-        const bookmarkItem = document.createElement("div");
-        bookmarkItem.className = "on-bar-bookmark";
-        bookmarkItem.style = `left: calc(${timePercentage}% - 4px)`;
-        bookmarkItem.setAttribute("hovered", "0");
-        bookmarkItem.innerHTML = `<i class="fa-solid fa-bookmark"></i>`;
-        bookmarkItem.onclick = () => { seekAudioAt(bookmark.moment_s); }
-
-        const bookmarkComment = document.createElement("span");
-        bookmarkComment.className = "bookmark-comment";
-        if (bookmark.comment) bookmarkComment.textContent = bookmark.comment;
-
-        const bookmarkMeta = document.createElement("div");
-        bookmarkMeta.className = "bookmark-meta";
-
-        const bookmarkTimeInfo = document.createElement("span");
-        bookmarkTimeInfo.className = "bookmark-meta-info";
-        bookmarkTimeInfo.textContent = secondsToReadable(bookmark.moment_s);
-        bookmarkMeta.appendChild(bookmarkTimeInfo);
-        
-        const bookmarkDateInfo = document.createElement("span");
-        bookmarkDateInfo.className = "bookmark-meta-info";
-        bookmarkDateInfo.textContent = bookmark.date_add;
-        bookmarkMeta.appendChild(bookmarkDateInfo);
-        
-        bookmarkItem.addEventListener("mouseenter", () => {
-            setTimeout(() => {
-                if (!bookmarkItem.matches(":hover")) return;
-                bookmarkItem.setAttribute("hovered", "1");
-                setTimeout(() => { bookmarkComment.style.opacity = "1"; }, 1);
-            }, 600)
-        })
-        bookmarkItem.addEventListener("mouseleave", () => {
-            setTimeout(() => {
-                if (bookmarkItem.matches(":hover")) return;
-                bookmarkComment.style.opacity = "0"
-                setTimeout(() => {
-                    bookmarkItem.setAttribute("hovered", "0");
-                }, 450)
-            }, 500)
-        })
-
-        bookmarkComment.appendChild(bookmarkMeta);
-        bookmarkItem.appendChild(bookmarkComment);
-        bookmarksContainer.appendChild(bookmarkItem);
-    })
+    placeBarBookmarks(track);
 
     const state = await window.state.get();
     setAudioVolume(state.volume);
@@ -282,4 +287,50 @@ document.getElementById("previous-track-btn").addEventListener('click', async ()
 
     setupAudiobookPlay(ab_id, nextTrack.id).then(() => { playAudio() });
 })
+
+/// Button: Add bookmark
+let addBookmarkFormUsed = false;
+
+document.getElementById("add-bookmark").addEventListener('click', async () => {
+    if (addBookmarkFormUsed) return;
+    addBookmarkFormUsed = true;
+
+    const moment_s = audioPlayer.currentTime;
+    document.getElementById("add-bookmark-time").textContent = secondsToReadable(moment_s);
+    bookmarkFormContainer.setAttribute("target-s", parseInt(moment_s));
+
+    bookmarkFormContainer.setAttribute("show", "1");
+    setTimeout(() => {
+        bookmarkFormContainer.style.right = "20px";
+        bookmarkFormContainer.style.opacity = "1";
+    }, 1)
+})
+
+async function acceptBookmarkForm() {
+    const moment_s = parseInt(bookmarkFormContainer.getAttribute("target-s"));
+    if (moment_s == -1) { return cancelBookmarkForm(); }
+
+    const comment = document.getElementById("add-bookmark-comment").value;
+    document.getElementById("add-bookmark-comment").value = ""
+    ;
+    const trackId = parseInt(audioPlayer.getAttribute("track-id"));
+    await window.electron.addBookmark(trackId, moment_s, comment);
+    
+    const track = await window.electron.getIrackById(trackId);
+    placeBarBookmarks(track);
+
+    document.getElementById(`cv-idx-${track.idx}`).setAttribute("bookmarked", "1");
+
+    cancelBookmarkForm();
+    setTimeout(() => { displayInfoMessage(`Added bookmark at: ${secondsToReadable(moment_s)}`); }, 500)
+}
+
+function cancelBookmarkForm() {
+    bookmarkFormContainer.style.right = "-400px";
+    bookmarkFormContainer.style.opacity = "0";
+    bookmarkFormContainer.setAttribute("target-s", "-1");
+    document.getElementById("add-bookmark-comment").value = ""
+    setTimeout(() => { bookmarkFormContainer.setAttribute("show", "0"); }, 500);
+    addBookmarkFormUsed = false;
+}
 

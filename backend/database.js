@@ -145,12 +145,12 @@ function insertBookmark(track_id, curr_moment_s, comment) {
     const dateAdd = `${day}/${month}/${year}`;
 
     try {
-        db.prepare(`
+        db.exec(`
             INSERT INTO bookmarks
                 (comment, moment_s, track_id, date_add)
             VALUES
-                (?, ?, ?, ?)    
-        `).run(comment, curr_moment_s, track_id, dateAdd);
+                ('${comment}', ${curr_moment_s}, ${track_id}, '${dateAdd}')    
+        `);
     } catch (err) { console.error(`Error inserting bookmark to: ${track_id}`, err); }
 
 }
