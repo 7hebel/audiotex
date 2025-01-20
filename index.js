@@ -12,6 +12,8 @@ const createWindow = () => {
     ROOT_WIN = new BrowserWindow({
         width: 1600,
         height: 1000,
+        minWidth: 1200,
+        minHeight: 800,
         backgroundColor: '#0f0e11',
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
@@ -143,6 +145,12 @@ ipcMain.handle('add-bookmark', async (ev, track_id, moment_s, comment) => {
     db.insertBookmark(track_id, moment_s, comment);
 })
 
+ipcMain.handle('remove-bookmark', async (ev, bookmark_id) => {
+    db.db.exec(`
+        DELETE FROM bookmarks
+        WHERE id = ${bookmark_id};
+    `)
+})
 
 ipcMain.handle('get-state', async () => {
     return state.STATE;

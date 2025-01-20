@@ -1,9 +1,3 @@
-:root {
-    --cover-src: url("https://upload.wikimedia.org/wikipedia/en/7/74/Pink_Floyd-Animals-Frontal.jpg");
-    /* --cover-src: url("https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTA1L3BmLXMxMjQtYWstMjYxNV8yLmpwZw.jpg"); */
-    /* --cover-src: url("../default-cover.png"); */
-}
-
 .contentview {
     position: absolute;
     left: 0;

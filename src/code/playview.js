@@ -190,12 +190,21 @@ function placeBarBookmarks(track) {
         bookmarkItem.className = "on-bar-bookmark";
         bookmarkItem.style = `left: calc(${timePercentage}% - 4px)`;
         bookmarkItem.setAttribute("hovered", "0");
-        bookmarkItem.innerHTML = `<i class="fa-solid fa-bookmark"></i>`;
-        bookmarkItem.onclick = () => { seekAudioAt(bookmark.moment_s); }
+        bookmarkItem.innerHTML = `<i class="fa-solid fa-bookmark" onclick="seekAudioAt(${bookmark.moment_s});"></i>`;
     
         const bookmarkComment = document.createElement("span");
         bookmarkComment.className = "bookmark-comment";
         if (bookmark.comment) bookmarkComment.textContent = bookmark.comment;
+
+        const rmBookmarkIcon = document.createElement("img");
+        rmBookmarkIcon.src = "src/icon/bookmark-slash.svg";
+        rmBookmarkIcon.className = "rm-bookmark-icon";
+        rmBookmarkIcon.onclick = async () => {
+            bookmarksContainer.removeChild(bookmarkItem);
+            await window.electron.removeBookmark(bookmark.id);
+            document.getElementById(`cv-idx-${track.idx}`).setAttribute("bookmarked", "0");
+            displayInfoMessage(`Removed bookmark: ${secondsToReadable(bookmark.moment_s)}`);
+        }
     
         const bookmarkMeta = document.createElement("div");
         bookmarkMeta.className = "bookmark-meta";
@@ -226,7 +235,8 @@ function placeBarBookmarks(track) {
                 }, 450)
             }, 500)
         })
-    
+        
+        bookmarkComment.appendChild(rmBookmarkIcon);
         bookmarkComment.appendChild(bookmarkMeta);
         bookmarkItem.appendChild(bookmarkComment);
         bookmarksContainer.appendChild(bookmarkItem);
@@ -296,6 +306,8 @@ document.getElementById("add-bookmark").addEventListener('click', async () => {
     addBookmarkFormUsed = true;
 
     const moment_s = audioPlayer.currentTime;
+    if (isNaN(moment_s)) return;
+
     document.getElementById("add-bookmark-time").textContent = secondsToReadable(moment_s);
     bookmarkFormContainer.setAttribute("target-s", parseInt(moment_s));
 

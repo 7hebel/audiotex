@@ -266,7 +266,6 @@ input[type="range"]::-moz-range-thumb {
 
 .on-bar-bookmark {
     position: absolute;
-    cursor: pointer;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -279,6 +278,7 @@ input[type="range"]::-moz-range-thumb {
     color: #a2a9e3;
     text-shadow: 0px 0px 6px #0000009c;
     font-size: 12px;
+    cursor: pointer;
 }
 
 .on-bar-bookmark[hovered="0"] > .bookmark-comment {
@@ -400,5 +400,23 @@ input[type="range"]::-moz-range-thumb {
 
 #add-bookmark-cancel-btn:hover {
     background-color: #65677763;
+}
+
+.rm-bookmark-icon {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    top: -12px;
+    left: -12px;
+    background-color: #2a2f3a;
+    padding: 4px;
+    border-radius: 4px;
+    border: 1px solid #ffffff1c;
+    cursor: pointer;
+    transition: background-color .3s;
+}
+
+.rm-bookmark-icon:hover {
+    background-color: #5c484b;
 }
 

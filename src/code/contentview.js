@@ -12,6 +12,7 @@ function hideContentView() {
 }
 
 function showContentView() {
+    closeInfoPopup();
     contentViewContainer.setAttribute("show", "1");
     setTimeout(() => {
         contentViewContainer.style.top = "0%"

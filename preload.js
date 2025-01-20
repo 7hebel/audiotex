@@ -16,7 +16,8 @@ contextBridge.exposeInMainWorld('electron', {
     playAudiobook: (ab_id, track_id = null) => ipcRenderer.invoke("play-audiobook", ab_id, track_id),
     updateAudiobookState: (ab_id, track_id, curr_moment_s, speed) => ipcRenderer.invoke("update-ab-state", ab_id, track_id, curr_moment_s, speed),
     updateAudiobookMeta: (ab_id, title, author, tracks) => ipcRenderer.invoke("update-audiobook-meta", ab_id, title, author, tracks),
-    addBookmark: (track_id, moment_s, comment) => ipcRenderer.invoke("add-bookmark", track_id, moment_s, comment)
+    addBookmark: (track_id, moment_s, comment) => ipcRenderer.invoke("add-bookmark", track_id, moment_s, comment),
+    removeBookmark: (bookmark_id) => ipcRenderer.invoke("remove-bookmark", bookmark_id)
 });
 
 contextBridge.exposeInMainWorld('state', {
