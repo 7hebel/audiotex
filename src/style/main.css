@@ -43,10 +43,15 @@
     user-select: none;
 }
 
+*:focus-visible {
+    outline: none;
+}
+
 body {
     background-color: #0f0e11;
     margin: 0;
     padding: 0;
+    overflow: hidden;
 }
 
 ::-webkit-scrollbar {

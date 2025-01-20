@@ -13,7 +13,8 @@
 
     <script src="src/code/lib/butterup/butterup.min.js"></script>
     <link rel="stylesheet" href="src/code/lib/butterup/butterup.min.css">
-
+    
+    <script defer src="src/code/contentview.js"></script>
     <script defer src="src/code/generators.js"></script>
     <script defer src="src/code/info-popup.js"></script>
     <script defer src="src/code/playview.js"></script>
@@ -22,6 +23,7 @@
     <link rel="stylesheet" href="src/style/shelf.css">
     <link rel="stylesheet" href="src/style/info.css">
     <link rel="stylesheet" href="src/style/playview.css">
+    <link rel="stylesheet" href="src/style/contentview.css">
     <title>AudioTex</title>
 </head>
 
@@ -173,11 +175,38 @@
         </div>
     </div>
 
+    <div class="contentview" show="1">
+        <i id="cv-hide" class="fa-solid fa-angle-down" onclick="hideContentView()"></i>
+        <div class="contentview-container">
+            <span id="cv-title">long abc def Audiobook hello world abc jupa title</span>
+            <span id="cv-author">some author</span>
+            <div class="cv-tracks-container">
+                
+                <div class="cv-track-item">
+                    <span class="cv-item-index">11</span>
+                    <span class="cv-item-title">01-Jakiś Audiobook-pl</span>
+                    <span class="cv-item-time">24:53</span>
+                </div>
+                <div class="cv-track-item" active>
+                    <span class="cv-item-index">22</span>
+                    <span class="cv-item-title">02-Jakiś Audiobook-pl</span>
+                    <i class="cv-item-bookmark fa-solid fa-bookmark"></i>
+                    <span class="cv-item-time">17:38</span>
+                </div>
+                <div class="cv-track-item">
+                    <span class="cv-item-index">3</span>
+                    <span class="cv-item-title">03-Jakiś Audiobook-pl</span>
+                    <span class="cv-item-time">12:48</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="playview-container">
         <input type="range" id="play-bar" min="0" max="1000" value="0">
         <span id="play-bar-hint">00:00</span>
         <div class="pv-cover-container">
-            <img id="pv-cover" src="./src/default-cover.png">
+            <img id="pv-cover" src="./src/default-cover.png" onclick="showContentView()">
         </div>
         <div class="playview">
             <audio id="audio-player" src="" track-id="" track-index="" ab-id=""></audio>
@@ -195,7 +224,7 @@
                 <span id="pv-track-time">00:00 / 00:00</span>
             </div>
             
-            <div class="current-info-group">
+            <div class="current-info-group" onclick="showContentView()">
                 <span id="pv-curr-track">-</span>
                 <span id="pv-curr-audiobook">AudioTex</span>
             </div>
@@ -224,6 +253,10 @@
                 <button class="feature-btn" id="add-bookmark">
                     <i class="fa-solid fa-bookmark"></i>
                 </button>
+
+                <button class="feature-btn" id="switch-contentview" onclick="switchContentView()">
+                    <i class="fa-solid fa-angle-down"></i>
+                </button>
             </div>
         </div>
     </div>
@@ -240,8 +273,6 @@
             if (recentAb == null) return;
             setupAudiobookPlay(recentAb);
         })
-
-       
     </script>
 </body>
 </html>
