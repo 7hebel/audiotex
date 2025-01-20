@@ -5,10 +5,10 @@ const barStateIcon = document.getElementById("switch-contentview").querySelector
 function hideContentView() {
     contentViewContainer.style.top = "100%"
     contentViewContainer.style.opacity = "0"
-    barStateIcon.className = "fa-solid fa-angle-up";
     setTimeout(() => {
         contentViewContainer.setAttribute("show", "0");
     }, 600)
+    barStateIcon.style.transform = "rotateX(0deg)";
 }
 
 function showContentView() {
@@ -17,9 +17,54 @@ function showContentView() {
         contentViewContainer.style.top = "0%"
         contentViewContainer.style.opacity = "1"
     }, 1)
-    barStateIcon.className = "fa-solid fa-angle-down";
+    barStateIcon.style.transform = "rotateX(180deg)";
 }
 
 function switchContentView() {
     contentViewContainer.getAttribute("show") == "0" ? showContentView() : hideContentView();
 }
+
+function populateContentView(audiobook, allTracks, currTrackID) {
+    document.getElementById("cv-title").textContent = audiobook.title;
+    document.getElementById("cv-author").textContent = audiobook.author;
+    contentViewContainer.style.setProperty('--cover-src', `url("${audiobook.cover_src}")`);
+
+    const tracksContainer = document.querySelector(".cv-tracks-container");
+    let activeItem = null;
+    tracksContainer.innerHTML = "";
+
+    allTracks.forEach(track => {
+        const trackItem = document.createElement("div");
+        trackItem.className = "cv-track-item";
+        trackItem.id = `cv-idx-${track.idx}`;
+        trackItem.onclick = async () => {
+            setupAudiobookPlay(audiobook.id, track.id).then(() => { playAudio(); });
+        }
+        
+        const itemIndex = document.createElement("span");
+        if (track.id == currTrackID) {
+            trackItem.setAttribute("active", "");
+            activeItem = trackItem;
+        }
+        itemIndex.className = "cv-item-index";
+        itemIndex.textContent = track.idx;
+        trackItem.appendChild(itemIndex);
+        
+        const itemTitle = document.createElement("span");
+        itemTitle.className = "cv-item-title";
+        itemTitle.textContent = track.title;
+        trackItem.appendChild(itemTitle);
+        
+        // TODO: if bookmaark in track: <i class="cv-item-bookmark fa-solid fa-bookmark"></i>
+        
+        const itemTime = document.createElement("span");
+        itemTime.className = "cv-item-time";
+        itemTime.textContent = track.total_time;
+        trackItem.appendChild(itemTime);
+
+        tracksContainer.appendChild(trackItem);
+    })
+
+    if (activeItem) activeItem.scrollIntoView({ behaviour: 'smooth', block: 'center' });
+}
+

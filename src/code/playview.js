@@ -178,6 +178,7 @@ setInterval(() => {
 async function setupAudiobookPlay(ab_id, track_id = null) {
     // If track-id is null, resume from the latest session.
     const data = await window.electron.playAudiobook(ab_id, track_id);
+    const allTracks = await window.electron.getAllTracks(ab_id);
 
     const ab = data.audiobook;
     const track = data.track;
@@ -201,6 +202,7 @@ async function setupAudiobookPlay(ab_id, track_id = null) {
 
     const state = await window.state.get();
     setAudioVolume(state.volume);
+    populateContentView(ab, allTracks, track.id);
 }
 
 /// Button: Play next track

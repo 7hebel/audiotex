@@ -89,12 +89,12 @@
     padding-inline: 16px;
     border-radius: 8px;
     cursor: pointer;
-    transition: background-color .2s;
+    transition: background-color .3s;
 }
 
 .cv-track-item[active] {
     background-color: #33385063;
-    border: 1px solid #ffffff08;
+    outline: 1px solid #ffffff08;
     box-shadow: 0px 0px 28px 0px #2e323cbf;
 }
 
@@ -141,4 +141,8 @@
 
 #cv-hide:hover {
     color: rgba(255, 255, 255, 0.6)
+}
+
+#switch-contentview > i {
+    transition: transform .5s;
 }

@@ -175,30 +175,12 @@
         </div>
     </div>
 
-    <div class="contentview" show="1">
+    <div class="contentview" show="0" style="top: 100%; opacity: 0;">
         <i id="cv-hide" class="fa-solid fa-angle-down" onclick="hideContentView()"></i>
         <div class="contentview-container">
-            <span id="cv-title">long abc def Audiobook hello world abc jupa title</span>
-            <span id="cv-author">some author</span>
-            <div class="cv-tracks-container">
-                
-                <div class="cv-track-item">
-                    <span class="cv-item-index">11</span>
-                    <span class="cv-item-title">01-Jakiś Audiobook-pl</span>
-                    <span class="cv-item-time">24:53</span>
-                </div>
-                <div class="cv-track-item" active>
-                    <span class="cv-item-index">22</span>
-                    <span class="cv-item-title">02-Jakiś Audiobook-pl</span>
-                    <i class="cv-item-bookmark fa-solid fa-bookmark"></i>
-                    <span class="cv-item-time">17:38</span>
-                </div>
-                <div class="cv-track-item">
-                    <span class="cv-item-index">3</span>
-                    <span class="cv-item-title">03-Jakiś Audiobook-pl</span>
-                    <span class="cv-item-time">12:48</span>
-                </div>
-            </div>
+            <span id="cv-title">-</span>
+            <span id="cv-author">AudioTex</span>
+            <div class="cv-tracks-container"></div>
         </div>
     </div>
 
@@ -255,7 +237,7 @@
                 </button>
 
                 <button class="feature-btn" id="switch-contentview" onclick="switchContentView()">
-                    <i class="fa-solid fa-angle-down"></i>
+                    <i class="fa-solid fa-angle-up"></i>
                 </button>
             </div>
         </div>
