@@ -54,39 +54,46 @@ function populateInfoPopup(ab_id) {
         document.getElementById("info-bookmarks").textContent = ab.bookmarksCount + " bookmarks";
     })
 
-    const tbody = document.getElementById("info-tracks");
-    for (const tr of Array.from(tbody.children)) {
-        if (tr.id != "info-table-header") {
-            tbody.removeChild(tr);
-        }
-    }
+    const tracksContainer = document.getElementById("info-tracks-table");
+    tracksContainer.innerHTML = "";
 
     window.electron.getAllTracks(ab_id).then((tracks) => {
-        for (const track of tracks) {
-            const tr = document.createElement("tr");
-            tr.setAttribute("draggable", "true");
-            tr.setAttribute("track-id", track.id);
+        for (const track of tracks ) {
+            const trackItem = document.createElement("div");
+            trackItem.className = "info-track-item";
+            trackItem.setAttribute("draggable", "true");
+            trackItem.setAttribute("track-id", track.id);
 
-            const tdIndex = document.createElement("td");
-            tdIndex.textContent = track.idx;
+            const index = document.createElement("span");
+            index.className = "info-track-item-index";
+            index.textContent = track.idx;
+            trackItem.appendChild(index);
             
-            const tdTitle = document.createElement("td");
-            tdTitle.className = "info-list-title";
-            tdTitle.textContent = track.title;
-            tdTitle.onclick = () => {
+            const title = document.createElement("span");
+            title.className = "info-track-item-title";
+            title.innerHTML = `${track.title} <i class="fa-solid fa-play"></i>`;
+            title.onclick = () => {
                 setupAudiobookPlay(ab_id, track.id).then(() => {
                     playAudio();
                     closeInfoPopup();
                 });
             }
+            trackItem.appendChild(title);
             
-            const tdTime = document.createElement("td");
-            tdTime.textContent = track.total_time;
+            const bookmarks = document.createElement("span");
+            const bookmarksCount = track.bookmarks.length;
+            bookmarks.className = "info-track-item-bookmarks";
+            if (bookmarksCount > 0) {
+                bookmarks.innerHTML = `${bookmarksCount} <i class="fa-solid fa-bookmark"></i>`
+            } 
+            trackItem.appendChild(bookmarks);
+            
+            const time = document.createElement("span");
+            time.className = "info-track-item-time";
+            time.textContent = track.total_time;
+            trackItem.appendChild(time);
 
-            tr.appendChild(tdIndex);
-            tr.appendChild(tdTitle);
-            tr.appendChild(tdTime);
-            tbody.appendChild(tr);
+            tracksContainer.appendChild(trackItem);
         }
     })
 }

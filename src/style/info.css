@@ -147,10 +147,6 @@
     text-decoration: underline;
 }
 
-#ab-info-popup[edit="1"] #info-tracks-table {
-    cursor: row-resize;
-}
-
 .vertical-sep {
     width: 1px;
     background-color: #5a59592b;
@@ -163,47 +159,82 @@
     overflow-y: scroll;
 }
 
+
 #info-tracks-table {
+    display: flex;
+    flex-direction: column;
     width: 100%;
 }
 
-#info-tracks-table th {
-    color: white;
-    font-family: 'ClashDisplay';
-    font-weight: 500;
-    border-bottom: 1px solid #ffffff59;
+#ab-info-popup[edit="1"] #info-tracks-table {
+    cursor: row-resize;
 }
 
-#info-tracks-table td {
+.info-track-item  {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
     font-family: 'Code';
-    color: white;
-    font-size: 12px;
-    height: 24px;
+    font-size: 14px;
+    word-wrap: break-word;
+    background-color: transparent;
+    transition: background-color .4s;
+    padding-block: 4px;
+    border-radius: 6px;
 }
 
-#info-tracks-table tr:nth-child(even) {
-    background-color: #ffffff04;
+.info-track-item:hover {
+    background-color: #ffffff0a;
 }
 
-#info-tracks-table td {
-    padding-left: 4px;
-    border-right: 1px solid #ffffff59;
-}   
-
-#info-tracks-table td:last-child {
-    border-right: none;
-}   
-
-.dragging {
-    background-color: #f0f0f071;
+.info-track-item-index {
+    color: #5b646e;
+    width: 50px;
+    padding-left: 8px;
 }
 
-.info-list-title {
-    text-decoration: underline;
+.info-track-item-title {
+    width: 100%;
+    color: #d1d4e0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
+#ab-info-popup[edit="0"] .info-track-item-title {
     cursor: pointer;
 }
 
-#ab-info-popup[edit="1"] .info-list-title {
-    text-decoration: none;
-    cursor: row-resize;
+.info-track-item-title > i {
+    font-size: 10px;
+    color: #5b646e;
+    opacity: 0;
+    transition: opacity .2s;
+}
+
+#ab-info-popup[edit="0"] .info-track-item-title:hover > i {
+    opacity: 1;
+}
+
+.info-track-item-bookmarks {
+    width: 60px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    color: #a2a9e3;
+}
+
+.info-track-item-bookmarks > i {
+    font-size: 10px;
+}
+
+.info-track-item-time {
+    color: #5b646e;
+    text-align: right;
+    width: 70px;
+    padding-right: 8px;
 }

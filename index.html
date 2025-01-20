@@ -28,7 +28,7 @@
 </head>
 
 <body>
-    <div id="ab-info-popup" show="0" edit="0" target="-1">
+    <div id="ab-info-popup" show="1" edit="0" target="-1">
         <div class="info-window">
             <div class="info-meta-part">
                 <img id="info-cover" class="info-not-editable" src="src/default-cover.png">
@@ -117,7 +117,7 @@
                             }
 
                             let newTracksOrder = []
-                            Array.from(document.getElementById("info-tracks").children).slice(1).forEach((trackEl) => {
+                            Array.from(document.getElementById("info-tracks-table").children).forEach((trackEl) => {
                                 newTracksOrder.push([
                                     parseInt(trackEl.getAttribute("track-id")), 
                                     parseInt(trackEl.children[0].textContent)
@@ -144,15 +144,49 @@
             <div class="vertical-sep"></div>
 
             <div class="info-tracks-part">
-                <table id="info-tracks-table">
-                    <tbody id="info-tracks">
-                        <tr id="info-table-header">
-                            <th id="no-col">#</th>
-                            <th id="title-col">title</th>
-                            <th id="time-col">time</th>
-                        </tr>
-                    </tbody>
-                </table>
+                <div id="info-tracks-table">
+
+                    <div class="info-track-item">
+                        <span class="info-track-item-index">1</span>
+                        <span class="info-track-item-title">
+                            01 <i class="fa-solid fa-play"></i>
+                        </span>   
+                        <span class="info-track-item-bookmarks">
+                            3 <i class="fa-solid fa-bookmark"></i>
+                        </span> 
+                        <span class="info-track-item-time">27:36</span>    
+                    </div>
+
+                    <div class="info-track-item">
+                        <span class="info-track-item-index">2</span>
+                        <span class="info-track-item-title">
+                            02 <i class="fa-solid fa-play"></i>
+                        </span>   
+                        <span class="info-track-item-bookmarks"></span> 
+                        <span class="info-track-item-time">12:87</span>    
+                    </div>
+
+                    <div class="info-track-item">
+                        <span class="info-track-item-index">3</span>
+                        <span class="info-track-item-title">
+                            03 <i class="fa-solid fa-play"></i>
+                        </span>   
+                        <span class="info-track-item-bookmarks">
+                            1 <i class="fa-solid fa-bookmark"></i>
+                        </span> 
+                        <span class="info-track-item-time">38:12</span>    
+                    </div>
+
+                    <div class="info-track-item">
+                        <span class="info-track-item-index">4</span>
+                        <span class="info-track-item-title">
+                            04 <i class="fa-solid fa-play"></i>
+                        </span>   
+                        <span class="info-track-item-bookmarks"></span> 
+                        <span class="info-track-item-time">28:26</span>    
+                    </div>
+
+                </div>
             </div>            
         </div>
     </div>

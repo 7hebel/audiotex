@@ -24,5 +24,13 @@ function secondsToReadable(s) {
     return `${minutes}:${seconds}`;
 }
 
+function getDate() {
+    // Returns current date in: DD/MM/YYYY format.
+    const currentDateParts = new Date().toISOString().split("T")[0].split("-");
+    const year = currentDateParts[0];
+    const month = currentDateParts[1];
+    const day = currentDateParts[2];
+    return `${day}/${month}/${year}`;
+}
 
-try { module.exports = { secondsToReadable }} catch {}
+try { module.exports = { secondsToReadable, getDate }} catch {}

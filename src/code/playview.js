@@ -242,7 +242,7 @@ async function setupAudiobookPlay(ab_id, track_id = null) {
     const ab = data.audiobook;
     const track = data.track;
 
-    if (ab.cover_src) document.getElementById("pv-cover").src = ab.cover_src;
+    document.getElementById("pv-cover").src = ab.cover_src ? ab.cover_src : './src/default-cover.png';
 
     const progress = Math.round((track.idx / ab.total_tracks) * 100) + "%";
     document.getElementById(String(ab_id)).querySelectorAll(".ab-meta")[1].textContent = progress;

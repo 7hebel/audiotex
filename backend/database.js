@@ -1,3 +1,4 @@
+const timeutils = require('./timeutils');
 const Database = require('better-sqlite3');
 const path = require('path');
 const fs = require('fs');
@@ -138,11 +139,7 @@ function insertTrack(title, filepath, index, total_time, total_seconds, audioboo
 }
 
 function insertBookmark(track_id, curr_moment_s, comment) {
-    const currentDateParts = new Date().toISOString().split("T")[0].split("-");
-    const year = currentDateParts[0];
-    const month = currentDateParts[1];
-    const day = currentDateParts[2];
-    const dateAdd = `${day}/${month}/${year}`;
+    const dateAdd = timeutils.getDate();
 
     try {
         db.exec(`

@@ -1,5 +1,6 @@
 const { app, BrowserWindow, dialog, ipcMain, nativeImage } = require('electron');
-const audibook = require('./backend/audiobook');
+const audiobook = require('./backend/audiobook');
+const timeutils = require('./backend/timeutils')
 const msg = require('./backend/messages');
 const db = require('./backend/database');
 const state = require("./backend/state");
@@ -33,7 +34,7 @@ ipcMain.handle('import-new-ab', async () => {
 
     if (!result.canceled) {
         console.log("calling with ", result.filePaths[0]);
-        return await audibook.importAudiobook(result.filePaths[0]);
+        return await audiobook.importAudiobook(result.filePaths[0]);
     }
 
     return false;
@@ -54,7 +55,7 @@ ipcMain.handle('get-tracks', async (ev, ab_id) => {
 });
 
 ipcMain.handle('delete-audiobook', async (ev, ab_id) => {
-    audibook.removeCover(ab_id);
+    audiobook.removeCover(ab_id);
     return db.deleteAudiobookRelated(ab_id);
 });
 
@@ -101,17 +102,12 @@ ipcMain.handle('play-audiobook', async (ev, ab_id, track_id = null) => {
 });
 
 ipcMain.handle('update-ab-state', async (ev, ab_id, track_id, curr_moment_s, speed) => {
-    const currentDateParts = new Date().toISOString().split("T")[0].split("-");
-    const year = currentDateParts[0];
-    const month = currentDateParts[1];
-    const day = currentDateParts[2];
-    const lastPlayed = `${day}/${month}/${year}`;
-
     const track = db.getTrackById(parseInt(track_id));
     const trackIndex = track.idx;
     const trackTotalSeconds = track.total_seconds;
     const abTotalTracks = db.getAudiobook(ab_id).total_tracks;
     const progress = Math.round(trackIndex / abTotalTracks);
+    const lastPlayed = timeutils.getDate();
     
     db.updatePlayState(ab_id, trackIndex, curr_moment_s, lastPlayed, progress, speed);
     ROOT_WIN.setProgressBar(curr_moment_s / trackTotalSeconds, { mode: "normal" });
