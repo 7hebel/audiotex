@@ -65,6 +65,10 @@ ipcMain.handle('get-track-index', async (ev, ab_id, track_index) => {
     return db.getIndexedTrack(ab_id, track_index);
 });
 
+ipcMain.handle('calc-ab-progress', async (ev, ab_id) => {
+    return audiobook.calculateProgress(ab_id);
+});
+
 ipcMain.handle('get-track-id', async (ev, track_id) => {
     const trackData = db.getTrackById(track_id);
     trackData.bookmarks = db.getBookmarksForTrack(track_id);
@@ -107,8 +111,7 @@ ipcMain.handle('update-ab-state', async (ev, ab_id, track_id, curr_moment_s, spe
     const track = db.getTrackById(parseInt(track_id));
     const trackIndex = track.idx;
     const trackTotalSeconds = track.total_seconds;
-    const abTotalTracks = db.getAudiobook(ab_id).total_tracks;
-    const progress = Math.round(trackIndex / abTotalTracks);
+    const progress = audiobook.calculateProgress(ab_id);
     const lastPlayed = timeutils.getDate();
     
     db.updatePlayState(ab_id, trackIndex, curr_moment_s, lastPlayed, progress, speed);

@@ -46,7 +46,7 @@ Array.from(document.getElementsByClassName("feature-btn")).forEach(el => {
             el.setAttribute("showContent", "1"); 
             const contentElement = el.querySelector(".feature-range-container");
             if (contentElement) setTimeout(() => { contentElement.style.opacity = "1"; }, 1);
-        }, 500)
+        }, 300)
     })
     el.addEventListener("mouseleave", e => {
         const contentElement = el.querySelector(".feature-range-container");
@@ -87,14 +87,20 @@ document.addEventListener('mousemove', (e) => {
     timeHint.textContent = secondsToReadable(time_s);
 });
 
-/// Automatically alter play time information. Play next track if ended.
-audioPlayer.addEventListener("timeupdate", (e) => {
+/// Automatically alter play time and progress information. Play next track if ended.
+audioPlayer.addEventListener("timeupdate", async (e) => {
     const current = audioPlayer.currentTime;
     const total = audioPlayer.duration;
     if (!current || !total) return;
 
     if (current == total) {
         playNextTrack();
+    }
+
+    const ab_id = parseInt(audioPlayer.getAttribute("ab-id"));
+    if (ab_id) {
+        const progress = await window.electron.calculateAudiobookProgress(ab_id);
+        document.getElementById(String(ab_id)).querySelectorAll(".ab-meta")[1].textContent = `${progress}%`;
     }
 
     updateTimeInformation(current, total);
@@ -180,6 +186,7 @@ setInterval(() => {
 
 
 function placeBarBookmarks(track) {
+    /// Place all bookmarks from this track on the play bar.
     const bookmarksContainer = document.getElementById("bar-bookmarks");
 
     bookmarksContainer.innerHTML = "";
@@ -241,7 +248,6 @@ function placeBarBookmarks(track) {
         bookmarkItem.appendChild(bookmarkComment);
         bookmarksContainer.appendChild(bookmarkItem);
     })
-    
 }
 
 async function setupAudiobookPlay(ab_id, track_id = null) {
@@ -254,8 +260,8 @@ async function setupAudiobookPlay(ab_id, track_id = null) {
 
     document.getElementById("pv-cover").src = ab.cover_src ? ab.cover_src : './src/default-cover.png';
 
-    const progress = Math.round((track.idx / ab.total_tracks) * 100) + "%";
-    document.getElementById(String(ab_id)).querySelectorAll(".ab-meta")[1].textContent = progress;
+    const progress = await window.electron.calculateAudiobookProgress(ab_id);
+    document.getElementById(String(ab_id)).querySelectorAll(".ab-meta")[1].textContent = `${progress}%`;
 
     audioPlayer.src = track.filepath;
     setTrackMeta(track.id, track.idx, ab.id);

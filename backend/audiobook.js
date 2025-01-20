@@ -88,6 +88,18 @@ async function importAudiobook(dirpath) {
 };
 
 
+function calculateProgress(ab_id) {
+    const audiobook = db.getAudiobook(ab_id);
+    const allTracks = db.getAllTracks(ab_id);
+
+    let passedSeconds = audiobook.curr_moment_s;
+    allTracks.forEach((track) => {
+        if (track.idx < audiobook.curr_track) passedSeconds += track.total_seconds;
+    })
+
+    return parseInt((passedSeconds / audiobook.total_seconds) * 100);
+}
+
 /// Covers related stuff
 
 const COVERS_PATH = path.join(require('electron').app.getPath('userData'), 'covers')
@@ -108,4 +120,5 @@ module.exports = {
     importAudiobook,
     saveCover,
     removeCover,
+    calculateProgress
 }
