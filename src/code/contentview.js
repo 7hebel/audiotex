@@ -13,6 +13,7 @@ function hideContentView() {
 
 function showContentView() {
     closeInfoPopup();
+    closeBookmarksListPopup();
     contentViewContainer.setAttribute("show", "1");
     setTimeout(() => {
         contentViewContainer.style.top = "0%"

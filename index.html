@@ -14,16 +14,19 @@
     <script src="src/code/lib/butterup/butterup.min.js"></script>
     <link rel="stylesheet" href="src/code/lib/butterup/butterup.min.css">
     
+    <script defer src="src/code/bookmarks-list.js"></script>
     <script defer src="src/code/contentview.js"></script>
     <script defer src="src/code/generators.js"></script>
     <script defer src="src/code/info-popup.js"></script>
     <script defer src="src/code/playview.js"></script>
+    <script defer src="src/code/shelf.js"></script>
     <script defer src="backend/timeutils.js"></script>
     <link rel="stylesheet" href="src/style/main.css">
-    <link rel="stylesheet" href="src/style/shelf.css">
     <link rel="stylesheet" href="src/style/info.css">
+    <link rel="stylesheet" href="src/style/shelf.css">
     <link rel="stylesheet" href="src/style/playview.css">
     <link rel="stylesheet" href="src/style/contentview.css">
+    <link rel="stylesheet" href="src/style/bookmarks-list.css">
     <title>AudioTex</title>
 </head>
 
@@ -149,20 +152,24 @@
         </div>
     </div>
 
+    <div id="bookmarks-list-popup" show="0">
+        <div id="bm-list-window"></div>
+    </div>
+
     <div class="shelf">
         <div id="audiobooks-container">
-            <div class="ab-entry" id="add-audiobook">
-                <script>
-                    const selectDirButton = document.getElementById('add-audiobook');
-                    selectDirButton.addEventListener('click', async () => {
-                        const ab_data = await window.electron.importNewAudiobook();
-                        if (ab_data) setTimeout(() => {addAudiobookToShelf(...ab_data)}, 1000);
-                    });
-                </script>
+            <div class="ab-entry ab-default-entry" id="add-audiobook">
                 <div class="ab-cover">
                     <i class="fa-solid fa-plus"></i>
                 </div>
                 <p class="ab-title">import audiobook</p>
+            </div>
+
+            <div class="ab-entry ab-default-entry" id="bookmarks-opener">
+                <div class="ab-cover">
+                    <i class="fa-solid fa-bookmark"></i>
+                </div>
+                <p class="ab-title"><span id="totalbookmarks-count">0</span> bookmarks</p>
             </div>
         </div>
     </div>
@@ -235,7 +242,7 @@
             </div>
 
             <div class="add-bookmark-form" show="0" style="right: -400px; opacity: 0;" target-s="-1">
-                <textarea id="add-bookmark-comment" maxlength="250" placeholder="Optional comment"></textarea>
+                <textarea id="add-bookmark-comment" maxlength="200" placeholder="Optional comment"></textarea>
                 <div class="bookmark-form-buttons">
                     <button class="form-btn" id="add-bookmark-btn" onclick="acceptBookmarkForm()">
                         <i class="fa-solid fa-bookmark"></i>

@@ -148,11 +148,51 @@ ipcMain.handle('add-bookmark', async (ev, track_id, moment_s, comment) => {
     db.insertBookmark(track_id, moment_s, comment);
 })
 
+ipcMain.handle('count-bookmarks', async (ev, ab_id) => {
+    return db.countBookmarksInAudiobook(ab_id);
+})
+
+ipcMain.handle('count-total-bookmarks', async (ev) => {
+    return db.countTotalBookmarks();
+})
+
 ipcMain.handle('remove-bookmark', async (ev, bookmark_id) => {
     db.db.exec(`
         DELETE FROM bookmarks
         WHERE id = ${bookmark_id};
     `)
+})
+
+ipcMain.handle('prepare-bookmarks-data', async (ev) => {
+    const allAudiobooks = db.getAllAudiobooks();
+    const bookmarkedAudiobooks = [];
+    
+    allAudiobooks.forEach((ab) => {
+        const bookmarksCount = db.countBookmarksInAudiobook(ab.id);
+        if (bookmarksCount == 0) return;
+
+        ab.bookmarksCount = bookmarksCount;
+        const allTracks = db.getAllTracks(ab.id);
+        const bookmarks = [];
+
+        allTracks.forEach((track) => {
+            const trackBookmarks = db.getBookmarksForTrack(track.id);
+            if (trackBookmarks.length > 0) {
+                trackBookmarks.forEach((bookmark) => {
+                    bookmark.track_index = track.idx;
+                    bookmark.track_title = track.title;
+                })
+                bookmarks.push(trackBookmarks);
+            }
+        })
+        
+        bookmarkedAudiobooks.push({
+            audiobook: ab,
+            bookmarks: bookmarks
+        })
+    })
+
+    return bookmarkedAudiobooks;
 })
 
 ipcMain.handle('get-state', async () => {

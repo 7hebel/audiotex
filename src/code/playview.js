@@ -188,8 +188,8 @@ setInterval(() => {
 function placeBarBookmarks(track) {
     /// Place all bookmarks from this track on the play bar.
     const bookmarksContainer = document.getElementById("bar-bookmarks");
-
     bookmarksContainer.innerHTML = "";
+
     track.bookmarks.forEach((bookmark) => {
         const timePercentage = (bookmark.moment_s / track.total_seconds) * 100;
     
@@ -210,6 +210,7 @@ function placeBarBookmarks(track) {
             bookmarksContainer.removeChild(bookmarkItem);
             await window.electron.removeBookmark(bookmark.id);
             document.getElementById(`cv-idx-${track.idx}`).setAttribute("bookmarked", "0");
+            updateTotalBookmarksCount();
             displayInfoMessage(`Removed bookmark: ${secondsToReadable(bookmark.moment_s)}`);
         }
     
@@ -286,7 +287,7 @@ async function setupAudiobookPlay(ab_id, track_id = null) {
 async function playNextTrack() {
     const ab_id = audioPlayer.getAttribute("ab-id");
     const nextIndex = parseInt(audioPlayer.getAttribute("track-index")) + 1;
-    const nextTrack = await window.electron.getIrackByIndex(ab_id, nextIndex);
+    const nextTrack = await window.electron.getTrackByIndex(ab_id, nextIndex);
     if (nextTrack === undefined) return;
     
     setupAudiobookPlay(ab_id, nextTrack.id).then(() => { playAudio() });
@@ -298,7 +299,7 @@ document.getElementById("previous-track-btn").addEventListener('click', async ()
     const nextIndex = parseInt(audioPlayer.getAttribute("track-index")) - 1;
     if (nextIndex < 1) { return; }
 
-    const nextTrack = await window.electron.getIrackByIndex(ab_id, nextIndex);
+    const nextTrack = await window.electron.getTrackByIndex(ab_id, nextIndex);
     if (nextTrack === undefined) return;
 
     setupAudiobookPlay(ab_id, nextTrack.id).then(() => { playAudio() });
@@ -334,13 +335,14 @@ async function acceptBookmarkForm() {
     const trackId = parseInt(audioPlayer.getAttribute("track-id"));
     await window.electron.addBookmark(trackId, moment_s, comment);
     
-    const track = await window.electron.getIrackById(trackId);
+    const track = await window.electron.getTrackById(trackId);
     placeBarBookmarks(track);
 
     document.getElementById(`cv-idx-${track.idx}`).setAttribute("bookmarked", "1");
 
     cancelBookmarkForm();
-    setTimeout(() => { displayInfoMessage(`Added bookmark at: ${secondsToReadable(moment_s)}`); }, 500)
+    updateTotalBookmarksCount();
+    setTimeout(() => { displayInfoMessage(`Placed bookmark at: ${secondsToReadable(moment_s)}`); }, 500)
 }
 
 function cancelBookmarkForm() {

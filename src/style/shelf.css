@@ -43,14 +43,14 @@
     opacity: 1;
 }
 
-#add-audiobook .ab-cover {
+.ab-default-entry .ab-cover {
     color: #ffffff1c;
     font-size: 50px;
     justify-content: center;
     align-items: center;
 }
 
-#add-audiobook .ab-title {
+.ab-default-entry .ab-title {
     color: #ffffff25
 }
 

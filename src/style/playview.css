@@ -338,6 +338,7 @@ input[type="range"]::-moz-range-thumb {
     box-sizing: border-box;
     gap: 12px;
     transition: right .3s, opacity .3s;
+    z-index: 6;
 }
 
 .add-bookmark-form[show="0"] {

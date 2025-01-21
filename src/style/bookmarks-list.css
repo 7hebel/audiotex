@@ -1,0 +1,223 @@
+#bookmarks-list-popup[show="0"] {
+    display: none;
+}
+
+#bookmarks-list-popup[show="1"] {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(10px);
+}
+
+#bm-list-window {
+    width: 1050px;
+    min-height: 650px;
+    max-height: 650px;
+    height: 650px;
+    background-color: #151518;
+    border-radius: 12px;
+    border: 1px solid #43434326;
+    padding: 10px;
+    padding-right: 7px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0px 0px 20px 2px rgba(0, 0, 0, 0.479);
+    overflow-y: scroll;
+    gap: 12px
+}
+
+.bm-list-ab-entry {
+    height: fit-content;
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+    background-color: #ffffff03;
+    border: 1px solid #4343431c;
+    border-radius: 8px;
+}
+
+.bm-list-ab-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.bm-list-ab-header-meta {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 24px;
+}
+
+.ab-list-entry-fold-icon {
+    color: #3b3b3b;
+    margin-left: 8px;
+    cursor: pointer;
+    transition: transform .25s, color .3s;
+}
+
+.ab-list-entry-fold-icon:hover {
+    color: #6d6c6c;
+}
+
+.ab-list-entry-cover {
+    height: 50px;
+    width: 50px;
+    border-radius: 4px;
+    border: 1px solid #43434326;
+}
+
+.ab-list-entry-meta-container {
+    display: flex;
+    flex-direction: column;
+    font-family: 'Code';
+}
+
+.ab-list-entry-title {
+    font-size: 16px;
+    color: #a6a9bf;
+}
+
+.ab-list-entry-author {
+    font-size: 12px;
+    color: #595f71;
+}
+
+.bm-list-header-bm-count {
+    font-family: 'Code';
+    color: #a2a9e3;
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    align-items: center;
+    margin-right: 8px;
+}
+
+.bm-list-header-bm-count > i {
+    font-size: 12px;
+    padding-top: 3px;
+}
+
+.bm-list-items-container {
+    display: flex;
+    flex-direction: column;
+    margin-left: 46px;
+    margin-top: 8px;
+    gap: 8px;
+    overflow: hidden;
+    transition: height .25s;
+}
+
+.bm-list-item {
+    display: flex;
+    flex-direction: row;
+    font-family: 'Code';
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    gap: 8px;
+    background-color: #ffffff03;
+    padding-block: 4px;
+    padding-inline: 4px;
+    border: 1px solid #43434317;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.bm-list-track-index {
+    font-size: 12px;
+    color: #4f525a;
+    margin-right: 8px;
+}
+
+.bm-list-track-title {
+    color: #c5c9d3;
+    margin-right: 8px;
+}
+
+.bm-list-track-time {
+    color: #5e6370;
+    padding-inline: 4px;
+    border-radius: 4px;
+    background-color: #393c4f1c;
+    border: 1px solid #43434326;
+    font-size: 12px;
+}
+
+.bm-list-track-time > i {
+    font-size: 10px;
+}
+
+.bm-list-track-comment {
+    color: #a8a8a8;
+    font-style: italic;
+    font-size: 12px;
+    max-width: 700px;
+    text-align: center;
+    overflow-wrap: break-word
+}
+
+.bm-list-item-right {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
+
+.bm-list-item-right > i {
+    width: 16px;
+    cursor: pointer;
+    transition: color .4s;
+}
+
+.bm-list-item-btn-delete {
+    color: #654444;
+    font-size: 12px;
+    margin-left: 4px;
+}
+
+.bm-list-item-btn-delete:hover {
+    color: #d8868a;
+}
+
+.bm-list-item-btn-play {
+    color: #424758;
+}
+
+.bm-list-item-btn-play:hover {
+    color: #9ab1c4;
+}
+
+.bm-list-track-name {
+    color: #a6a9bf;
+    font-family: 'Code';
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    align-items: center;
+    margin-left: 16px;
+    margin-top: 16px;
+}
+
+.bm-list-ab-entry[folded="1"] .ab-list-entry-fold-icon {
+    transform: rotateZ(-90deg);
+}
+
+.bm-list-ab-entry[folded="1"] .bm-list-items-container {
+    height: 0px;
+}
+
+.no-bookmarks {
+    font-family: 'Code';
+    color: #4f525a;
+    height: 100%;
+    width: 100%;
+    display: grid;
+    place-items: center;
+}

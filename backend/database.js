@@ -86,6 +86,18 @@ function countBookmarksInAudiobook(ab_id) {
     }
 }
 
+function countTotalBookmarks() {
+    try {
+        return db.prepare(`
+            SELECT Count(*) as count
+            FROM bookmarks
+        `).get().count;
+    } catch (err) {
+        console.error(`Error counting all bookmarks`, err);
+        return 0;
+    }
+}
+
 function getTrackById(track_id) {
     try {
         return db.prepare(`
@@ -202,5 +214,6 @@ module.exports = {
     insertBookmark,
     getBookmarksForTrack,
     countBookmarksInAudiobook,
+    countTotalBookmarks,
     updatePlayState,
 };
