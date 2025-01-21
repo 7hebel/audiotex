@@ -93,9 +93,7 @@ audioPlayer.addEventListener("timeupdate", async (e) => {
     const total = audioPlayer.duration;
     if (!current || !total) return;
 
-    if (current == total) {
-        playNextTrack();
-    }
+    if (current == total) playNextTrack();
 
     const ab_id = parseInt(audioPlayer.getAttribute("ab-id"));
     if (ab_id) {
@@ -343,8 +341,8 @@ async function acceptBookmarkForm() {
     if (moment_s == -1) { return cancelBookmarkForm(); }
 
     const comment = document.getElementById("add-bookmark-comment").value;
-    document.getElementById("add-bookmark-comment").value = ""
-    ;
+    document.getElementById("add-bookmark-comment").value = "";
+
     const trackId = parseInt(audioPlayer.getAttribute("track-id"));
     await window.electron.addBookmark(trackId, moment_s, comment);
     

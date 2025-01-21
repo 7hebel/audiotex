@@ -7,11 +7,21 @@ let tracksTableBackupCopy = "";  // Backup for the tracks table. Used when chang
 /// Close the pop-up whenever user clicks outside it.
 infoPopupContainer.onclick = (ev) => { if (ev.target.id === "ab-info-popup") closeInfoPopup(); }
 
-function openInfoPopup() { infoPopupContainer.setAttribute("show", "1"); }
+function openInfoPopup() {
+    infoPopupContainer.setAttribute("show", "1"); 
+
+    setTimeout(() => {
+        infoPopupContainer.style.opacity = "1";
+    }, 1)
+}
 
 function closeInfoPopup() {
-    infoPopupContainer.setAttribute("show", "0");
-    infoPopupContainer.setAttribute("target", "-1");
+    infoPopupContainer.style.opacity = "0";
+
+    setTimeout(() => {
+        infoPopupContainer.setAttribute("show", "0");
+        infoPopupContainer.setAttribute("target", "-1");
+    }, 250)
 
     exitInfoEditMode();
 }
@@ -115,14 +125,7 @@ function populateInfoPopup(ab_id) {
         document.getElementById("info-progress").textContent = ab.curr_track + "/" + ab.total_tracks + " - " + ab.progress + "%";
         document.getElementById("info-recent").textContent = ab.last_listened;
         document.getElementById("info-bookmarks").textContent = (ab.bookmarksCount == 0) ? "No bookmarks" : ab.bookmarksCount + " bookmarks";
-
-        if (ab.bookmarksCount > 0) {
-            document.getElementById("goto-bookmarks-btn").style.display = "flex";
-        } else {
-            document.getElementById("goto-bookmarks-btn").style.display = "none";
-        }
     })
-
 
     const tracksContainer = document.getElementById("info-tracks-table");
     tracksContainer.innerHTML = "";
@@ -169,3 +172,35 @@ function populateInfoPopup(ab_id) {
     })
 }
 
+/// Accept info popup audiobook changes.
+const saveAudiobookBtn = document.getElementById("save-ab-btn");
+saveAudiobookBtn.addEventListener('click', async () => {
+    const ab_id = parseInt(document.getElementById("ab-info-popup").getAttribute("target"));
+    const newTitle = document.getElementById("info-title").textContent;
+    const newAuthor = document.getElementById("info-author").textContent;
+
+    if (!newTitle.trim()) return displayErrorMessage("Title cannot be blank.");
+    if (!newAuthor.trim()) return displayErrorMessage("Author cannot be blank.");
+
+    let newTracksOrder = []
+    Array.from(document.getElementById("info-tracks-table").children).forEach((trackEl) => {
+        newTracksOrder.push([
+            parseInt(trackEl.getAttribute("track-id")),
+            parseInt(trackEl.children[0].textContent)
+        ])
+    });
+
+    await window.electron.updateAudiobookMeta(ab_id, newTitle, newAuthor, newTracksOrder);
+    acceptInfoEditChanges();
+    displayInfoMessage("Changes saved.")
+})
+
+/// Remove audiobook button.
+const deleteAudiobookBtn = document.getElementById('delete-ab-btn');
+deleteAudiobookBtn.addEventListener('click', async () => {
+    const ab_id = parseInt(document.getElementById("ab-info-popup").getAttribute("target"));
+    await window.electron.deleteAudiobook(ab_id);
+    closeInfoPopup();
+    document.getElementById(String(ab_id)).remove();
+    displayInfoMessage('Removed audiobook from shelf.')
+});

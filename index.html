@@ -30,7 +30,7 @@
 </head>
 
 <body>
-    <div id="ab-info-popup" show="0" edit="0" target="-1">
+    <div id="ab-info-popup" show="0" edit="0" target="-1" style="opacity: 0">
         <div class="info-window">
             <div class="info-meta-part">
                 <img id="info-cover" class="info-not-editable" src="src/default-cover.png">
@@ -78,7 +78,7 @@
                             <i class="fa-solid fa-bookmark"></i>
                         </div>
                         <span id="info-bookmarks">-</span>
-                        <i id="goto-bookmarks-btn" class="fa-solid fa-angle-right" style="display: none;" onclick="openBookmarksListPopup()"></i>
+                        <i id="goto-bookmarks-btn" class="fa-solid fa-angle-right" onclick="openBookmarksListPopup()"></i>
                     </div>
                 </div>
 
@@ -104,39 +104,6 @@
                     <button class="info-btn-secondary" id="delete-ab-btn">
                         <i class="fa-solid fa-trash" style="color: rgb(228, 136, 136)"></i>
                     </button>
-
-                    <script>
-                        const saveAudiobookBtn = document.getElementById("save-ab-btn");
-                        saveAudiobookBtn.addEventListener('click', async () => {
-                            const ab_id = parseInt(document.getElementById("ab-info-popup").getAttribute("target"));
-                            const newTitle = document.getElementById("info-title").textContent;
-                            const newAuthor = document.getElementById("info-author").textContent;
-
-                            if (!newTitle.trim()) return displayErrorMessage("Title cannot be blank.");
-                            if (!newAuthor.trim()) return displayErrorMessage("Author cannot be blank.");
-
-                            let newTracksOrder = []
-                            Array.from(document.getElementById("info-tracks-table").children).forEach((trackEl) => {
-                                newTracksOrder.push([
-                                    parseInt(trackEl.getAttribute("track-id")), 
-                                    parseInt(trackEl.children[0].textContent)
-                                ])
-                            });
-                            
-                            await window.electron.updateAudiobookMeta(ab_id, newTitle, newAuthor, newTracksOrder);                            
-                            acceptInfoEditChanges();
-                            displayInfoMessage("Changes saved.")
-                        })
-
-                        const deleteAudiobookBtn = document.getElementById('delete-ab-btn');
-                        deleteAudiobookBtn.addEventListener('click', async () => {
-                            const ab_id = parseInt(document.getElementById("ab-info-popup").getAttribute("target"));
-                            await window.electron.deleteAudiobook(ab_id);
-                            closeInfoPopup();
-                            document.getElementById(String(ab_id)).remove();
-                            displayInfoMessage('Removed audiobook from shelf.')
-                        });
-                    </script>
                 </div>
             </div>
             
@@ -148,7 +115,7 @@
         </div>
     </div>
 
-    <div id="bookmarks-list-popup" show="0">
+    <div id="bookmarks-list-popup" show="0" style="opacity: 0">
         <div id="bm-list-window"></div>
     </div>
 
@@ -252,19 +219,5 @@
             </div>
         </div>
     </div>
-
-    <script>
-        window.electron.getAllAudiobooks().then(async (audiobooks) => {
-            for (const ab of audiobooks) {
-                addAudiobookToShelf(ab.id, ab.title, ab.author, ab.cover_src, ab.total_time, ab.progress);
-            }
-        })
-
-        window.state.get().then(async (state) => {
-            const recentAb = state.recentAudiobook;
-            if (recentAb == null) return;
-            setupAudiobookPlay(recentAb);
-        })
-    </script>
 </body>
 </html>

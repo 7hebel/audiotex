@@ -57,3 +57,15 @@ function updateTotalBookmarksCount() {
 
 updateTotalBookmarksCount();
 
+
+window.electron.getAllAudiobooks().then(async (audiobooks) => {
+    for (const ab of audiobooks) {
+        addAudiobookToShelf(ab.id, ab.title, ab.author, ab.cover_src, ab.total_time, ab.progress);
+    }
+})
+
+window.state.get().then(async (state) => {
+    const recentAb = state.recentAudiobook;
+    if (recentAb == null) return;
+    setupAudiobookPlay(recentAb);
+})

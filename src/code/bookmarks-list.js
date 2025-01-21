@@ -4,8 +4,21 @@ const bookmarksListEntriesContainer = document.getElementById("bm-list-window");
 /// Close the pop-up whenever user clicks outside it.
 bookmarksListPopup.onclick = (ev) => { if (ev.target.id === "bookmarks-list-popup") closeBookmarksListPopup(); }
 
-function openBookmarksListPopup() { bookmarksListPopup.setAttribute("show", "1"); }
-function closeBookmarksListPopup() { bookmarksListPopup.setAttribute("show", "0"); }
+function openBookmarksListPopup() { 
+    bookmarksListPopup.setAttribute("show", "1"); 
+
+    setTimeout(() => {
+        bookmarksListPopup.style.opacity = "1";
+    }, 1)
+}
+
+function closeBookmarksListPopup() { 
+    bookmarksListPopup.style.opacity = "0";
+
+    setTimeout(() => {
+        bookmarksListPopup.setAttribute("show", "0");
+    }, 250)
+}
 
 
 function insertAudiobookEntry(audiobook, bookmarks) {
