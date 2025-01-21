@@ -212,6 +212,19 @@ function placeBarBookmarks(track) {
             document.getElementById(`cv-idx-${track.idx}`).setAttribute("bookmarked", "0");
             updateTotalBookmarksCount();
             displayInfoMessage(`Removed bookmark: ${secondsToReadable(bookmark.moment_s)}`);
+
+            if (infoPopupContainer.getAttribute("target") == track.audiobook_id) {
+                const infoItem = document.querySelector(`.info-track-item[track-id="${bookmark.track_id}"] .info-track-item-bookmarks`);
+                const count = parseInt(infoItem.textContent) - 1;
+
+                if (count == 0) {
+                    infoItem.innerHTML = "";
+                    document.getElementById("info-bookmarks").textContent = "No bookmarks"
+                } else {
+                    infoItem.innerHTML = `${count} <i class="fa-solid fa-bookmark"></i>`;
+                    document.getElementById("info-bookmarks").textContent = `${count} bookmarks`
+                }
+            }
         }
     
         const bookmarkMeta = document.createElement("div");
@@ -339,6 +352,14 @@ async function acceptBookmarkForm() {
     placeBarBookmarks(track);
 
     document.getElementById(`cv-idx-${track.idx}`).setAttribute("bookmarked", "1");
+
+    if (infoPopupContainer.getAttribute("target") == audioPlayer.getAttribute("ab-id")) {
+        const infoItem = document.querySelector(`.info-track-item[track-id="${trackId}"] .info-track-item-bookmarks`);
+        const count = (parseInt(infoItem.textContent) || 0) + 1;
+
+        infoItem.innerHTML = `${count} <i class="fa-solid fa-bookmark"></i>`;
+        document.getElementById("info-bookmarks").textContent = `${count} bookmarks`
+    }
 
     cancelBookmarkForm();
     updateTotalBookmarksCount();

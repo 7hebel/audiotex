@@ -16,7 +16,6 @@
     
     <script defer src="src/code/bookmarks-list.js"></script>
     <script defer src="src/code/contentview.js"></script>
-    <script defer src="src/code/generators.js"></script>
     <script defer src="src/code/info-popup.js"></script>
     <script defer src="src/code/playview.js"></script>
     <script defer src="src/code/shelf.js"></script>
@@ -79,6 +78,7 @@
                             <i class="fa-solid fa-bookmark"></i>
                         </div>
                         <span id="info-bookmarks">-</span>
+                        <i id="goto-bookmarks-btn" class="fa-solid fa-angle-right" style="display: none;" onclick="openBookmarksListPopup()"></i>
                     </div>
                 </div>
 
@@ -112,12 +112,8 @@
                             const newTitle = document.getElementById("info-title").textContent;
                             const newAuthor = document.getElementById("info-author").textContent;
 
-                            if (!newTitle.trim()) {
-                                return displayErrorMessage("Title cannot be blank.");
-                            }
-                            if (!newAuthor.trim()) {
-                                return displayErrorMessage("Author cannot be blank.");
-                            }
+                            if (!newTitle.trim()) return displayErrorMessage("Title cannot be blank.");
+                            if (!newAuthor.trim()) return displayErrorMessage("Author cannot be blank.");
 
                             let newTracksOrder = []
                             Array.from(document.getElementById("info-tracks-table").children).forEach((trackEl) => {

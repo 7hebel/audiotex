@@ -15,7 +15,7 @@ function insertAudiobookEntry(audiobook, bookmarks) {
 
     const header = document.createElement("div");
     header.className = "bm-list-ab-header";
-    
+
     const headerMeta = document.createElement("div");
     headerMeta.className = "bm-list-ab-header-meta";
 
@@ -42,20 +42,20 @@ function insertAudiobookEntry(audiobook, bookmarks) {
     cover.className = "ab-list-entry-cover";
     cover.src = audiobook.cover_src ? audiobook.cover_src : "./src/default-cover.png";
     headerMeta.appendChild(cover);
-    
+
     const metaContainer = document.createElement("div");
-    metaContainer.className = "ab-list-entry-meta-container";    
-    
+    metaContainer.className = "ab-list-entry-meta-container";
+
     const abTitle = document.createElement("span");
     abTitle.className = "ab-list-entry-title";
     abTitle.textContent = audiobook.title;
     metaContainer.appendChild(abTitle);
-    
+
     const abAuthor = document.createElement("span");
     abAuthor.className = "ab-list-entry-author";
     abAuthor.textContent = audiobook.author;
     metaContainer.appendChild(abAuthor);
-    
+
     headerMeta.appendChild(metaContainer);
     header.appendChild(headerMeta);
 
@@ -82,25 +82,25 @@ function insertAudiobookEntry(audiobook, bookmarks) {
         trackBookmarks.forEach((bookmark) => {
             const item = document.createElement("div");
             item.className = "bm-list-item";
-    
+
             const trackTime = document.createElement("span");
             trackTime.className = "bm-list-track-time";
             trackTime.innerHTML = `<i class="fa-solid fa-clock"></i> ${secondsToReadable(bookmark.moment_s)}`;
             item.appendChild(trackTime);
-    
+
             const comment = document.createElement("span");
             comment.className = "bm-list-track-comment";
             comment.textContent = bookmark.comment;
             item.appendChild(comment);
-    
+
             const rightSide = document.createElement("div");
             rightSide.className = "bm-list-item-right";
-    
+
             const dateAdd = document.createElement("span");
             dateAdd.className = "bm-list-track-time";
             dateAdd.innerHTML = `<i class="fa-solid fa-calendar-plus"></i> ${bookmark.date_add}`;
             rightSide.appendChild(dateAdd);
-            
+
             const deleteBtn = document.createElement("i");
             deleteBtn.className = "fa-solid fa-trash bm-list-item-btn-delete";
             deleteBtn.onclick = async () => {
@@ -123,11 +123,24 @@ function insertAudiobookEntry(audiobook, bookmarks) {
                     if (abBookmarksCount == 0) entry.remove();
                 }
 
+                if (infoPopupContainer.getAttribute("target") == audiobook.id) {
+                    const infoItem = document.querySelector(`.info-track-item[track-id="${bookmark.track_id}"] .info-track-item-bookmarks`);
+                    const count = parseInt(infoItem.textContent) - 1;
+
+                    if (count == 0) {
+                        infoItem.innerHTML = "";
+                        document.getElementById("info-bookmarks").textContent = "No bookmarks"
+                    } else {
+                        infoItem.innerHTML = `${count} <i class="fa-solid fa-bookmark"></i>`;
+                        document.getElementById("info-bookmarks").textContent = `${count} bookmarks`
+                    }
+                }
+
                 updateTotalBookmarksCount();
                 if (bookmarksListEntriesContainer.innerHTML == '') closeBookmarksListPopup();
             };
             rightSide.appendChild(deleteBtn);
-            
+
             const playBtn = document.createElement("i");
             playBtn.className = "fa-solid fa-play bm-list-item-btn-play";
             playBtn.onclick = () => {
@@ -137,7 +150,7 @@ function insertAudiobookEntry(audiobook, bookmarks) {
                 });
             };
             rightSide.appendChild(playBtn);
-    
+
             item.appendChild(rightSide);
             itemsContainer.appendChild(item);
         })
@@ -155,12 +168,12 @@ async function buildBookmarksListPopup() {
         bookmarksListEntriesContainer.innerHTML = `<span class="no-bookmarks">There are no bookmarks.</span>`;
         return;
     }
-    
+
     bookmarksData.forEach((data) => {
         const audiobook = data.audiobook;
         const bookmarks = data.bookmarks;
         insertAudiobookEntry(audiobook, bookmarks);
-    }) 
+    })
 }
 
 buildBookmarksListPopup();
