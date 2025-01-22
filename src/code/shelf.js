@@ -1,4 +1,6 @@
-const shelfContainer = document.getElementById("audiobooks-container");
+const audiobooksContainer = document.getElementById("shelf-audiobooks-container");
+const foldersContainer = document.getElementById("shelf-folders-container");
+const shelfContainer = document.getElementById("shelf-container");
 
 function addAudiobookToShelf(ab_id, title, author, cover_src, duration, progress) {
     const abEntry = document.createElement("div");
@@ -37,7 +39,7 @@ function addAudiobookToShelf(ab_id, title, author, cover_src, duration, progress
     abAuthor.innerText = author;
     abEntry.appendChild(abAuthor);
 
-    shelfContainer.appendChild(abEntry);
+    audiobooksContainer.appendChild(abEntry);
 }
 
 function addFolderToShelf(dirname, items) {
@@ -52,8 +54,7 @@ function addFolderToShelf(dirname, items) {
         <p class="ab-author">${items.length} items</p>
     `;
 
-    shelfContainer.appendChild(dirEntry);
-
+    foldersContainer.appendChild(dirEntry);
 }
 
 /// Button: Import audiobook(s)
@@ -79,42 +80,40 @@ updateTotalBookmarksCount();
 
 /// Load state.
 async function buildShelf() {
-    Array.from(shelfContainer.children).forEach((childEL) => {
-        if (!childEL.className.includes("ab-default-entry")) childEL.remove();
-    })
+    foldersContainer.innerHTML = "";
+    audiobooksContainer.innerHTML = "";
     
     const state = await window.state.get();
-    const arrangement = state.shelfArrangement;
+    const directories = state.directories;
 
-    for (const item of arrangement) {
-        if (Number.isInteger(item)) {
-            // Audiobook
-            const ab = await window.electron.getAudiobookData(item);
-            if (ab) addAudiobookToShelf(ab.id, ab.title, ab.author, ab.cover_src, ab.total_time, ab.progress);
-        } else {
-            // Folder
-            const name = item.dirname;
-            const items = item.items;
-            addFolderToShelf(name, items);
-        }
-    }
+    if (directories.length == 0) foldersContainer.innerHTML = `<span span class="blank-shelf-category">There are no folders.</span>`;
+
+    directories.forEach((dir) => {
+        const name = dir.dirname;
+        const items = dir.items;
+        addFolderToShelf(name, items);
+    });
+
+    const audiobooks = await window.electron.getAllAudiobooks();
+    audiobooks.forEach((ab) => {
+        addAudiobookToShelf(ab.id, ab.title, ab.author, ab.cover_src, ab.total_time, ab.progress);
+    })
 }
 
 async function createDirectory(name) {
     const state = await window.state.get();
 
-    for (const item of state.shelfArrangement) {
-        if (item.dirname == name) return displayErrorMessage("Folder with this name already exists.")
+    for (const dir of state.directories) {
+        if (dir.dirname == name) return displayErrorMessage("Folder with this name already exists.")
     }
     
-    state.shelfArrangement.unshift({
+    state.directories.unshift({
         dirname: name,
         items: []
     });
     await window.state.set(state);
     await buildShelf();
 }
-
 
 function __removeItemFromArr(arr, value) {
     var index = arr.indexOf(value);
@@ -126,14 +125,14 @@ function __removeItemFromArr(arr, value) {
 
 async function putItemInDir(ab_id, dirname) {
     const state = await window.state.get();
-    if (!state.shelfArrangement.includes(ab_id)) return;
     let dirItemsCount = null;
 
-    state.shelfArrangement = __removeItemFromArr(state.shelfArrangement, ab_id);
-    state.shelfArrangement.forEach((item) => {
-        if (!Number.isInteger(item) && item.dirname == dirname) {
-            item.items.push(ab_id)
-            dirItemsCount = item.items.length;
+    state.directories.forEach((dir) => {
+        if (dir.dirname == dirname) {
+            if (dir.items.includes(ab_id)) return displayErrorMessage("Audiobook already in folder.")
+            
+            dir.items.push(ab_id)
+            dirItemsCount = dir.items.length;
         }
     })
 
@@ -147,8 +146,8 @@ async function removeItemFromDir(ab_id, dirname) {
     const state = await window.state.get();
     let dirItemsCount = null;
 
-    state.shelfArrangement.forEach((item) => {
-        if (!Number.isInteger(item) && item.dirname == dirname) {
+    state.directories.forEach((item) => {
+        if (item.dirname == dirname) {
             item.items = __removeItemFromArr(item.items, ab_id);
             dirItemsCount = item.items.length;
         }
@@ -156,7 +155,7 @@ async function removeItemFromDir(ab_id, dirname) {
 
     if (dirItemsCount == null) return;
     
-    state.shelfArrangement.unshift(ab_id);
+    state.directories.unshift(ab_id);
     document.getElementById(`dir-${dirname}`).querySelector(".ab-author").textContent = dirItemsCount + " items";
     await window.state.set(state);
 
@@ -201,10 +200,15 @@ shelfContainer.addEventListener('dragover', (e) => {
 shelfContainer.addEventListener('dragend', (e) => {
     e.target.classList.remove('dragging');
     
+    if (!lastHoveredElement.matches(":hover")) {
+        lastHoveredElement = null;
+        draggingItem = null;
+        return;
+    }
+
     if (lastHoveredElement) {
         const targetDirname = lastHoveredElement.id.slice(4);
         const draggedAudiobookId = draggingItem.id;
-        draggingItem.remove();
         putItemInDir(parseInt(draggedAudiobookId), targetDirname);
     }
     

@@ -192,7 +192,18 @@ saveAudiobookBtn.addEventListener('click', async () => {
 
     await window.electron.updateAudiobookMeta(ab_id, newTitle, newAuthor, newTracksOrder);
     acceptInfoEditChanges();
-    displayInfoMessage("Changes saved.")
+
+    const shelfItem = document.getElementById(String(ab_id));
+    shelfItem.querySelector(".ab-title").textContent = newTitle;
+    shelfItem.querySelector(".ab-author").textContent = newAuthor;
+    if (ab_id == audioPlayer.getAttribute("ab-id")) {
+        document.getElementById("pv-curr-audiobook").textContent = newTitle;
+        const audiobook = await window.electron.getAudiobookData(ab_id);
+        const allTracks = await window.electron.getAllTracks(ab_id);
+        populateContentView(audiobook, allTracks, parseInt(audioPlayer.getAttribute("track-id")));
+    }
+
+    displayInfoMessage("Changes saved.");
 })
 
 /// Remove audiobook button.

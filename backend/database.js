@@ -42,6 +42,7 @@ function getAllAudiobooks() {
         return db.prepare(`
             SELECT *
             FROM audiobooks
+            ORDER BY id DESC
         `).all();
     } catch (err) {
         console.error('Error fetching audiobooks:', err);

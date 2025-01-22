@@ -81,9 +81,6 @@ async function importAudiobook(dirpath) {
         console.log(`Inserted all contents of: ${TITLE} into the DB.`);
         msg.displayInfo(`Imported: ${TITLE}`);
 
-        state.STATE.shelfArrangement.unshift(AB_ID);
-        state.saveState(state.STATE);
-
         return [AB_ID, TITLE, AUTHOR, coverPath, TOTAL_TIME, "0"];
         
     } catch (err) {

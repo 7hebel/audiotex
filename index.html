@@ -78,7 +78,7 @@
                             <i class="fa-solid fa-bookmark"></i>
                         </div>
                         <span id="info-bookmarks">-</span>
-                        <i id="goto-bookmarks-btn" class="fa-solid fa-angle-right" onclick="openBookmarksListPopup()"></i>
+                        <i id="goto-bookmarks-btn" class="fa-solid fa-angle-right" onclick="buildBookmarksListPopup(); openBookmarksListPopup()"></i>
                     </div>
                 </div>
 
@@ -120,20 +120,40 @@
     </div>
 
     <div class="shelf">
-        <div id="audiobooks-container">
-            <div class="ab-entry ab-default-entry" id="add-audiobook">
-                <div class="ab-cover">
-                    <i class="fa-solid fa-plus"></i>
+        <div id="shelf-container">
+            <div class="shelf-category-container">
+                <div class="ab-entry ab-default-entry" id="add-audiobook">
+                    <div class="ab-cover">
+                        <i class="fa-solid fa-plus"></i>
+                    </div>
+                    <p class="ab-title">import audiobook(s)</p>
                 </div>
-                <p class="ab-title">import audiobook(s)</p>
+    
+                <div class="ab-entry ab-default-entry" id="bookmarks-opener">
+                    <div class="ab-cover">
+                        <i class="fa-solid fa-bookmark"></i>
+                    </div>
+                    <p class="ab-title"><span id="totalbookmarks-count">0</span> bookmarks</p>
+                </div>
             </div>
 
-            <div class="ab-entry ab-default-entry" id="bookmarks-opener">
-                <div class="ab-cover">
-                    <i class="fa-solid fa-bookmark"></i>
-                </div>
-                <p class="ab-title"><span id="totalbookmarks-count">0</span> bookmarks</p>
+            <span class="shelf-category-title">
+                <div class="shelf-category-title-sep"></div>
+                <i class="fa-solid fa-folder"></i>
+                Folders
+                <div class="shelf-category-title-sep"></div>
+            </span>
+            <div class="shelf-category-container" id="shelf-folders-container">
+                <span class="blank-shelf-category">There are no folders.</span>
             </div>
+
+            <span class="shelf-category-title">
+                <div class="shelf-category-title-sep"></div>
+                <i class="fa-solid fa-headphones"></i>
+                Audiobooks
+                <div class="shelf-category-title-sep"></div>
+            </span>
+            <div class="shelf-category-container" id="shelf-audiobooks-container"></div>
         </div>
     </div>
 
