@@ -63,31 +63,15 @@ document.getElementById('add-audiobook').addEventListener('click', async () => {
     await buildShelf();
 });
 
-/// Button: Open bookmarks window.
-document.getElementById('bookmarks-opener').addEventListener('click', async () => {
-    buildBookmarksListPopup().then(() => {
-        openBookmarksListPopup();
-    });
-});
-
-function updateTotalBookmarksCount() {
-    window.electron.countTotalBookmarks().then((count) => {
-        document.getElementById("totalbookmarks-count").textContent = count;
-    })
-}
-
-updateTotalBookmarksCount();
-
 /// Load state.
 async function buildShelf() {
     foldersContainer.innerHTML = "";
     audiobooksContainer.innerHTML = "";
     
     const state = await window.state.get();
+
     const directories = state.directories;
-
     if (directories.length == 0) foldersContainer.innerHTML = `<span span class="blank-shelf-category">There are no folders.</span>`;
-
     directories.forEach((dir) => {
         const name = dir.dirname;
         const items = dir.items;
@@ -95,6 +79,7 @@ async function buildShelf() {
     });
 
     const audiobooks = await window.electron.getAllAudiobooks();
+    if (audiobooks.length == 0) audiobooksContainer.innerHTML = `<span class="blank-shelf-category">There are no audiobooks.</span>`;
     audiobooks.forEach((ab) => {
         addAudiobookToShelf(ab.id, ab.title, ab.author, ab.cover_src, ab.total_time, ab.progress);
     })
@@ -200,6 +185,7 @@ shelfContainer.addEventListener('dragover', (e) => {
 shelfContainer.addEventListener('dragend', (e) => {
     e.target.classList.remove('dragging');
     
+    if (!lastHoveredElement) return;
     if (!lastHoveredElement.matches(":hover")) {
         lastHoveredElement = null;
         draggingItem = null;

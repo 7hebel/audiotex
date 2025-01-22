@@ -208,7 +208,6 @@ function placeBarBookmarks(track) {
             bookmarksContainer.removeChild(bookmarkItem);
             await window.electron.removeBookmark(bookmark.id);
             document.getElementById(`cv-idx-${track.idx}`).setAttribute("bookmarked", "0");
-            updateTotalBookmarksCount();
             displayInfoMessage(`Removed bookmark: ${secondsToReadable(bookmark.moment_s)}`);
 
             if (bookmarksListPopup.getAttribute("show") == "1") buildBookmarksListPopup();
@@ -364,7 +363,6 @@ async function acceptBookmarkForm() {
     }
 
     cancelBookmarkForm();
-    updateTotalBookmarksCount();
     if (bookmarksListPopup.getAttribute("show") == "1") buildBookmarksListPopup();
     setTimeout(() => { displayInfoMessage(`Placed bookmark at: ${secondsToReadable(moment_s)}`); }, 500)
 }

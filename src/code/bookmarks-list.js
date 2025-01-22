@@ -150,7 +150,6 @@ function insertAudiobookEntry(audiobook, bookmarks) {
                     }
                 }
 
-                updateTotalBookmarksCount();
                 if (bookmarksListEntriesContainer.innerHTML == '') closeBookmarksListPopup();
             };
             rightSide.appendChild(deleteBtn);

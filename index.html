@@ -121,39 +121,46 @@
 
     <div class="shelf">
         <div id="shelf-container">
-            <div class="shelf-category-container">
-                <div class="ab-entry ab-default-entry" id="add-audiobook">
-                    <div class="ab-cover">
-                        <i class="fa-solid fa-plus"></i>
-                    </div>
-                    <p class="ab-title">import audiobook(s)</p>
+            <div class="shelf-category-header">
+                <div class="shelf-category-header-mid">
+                    <div class="shelf-category-title-sep"></div>
+                    <span class="shelf-category-title">
+                        <i class="fa-solid fa-folder"></i>
+                        Folders
+                    </span>
+                    <div class="shelf-category-title-sep"></div>
                 </div>
-    
-                <div class="ab-entry ab-default-entry" id="bookmarks-opener">
-                    <div class="ab-cover">
-                        <i class="fa-solid fa-bookmark"></i>
-                    </div>
-                    <p class="ab-title"><span id="totalbookmarks-count">0</span> bookmarks</p>
+                <div class="shelf-category-actions-group">
+                    <button class="shelf-category-action-btn">
+                        <i class="fa-solid fa-folder-plus"></i>
+                        Create folder
+                    </button>
                 </div>
             </div>
 
-            <span class="shelf-category-title">
-                <div class="shelf-category-title-sep"></div>
-                <i class="fa-solid fa-folder"></i>
-                Folders
-                <div class="shelf-category-title-sep"></div>
-            </span>
             <div class="shelf-category-container" id="shelf-folders-container">
                 <span class="blank-shelf-category">There are no folders.</span>
             </div>
 
-            <span class="shelf-category-title">
-                <div class="shelf-category-title-sep"></div>
-                <i class="fa-solid fa-headphones"></i>
-                Audiobooks
-                <div class="shelf-category-title-sep"></div>
-            </span>
-            <div class="shelf-category-container" id="shelf-audiobooks-container"></div>
+            <div class="shelf-category-header">
+                <div class="shelf-category-header-mid">
+                    <div class="shelf-category-title-sep"></div>
+                    <span class="shelf-category-title">
+                        <i class="fa-solid fa-headphones"></i>
+                        Audiobooks
+                    </span>
+                    <div class="shelf-category-title-sep"></div>
+                </div>
+                <div class="shelf-category-actions-group">
+                    <button class="shelf-category-action-btn" id="add-audiobook">
+                        <i class="fa-solid fa-upload"></i>
+                        Import audiobook(s)
+                    </button>
+                </div>
+            </div>
+            <div class="shelf-category-container" id="shelf-audiobooks-container">
+                <span class="blank-shelf-category">There are no audiobooks.</span>
+            </div>
         </div>
     </div>
 
