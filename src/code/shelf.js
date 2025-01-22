@@ -1,6 +1,7 @@
 const audiobooksContainer = document.getElementById("shelf-audiobooks-container");
 const foldersContainer = document.getElementById("shelf-folders-container");
 const shelfContainer = document.getElementById("shelf-container");
+const createDirForm = document.getElementById("create-dir-form");
 
 function addAudiobookToShelf(ab_id, title, author, cover_src, duration, progress) {
     const abEntry = document.createElement("div");
@@ -98,6 +99,7 @@ async function createDirectory(name) {
     });
     await window.state.set(state);
     await buildShelf();
+    displayInfoMessage(`Created folder: ${name}`)
 }
 
 function __removeItemFromArr(arr, value) {
@@ -156,8 +158,37 @@ window.state.get().then(async (state) => {
 })
 
 
-/// Dragging items to the folders handling.
 
+/// Button: Create folder
+let createFolderFormUsed = false;
+function openCreateFolderForm() {
+    if (createFolderFormUsed) return;
+    createFolderFormUsed = true;
+    
+    createDirForm.setAttribute("show", "1");
+    setTimeout(() => {
+        createDirForm.style.right = "20px";
+        createDirForm.style.opacity = "1";
+    }, 1)
+}
+
+function closeCreateFolderForm() {
+    document.getElementById("create-dir-name").value = "";
+
+    createDirForm.style.right = "-400px";
+    createDirForm.style.opacity = "0";
+    setTimeout(() => { createDirForm.setAttribute("show", "0"); }, 500);
+    createFolderFormUsed = false;
+}
+
+function acceptCreateFolderForm() {
+    const dirname = document.getElementById("create-dir-name").value.trim();
+    createDirectory(dirname);
+    closeCreateFolderForm();
+}
+
+
+/// Dragging items to the folders handling.
 let draggingItem = null;
 let lastHoveredElement = null;
 

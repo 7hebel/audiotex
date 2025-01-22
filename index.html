@@ -21,6 +21,7 @@
     <script defer src="src/code/shelf.js"></script>
     <script defer src="backend/timeutils.js"></script>
     <link rel="stylesheet" href="src/style/main.css">
+    <link rel="stylesheet" href="src/style/form.css">
     <link rel="stylesheet" href="src/style/info.css">
     <link rel="stylesheet" href="src/style/shelf.css">
     <link rel="stylesheet" href="src/style/playview.css">
@@ -131,7 +132,7 @@
                     <div class="shelf-category-title-sep"></div>
                 </div>
                 <div class="shelf-category-actions-group">
-                    <button class="shelf-category-action-btn">
+                    <button class="shelf-category-action-btn" onclick="openCreateFolderForm()">
                         <i class="fa-solid fa-folder-plus"></i>
                         Create folder
                     </button>
@@ -160,6 +161,21 @@
             </div>
             <div class="shelf-category-container" id="shelf-audiobooks-container">
                 <span class="blank-shelf-category">There are no audiobooks.</span>
+            </div>
+        </div>
+
+        <div class="user-form" id="create-dir-form" show="0" style="right: -400px; opacity: 0;">
+            <label class="form-label" for="create-dir-name">Folder name:</label>
+            <input class="user-form-input" id="create-dir-name" placeholder="name..." maxlength="50">
+            <div class="form-buttons">
+                <button class="form-btn form-btn-primary" onclick="acceptCreateFolderForm()">
+                    <i class="fa-solid fa-folder-plus"></i>
+                    Create
+                </button>
+                <button class="form-btn form-btn-cancel" onclick="closeCreateFolderForm()">
+                    <i class="fa-solid fa-xmark"></i>
+                    Cancel
+                </button>
             </div>
         </div>
     </div>
@@ -231,14 +247,14 @@
                 </button>
             </div>
 
-            <div class="add-bookmark-form" show="0" style="right: -400px; opacity: 0;" target-s="-1">
+            <div class="user-form" id="add-bookmark-form" show="0" style="right: -400px; opacity: 0;" target-s="-1">
                 <textarea id="add-bookmark-comment" maxlength="200" placeholder="Optional comment"></textarea>
-                <div class="bookmark-form-buttons">
-                    <button class="form-btn" id="add-bookmark-btn" onclick="acceptBookmarkForm()">
+                <div class="form-buttons">
+                    <button class="form-btn form-btn-primary" onclick="acceptBookmarkForm()">
                         <i class="fa-solid fa-bookmark"></i>
                         Bookmark <span id="add-bookmark-time"></span>
                     </button>
-                    <button class="form-btn" id="add-bookmark-cancel-btn" onclick="cancelBookmarkForm()">
+                    <button class="form-btn form-btn-cancel" onclick="cancelBookmarkForm()">
                         <i class="fa-solid fa-xmark"></i>
                         Cancel
                     </button>

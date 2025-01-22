@@ -1,4 +1,4 @@
-const bookmarkFormContainer = document.querySelector(".add-bookmark-form");
+const bookmarkFormContainer = document.getElementById("add-bookmark-form");
 const volumeControl = document.getElementById("volume-bar");
 const speedControl = document.getElementById("speed-bar");
 const audioPlayer = document.getElementById("audio-player");
