@@ -2,6 +2,7 @@ const { loadMusicMetadata } = require(`music-metadata`);
 const { secondsToReadable } = require('./timeutils')
 const msg = require('./messages');
 const db = require('./database');
+const state = require('./state');
 const path = require('path');
 const fs = require('fs');
 
@@ -78,7 +79,11 @@ async function importAudiobook(dirpath) {
         }
         
         console.log(`Inserted all contents of: ${TITLE} into the DB.`);
-        msg.displayInfo(`Imported: ${TITLE}`)
+        msg.displayInfo(`Imported: ${TITLE}`);
+
+        state.STATE.shelfArrangement.unshift(AB_ID);
+        state.saveState(state.STATE);
+
         return [AB_ID, TITLE, AUTHOR, coverPath, TOTAL_TIME, "0"];
         
     } catch (err) {
@@ -97,8 +102,11 @@ function calculateProgress(ab_id) {
         if (track.idx < audiobook.curr_track) passedSeconds += track.total_seconds;
     })
 
-    return parseInt((passedSeconds / audiobook.total_seconds) * 100);
+    let progress = (passedSeconds / audiobook.total_seconds) * 100;
+    if (progress >= 99.1) progress = 100;
+    return parseInt(progress);
 }
+
 
 
 /// Covers related stuff

@@ -6,10 +6,10 @@ const stateFilePath = path.join(appdataPath, 'state.json');
 
 if (!fs.existsSync(stateFilePath)) fs.open(stateFilePath, 'w', () => {});
 
-let STATE = {
+var STATE = {
     volume: 0.5,
     recentAudiobook: null,
-    shelfArragement: []
+    shelfArrangement: []
 }
 
 try {
@@ -20,6 +20,7 @@ try {
 }
 
 function saveState(state) {
+    STATE = state;
     fs.writeFile(stateFilePath, JSON.stringify(state, null, 2), () => {});
 }
 

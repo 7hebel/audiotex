@@ -39,13 +39,11 @@ ipcMain.handle('import-new-ab', async () => {
         const imported = [];
         const promises = result.filePaths.map((path) =>
             audiobook.importAudiobook(path).then((data) => {
-                console.log("GOT: ", data);
                 imported.push(data);
             })
         );
 
         await Promise.all(promises);
-        console.log(imported); 
         return imported;
     }
 
@@ -206,14 +204,11 @@ ipcMain.handle('prepare-bookmarks-data', async (ev) => {
     return bookmarkedAudiobooks;
 })
 
-ipcMain.handle('get-state', async () => {
-    return state.STATE;
-})
-
+ipcMain.handle('get-state', async () => { return state.STATE; })
 ipcMain.handle('set-state', async (e, newState) => {
+    state.STATE = newState;
     state.saveState(newState);
 })
-
 
 app.whenReady().then(() => {
     createWindow();

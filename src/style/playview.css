@@ -44,6 +44,7 @@ input[type="range"]::-moz-range-thumb {
     margin-left: 180px;
     padding-inline: 20px;
     height: 68px;
+    backdrop-filter: blur(8px);
 }
 
 #play-bar {
