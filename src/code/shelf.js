@@ -39,8 +39,10 @@ function addAudiobookToShelf(ab_id, title, author, cover_src, duration, progress
 }
 
 document.getElementById('add-audiobook').addEventListener('click', async () => {
-    const ab_data = await window.electron.importNewAudiobook();
-    if (ab_data) setTimeout(() => { addAudiobookToShelf(...ab_data) }, 800);
+    const importedAudiobooks = await window.electron.importNewAudiobooks();
+    importedAudiobooks.forEach((ab_data) => {
+        if (ab_data) setTimeout(() => { addAudiobookToShelf(...ab_data) }, 800);
+    })
 });
 
 document.getElementById('bookmarks-opener').addEventListener('click', async () => {

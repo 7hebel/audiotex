@@ -200,6 +200,7 @@ const deleteAudiobookBtn = document.getElementById('delete-ab-btn');
 deleteAudiobookBtn.addEventListener('click', async () => {
     const ab_id = parseInt(document.getElementById("ab-info-popup").getAttribute("target"));
     await window.electron.deleteAudiobook(ab_id);
+    updateTotalBookmarksCount();
     closeInfoPopup();
     document.getElementById(String(ab_id)).remove();
     displayInfoMessage('Removed audiobook from shelf.')

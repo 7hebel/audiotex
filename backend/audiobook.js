@@ -23,7 +23,7 @@ async function importAudiobook(dirpath) {
 
         const TITLE = path.basename(dirpath);
         const files = await fs.promises.readdir(dirpath, { withFileTypes: true });
-        if (files.length == 0) return msg.displayError("No files in the directory.");
+        if (files.length == 0) return msg.displayError(`No files in the directory: ${TITLE}`);
         
         const mm = await loadMusicMetadata();
 
@@ -99,6 +99,7 @@ function calculateProgress(ab_id) {
 
     return parseInt((passedSeconds / audiobook.total_seconds) * 100);
 }
+
 
 /// Covers related stuff
 

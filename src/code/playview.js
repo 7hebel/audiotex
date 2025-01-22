@@ -211,6 +211,8 @@ function placeBarBookmarks(track) {
             updateTotalBookmarksCount();
             displayInfoMessage(`Removed bookmark: ${secondsToReadable(bookmark.moment_s)}`);
 
+            if (bookmarksListPopup.getAttribute("show") == "1") buildBookmarksListPopup();
+
             if (infoPopupContainer.getAttribute("target") == track.audiobook_id) {
                 const infoItem = document.querySelector(`.info-track-item[track-id="${bookmark.track_id}"] .info-track-item-bookmarks`);
                 const count = parseInt(infoItem.textContent) - 1;
@@ -265,6 +267,8 @@ function placeBarBookmarks(track) {
 async function setupAudiobookPlay(ab_id, track_id = null) {
     // If track-id is null, resume from the latest session.
     const data = await window.electron.playAudiobook(ab_id, track_id);
+    if (data === undefined) return;
+
     const allTracks = await window.electron.getAllTracks(ab_id);
 
     const ab = data.audiobook;
@@ -361,6 +365,7 @@ async function acceptBookmarkForm() {
 
     cancelBookmarkForm();
     updateTotalBookmarksCount();
+    if (bookmarksListPopup.getAttribute("show") == "1") buildBookmarksListPopup();
     setTimeout(() => { displayInfoMessage(`Placed bookmark at: ${secondsToReadable(moment_s)}`); }, 500)
 }
 

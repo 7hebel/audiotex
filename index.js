@@ -15,6 +15,7 @@ const createWindow = () => {
         minWidth: 1200,
         minHeight: 800,
         backgroundColor: '#0f0e11',
+        icon: __dirname + '/src/icon/app-icon.png',
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
             nodeIntegration: true,
@@ -31,12 +32,21 @@ const createWindow = () => {
 
 ipcMain.handle('import-new-ab', async () => {
     const result = await dialog.showOpenDialog({
-        properties: ['openDirectory']
+        properties: ['openDirectory', 'multiSelections']
     });
 
     if (!result.canceled) {
-        console.log("calling with ", result.filePaths[0]);
-        return await audiobook.importAudiobook(result.filePaths[0]);
+        const imported = [];
+        const promises = result.filePaths.map((path) =>
+            audiobook.importAudiobook(path).then((data) => {
+                console.log("GOT: ", data);
+                imported.push(data);
+            })
+        );
+
+        await Promise.all(promises);
+        console.log(imported); 
+        return imported;
     }
 
     return false;
@@ -77,6 +87,7 @@ ipcMain.handle('get-track-id', async (ev, track_id) => {
 
 ipcMain.handle('play-audiobook', async (ev, ab_id, track_id = null) => {
     const audiobook = db.getAudiobook(ab_id);
+    if (!audiobook) return;
 
     let currentTrack = null;
     if (track_id === null) {

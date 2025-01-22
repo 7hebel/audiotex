@@ -129,11 +129,12 @@ function insertAudiobookEntry(audiobook, bookmarks) {
                     if (bookmark.track_id == audioPlayer.getAttribute("track-id")) placeBarBookmarks(track);
                 }
 
+                const abBookmarksCount = await window.electron.countBookmarks(audiobook.id);
                 if (track.bookmarks.length == 0) {
                     trackHeader.remove();
-
-                    const abBookmarksCount = await window.electron.countBookmarks(audiobook.id);
                     if (abBookmarksCount == 0) entry.remove();
+                } else {
+                    bookmarksCount.innerHTML = `${abBookmarksCount} <i class="fa-solid fa-bookmark"></i>`;
                 }
 
                 if (infoPopupContainer.getAttribute("target") == audiobook.id) {

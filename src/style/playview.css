@@ -49,7 +49,9 @@ input[type="range"]::-moz-range-thumb {
 #play-bar {
     appearance: none;
     -webkit-appearance: none;
-    height: 3px;
+    height: 4px;
+    margin-top: 1px;
+    border-radius: 8px;
     width: calc(100% - 180px);
     margin-left: 180px;
     cursor: pointer;
