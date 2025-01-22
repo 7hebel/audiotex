@@ -89,7 +89,7 @@
 .cv-track-item[active] {
     background-color: #33385063;
     outline: 1px solid #ffffff08;
-    box-shadow: 0px 0px 28px 0px #2e323cbf;
+    box-shadow: 0px 0px 28px 0px #2d3048bf;
 }
 
 .cv-track-item:not([active]):hover {

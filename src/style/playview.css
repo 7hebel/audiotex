@@ -104,7 +104,7 @@ input[type="range"]::-moz-range-thumb {
 #pv-cover {
     position: absolute;
     bottom: 12px;
-    left: 8px;
+    left: 12px;
     width: 160px;
     height: 160px;
     border-radius: 8px;
