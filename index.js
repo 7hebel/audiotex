@@ -1,4 +1,4 @@
-const { app, BrowserWindow, dialog, ipcMain, nativeImage } = require('electron');
+const { app, BrowserWindow, dialog, ipcMain } = require('electron');
 const audiobook = require('./backend/audiobook');
 const timeutils = require('./backend/timeutils')
 const msg = require('./backend/messages');
@@ -18,7 +18,7 @@ const createWindow = () => {
         icon: __dirname + '/src/icon/app-icon.png',
         titleBarStyle: "hidden",
         titleBarOverlay: {
-            color: "#0f0e11",
+            color: "#00000000",
             symbolColor: "#BBBBBB",
             height: 28
         },

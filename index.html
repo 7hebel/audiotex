@@ -18,12 +18,15 @@
     <script defer src="src/code/contentview.js"></script>
     <script defer src="src/code/info-popup.js"></script>
     <script defer src="src/code/playview.js"></script>
+    <script defer src="src/code/dirview.js"></script>
     <script defer src="src/code/shelf.js"></script>
     <script defer src="backend/timeutils.js"></script>
+
     <link rel="stylesheet" href="src/style/main.css">
     <link rel="stylesheet" href="src/style/form.css">
     <link rel="stylesheet" href="src/style/info.css">
     <link rel="stylesheet" href="src/style/shelf.css">
+    <link rel="stylesheet" href="src/style/dirview.css">
     <link rel="stylesheet" href="src/style/playview.css">
     <link rel="stylesheet" href="src/style/contentview.css">
     <link rel="stylesheet" href="src/style/bookmarks-list.css">
@@ -34,6 +37,25 @@
     <div class="window-titlebar">
         <img src="src/icon/app-icon.png" width="18px" height="18px">
         AudioTex
+    </div>
+
+    <div id="dirview-popup" show="0" style="opacity: 0;">
+        <div id="dirview-window">
+            <div class="dirview-header">
+                <i class="fa-solid fa-folder"></i>
+                <span id="dirview-dirname">-</span>
+                <div class="dirview-actions-group">
+                    <span class="dirview-action action-left" onclick="openRenameFolderForm()">
+                        <i class="fa-solid fa-pen"></i>
+                    </span>
+                    <span class="dirview-action action-right dirview-danger-action"
+                        onclick="removeDirectory(document.getElementById(`dirview-dirname`).textContent); closeDirviewPopup();">
+                        <i class="fa-solid fa-trash"></i>
+                    </span>
+                </div>
+            </div>
+            <div id="dirview-container"></div>
+        </div>
     </div>
 
     <div id="ab-info-popup" show="0" edit="0" target="-1" style="opacity: 0">
@@ -178,6 +200,21 @@
                     Create
                 </button>
                 <button class="form-btn form-btn-cancel" onclick="closeCreateFolderForm()">
+                    <i class="fa-solid fa-xmark"></i>
+                    Cancel
+                </button>
+            </div>
+        </div>
+
+        <div class="user-form" id="rename-dir-form" show="0" style="right: -400px; opacity: 0;">
+            <label class="form-label" for="rename-dir-name">Rename:</label>
+            <input class="user-form-input" id="rename-dir-name" placeholder="name..." maxlength="50">
+            <div class="form-buttons">
+                <button class="form-btn form-btn-primary" onclick="acceptRenameFolderForm()">
+                    <i class="fa-solid fa-pen"></i>
+                    Rename
+                </button>
+                <button class="form-btn form-btn-cancel" onclick="closeRenameFolderForm()">
                     <i class="fa-solid fa-xmark"></i>
                     Cancel
                 </button>

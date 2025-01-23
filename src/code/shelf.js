@@ -2,6 +2,7 @@ const audiobooksContainer = document.getElementById("shelf-audiobooks-container"
 const foldersContainer = document.getElementById("shelf-folders-container");
 const shelfContainer = document.getElementById("shelf-container");
 const createDirForm = document.getElementById("create-dir-form");
+const renameDirForm = document.getElementById("rename-dir-form");
 
 function addAudiobookToShelf(ab_id, title, author, cover_src, duration, progress) {
     const abEntry = document.createElement("div");
@@ -54,6 +55,13 @@ function addFolderToShelf(dirname, items) {
         <p class="ab-title">${dirname}</p>
         <p class="ab-author">${items.length} items</p>
     `;
+    dirEntry.onclick = async () => {
+        const dir = await getDirectory(dirname);
+        if (dir == undefined) return buildShelf();
+
+        await buildDirview(dirname, dir.items);
+        openDirviewPopup();
+    }
 
     foldersContainer.appendChild(dirEntry);
 }
@@ -88,6 +96,8 @@ async function buildShelf() {
 
 async function createDirectory(name) {
     const state = await window.state.get();
+    name = name.trim();
+    if (!name) return displayErrorMessage("Invalid folder name.")
 
     for (const dir of state.directories) {
         if (dir.dirname == name) return displayErrorMessage("Folder with this name already exists.")
@@ -108,6 +118,45 @@ function __removeItemFromArr(arr, value) {
         arr.splice(index, 1);
     }
     return arr;
+}
+
+async function getDirectory(dirname) {
+    const state = await window.state.get();
+    for (const dir of state.directories) {
+        if (dir.dirname == dirname) return dir
+    }
+    return undefined;
+}
+
+async function removeDirectory(dirname) { 
+    const dir = await getDirectory(dirname);
+    if (dir === undefined) return buildShelf();
+
+    const state = await window.state.get();
+    state.directories = state.directories.filter((d) => d.dirname !== dirname);
+    await window.state.set(state);
+
+    document.getElementById(`dir-${dirname}`)?.remove();
+}
+
+
+async function renameDirectory(targetName, newName) {
+    const dir = await getDirectory(targetName);
+    if (dir === undefined) return buildShelf();
+    if (!newName) return displayErrorMessage("Invalid folder name.")
+
+    const state = await window.state.get();
+    for (const d of state.directories) {
+        if (d.dirname == newName) return displayErrorMessage("Folder with this name already exists.")
+    }
+    
+    state.directories.forEach((d) => {
+        if (d.dirname == targetName) d.dirname = newName;
+    });
+    document.getElementById(`dir-${targetName}`).id = `dir-${newName}`;
+    document.getElementById("dirview-dirname").textContent = newName;
+    await window.state.set(state);
+
 }
 
 async function putItemInDir(ab_id, dirname) {
@@ -142,12 +191,10 @@ async function removeItemFromDir(ab_id, dirname) {
 
     if (dirItemsCount == null) return;
     
-    state.directories.unshift(ab_id);
     document.getElementById(`dir-${dirname}`).querySelector(".ab-author").textContent = dirItemsCount + " items";
     await window.state.set(state);
-
-    await buildShelf();
 }
+
 
 window.state.get().then(async (state) => {
     await buildShelf();
@@ -185,6 +232,37 @@ function acceptCreateFolderForm() {
     const dirname = document.getElementById("create-dir-name").value.trim();
     createDirectory(dirname);
     closeCreateFolderForm();
+}
+
+
+/// Button: Rename folder
+let renameFolderFormUsed = false;
+function openRenameFolderForm() {
+    if (renameFolderFormUsed) return;
+    renameFolderFormUsed = true;
+
+    document.getElementById("rename-dir-name").placeholder = document.getElementById("dirview-dirname").textContent;
+    renameDirForm.setAttribute("show", "1");
+    setTimeout(() => {
+        renameDirForm.style.right = "20px";
+        renameDirForm.style.opacity = "1";
+    }, 1)
+}
+
+function closeRenameFolderForm() {
+    document.getElementById("rename-dir-name").value = "";
+
+    renameDirForm.style.right = "-400px";
+    renameDirForm.style.opacity = "0";
+    setTimeout(() => { renameDirForm.setAttribute("show", "0"); }, 500);
+    renameFolderFormUsed = false;
+}
+
+function acceptRenameFolderForm() {
+    const targetDirname = document.getElementById("dirview-dirname").textContent;
+    const newDirname = document.getElementById("rename-dir-name").value.trim();
+    renameDirectory(targetDirname, newDirname);
+    closeRenameFolderForm();
 }
 
 

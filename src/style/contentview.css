@@ -15,9 +15,10 @@
 .contentview:before {
     content: '';
     position: absolute;
-    top: -30px;
+    top: -45px;
+    left: -45px;
     height: 100%;
-    width: 100%;
+    width: 105%;
     background-image: var(--cover-src);
     background-repeat: repeat;
     background-position: center;
