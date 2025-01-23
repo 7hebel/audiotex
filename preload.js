@@ -22,6 +22,7 @@ contextBridge.exposeInMainWorld('backend', {
     countBookmarks: (ab_id) => ipcRenderer.invoke("count-bookmarks", ab_id),
     countTotalBookmarks: () => ipcRenderer.invoke("count-total-bookmarks"),
     getAllBookmarksData: () => ipcRenderer.invoke("prepare-bookmarks-data"),
+    getAuthors: () => ipcRenderer.invoke("get-authors")
 });
 
 contextBridge.exposeInMainWorld('state', {

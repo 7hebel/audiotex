@@ -121,6 +121,10 @@
     align-items: center;
 }
 
+.ab-entry-author > .ab-cover {
+    border-radius: 100%;
+}
+
 .ab-cover {
     height: 250px;
     width: 250px;
@@ -132,7 +136,7 @@
     justify-content: space-between;
     align-items: start;
     background-color: #17181b;
-    background-size: contain;
+    background-size: cover;
     background-repeat: no-repeat;
     padding: 8px;
     box-sizing: border-box;

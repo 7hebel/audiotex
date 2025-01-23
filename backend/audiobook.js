@@ -1,8 +1,9 @@
 const { loadMusicMetadata } = require(`music-metadata`);
 const { secondsToReadable } = require('./timeutils')
+const { GOOGLE_IMG_SCRAP } = require('google-img-scrap');
 const msg = require('./messages');
 const db = require('./database');
-const state = require('./state');
+const axios = require('axios');
 const path = require('path');
 const fs = require('fs');
 
@@ -128,9 +129,61 @@ function removeCover(ab_id) {
     if (fs.existsSync(coverFilePath)) fs.unlinkSync(coverFilePath);
 }
 
+
+/// Authors images related stuff
+
+const AUTHORS_PICS_PATH = path.join(require('electron').app.getPath('userData'), 'authors')
+if (!fs.existsSync(AUTHORS_PICS_PATH)) fs.mkdirSync(AUTHORS_PICS_PATH, { recursive: true });
+
+
+async function __fetchAuthorImageURL(name) {
+    const data = await GOOGLE_IMG_SCRAP({
+        search: name,
+        limit: 1
+    });
+
+    const defaultAvatar = "./src/default-author.png";
+    const url = data?.result[0]?.url;
+
+    if (url) {
+        try {
+            const authorPicPath = path.join(AUTHORS_PICS_PATH, name);
+            const response = await axios({
+                url: url,
+                method: 'GET',
+                responseType: 'stream'
+            });
+
+            const writer = fs.createWriteStream(authorPicPath);
+            response.data.pipe(writer);
+            console.log(`Downloaded author's image: ${name}`);
+            return authorPicPath.replaceAll('\\', "/");
+
+        } catch (error) {
+            console.error(`Error downloading author image: ${error.message}`);
+            return defaultAvatar;
+        }
+    }
+
+    return defaultAvatar;
+}
+
+async function getAuthorImage(name) {
+    if (name == "Unknown") return `./src/default-author.png`;
+    
+    const authorPicPath = path.join(AUTHORS_PICS_PATH, name);
+    if (fs.existsSync(authorPicPath)) return authorPicPath.replaceAll('\\', "/");
+
+    const imagePath = await __fetchAuthorImageURL(name);
+    return imagePath.replaceAll('\\', "/");
+}
+
+
+
 module.exports = {
     importAudiobook,
     saveCover,
     removeCover,
-    calculateProgress
+    calculateProgress,
+    getAuthorImage
 }

@@ -1,5 +1,6 @@
 const audiobooksContainer = document.getElementById("shelf-audiobooks-container");
 const foldersContainer = document.getElementById("shelf-folders-container");
+const authorsContainer = document.getElementById("shelf-authors-container");
 const shelfContainer = document.getElementById("shelf-container");
 const createDirForm = document.getElementById("create-dir-form");
 const renameDirForm = document.getElementById("rename-dir-form");
@@ -67,16 +68,40 @@ function addFolderToShelf(dirname, items) {
     foldersContainer.appendChild(dirEntry);
 }
 
+function addAuthorToShelf(name, imgUrl, itemsCount) {
+    const entry = document.createElement("div");
+    entry.className = "ab-entry ab-entry-author";
+    entry.id = `author-${name}`;
+
+    const image = document.createElement("div");
+    image.className = "ab-cover";
+    image.style.backgroundImage = `url("${imgUrl}")`;
+    entry.appendChild(image);
+
+    const title = document.createElement("p");
+    title.className = "ab-title";
+    title.textContent = name;
+    entry.appendChild(title);
+    
+    const count = document.createElement("p");
+    count.className = "ab-author";
+    count.textContent = `${itemsCount} audiobooks`;
+    entry.appendChild(count);
+
+    authorsContainer.appendChild(entry);
+}
+
 /// Button: Import audiobook(s)
 document.getElementById('add-audiobook').addEventListener('click', async () => {
     await window.backend.importNewAudiobooks();
     await buildShelf();
 });
 
-/// Load state.
+/// Rerender entire shelf.
 async function buildShelf() {
     foldersContainer.innerHTML = "";
     audiobooksContainer.innerHTML = "";
+    authorsContainer.innerHTML = "";
     
     const state = await window.state.get();
 
@@ -92,6 +117,12 @@ async function buildShelf() {
     if (audiobooks.length == 0) audiobooksContainer.innerHTML = `<span class="blank-shelf-category">There are no audiobooks.</span>`;
     audiobooks.forEach((ab) => {
         addAudiobookToShelf(ab.id, ab.title, ab.author, ab.cover_src, ab.total_time, ab.progress);
+    })
+
+    const authors = await window.backend.getAuthors();
+    if (authors.length == 0) authorsContainer.innerHTML = `<span class="blank-shelf-category">There are no authors.</span>`;
+    authors.forEach((author) => {
+        addAuthorToShelf(author.author, author.imgUrl, author.items.length);
     })
 }
 

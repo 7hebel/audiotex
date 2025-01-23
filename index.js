@@ -6,6 +6,7 @@ const db = require('./backend/database');
 const state = require("./backend/state");
 const path = require('path');
 
+
 let ROOT_WIN = null;
 
 const createWindow = () => {
@@ -208,6 +209,16 @@ ipcMain.handle('prepare-bookmarks-data', async (ev) => {
     })
 
     return bookmarkedAudiobooks;
+})
+
+ipcMain.handle('get-authors', async (ev) => {
+    const authors = db.getAuthors();
+    for (const author of authors) {
+        author.imgUrl = await audiobook.getAuthorImage(author.author);
+        author.items = db.getAudiobooksByAuthor(author.author);
+    }
+    console.log(authors)
+    return authors;
 })
 
 ipcMain.handle('get-state', async () => { return state.STATE; })

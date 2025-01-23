@@ -15,6 +15,8 @@
   },
   "dependencies": {
     "better-sqlite3": "^11.8.0",
+    "google-img-scrap": "^1.1.4",
+    "images-scraper": "^6.4.0",
     "music-metadata": "^10.7.0"
   }
 }

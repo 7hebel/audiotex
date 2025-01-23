@@ -201,6 +201,32 @@ function deleteAudiobookRelated(ab_id) {
     }
 }
 
+function getAuthors() {
+    try {
+        return db.prepare(`
+            SELECT DISTINCT author
+            FROM audiobooks
+        `).all();
+    } catch (err) {
+        console.error(`Error getting authors data`, err);
+        return [];
+    }
+}
+
+function getAudiobooksByAuthor(name) {
+    try {
+        return db.prepare(`
+            SELECT id
+            FROM audiobooks
+            WHERE author='${name}'
+        `).all();
+    } catch (err) {
+        console.error(`Error getting ABS for author: ${name}`, err);
+        return [];
+    }
+}
+
+
 module.exports = {
     db,
     initializeDatabase,
@@ -217,4 +243,6 @@ module.exports = {
     countBookmarksInAudiobook,
     countTotalBookmarks,
     updatePlayState,
+    getAuthors,
+    getAudiobooksByAuthor
 };
