@@ -157,6 +157,14 @@ function __removeItemFromArr(arr, value) {
     return arr;
 }
 
+async function removeItemFromAllDirs(ab_id) {
+    const state = await window.state.get();
+    for (const dir of state.directories) {
+        await removeItemFromDir(ab_id, dir.dirname)
+    }
+    await buildShelf();
+}
+
 async function getDirectory(dirname) {
     const state = await window.state.get();
     for (const dir of state.directories) {
@@ -175,7 +183,6 @@ async function removeDirectory(dirname) {
 
     document.getElementById(`dir-${dirname}`)?.remove();
 }
-
 
 async function renameDirectory(targetName, newName) {
     const dir = await getDirectory(targetName);

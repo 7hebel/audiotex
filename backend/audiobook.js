@@ -3,9 +3,31 @@ const { secondsToReadable } = require('./timeutils')
 const { GOOGLE_IMG_SCRAP } = require('google-img-scrap');
 const msg = require('./messages');
 const db = require('./database');
+const state = require('./state');
 const axios = require('axios');
 const path = require('path');
 const fs = require('fs');
+
+
+function getLostAudiobooks() {
+    const lostAudiobooks = [];
+    const allAudiobooks = db.getAllAudiobooks();
+
+    for (const audiobook of allAudiobooks) {
+        if (!fs.existsSync(audiobook.dirpath)) {
+            console.error(`Missing path for audiobook: ${audiobook.title}`);
+            lostAudiobooks.push(audiobook.id);
+        }
+    }
+
+    if (lostAudiobooks.includes(state.STATE.recentAudiobook)) {
+        state.STATE.recentAudiobook = null;
+        state.saveState(state.STATE);
+        console.error("Lost recent audiobook.");
+    }
+
+    return lostAudiobooks;
+}
 
 
 function __isDirpathInitialized(dirpath) {
@@ -203,12 +225,12 @@ async function updateAuthorCover(name) {
 }
 
 
-
 module.exports = {
     importAudiobook,
     saveCover,
     removeCover,
     calculateProgress,
     getAuthorImage,
-    updateAuthorCover
+    updateAuthorCover,
+    getLostAudiobooks
 }

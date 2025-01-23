@@ -26,6 +26,7 @@ contextBridge.exposeInMainWorld('backend', {
     getAuthorData: (name) => ipcRenderer.invoke("get-author-data", name),
     renameAuthor: (oldName, newName) => ipcRenderer.invoke("rename-author", oldName, newName),
     updateAuthorAvatar: (name) => ipcRenderer.invoke("update-author-avatar", name),
+    getLostAudiobooks: () => ipcRenderer.invoke("get-lost-abs"),
 });
 
 contextBridge.exposeInMainWorld('state', {

@@ -23,8 +23,11 @@ function closeDirviewPopup() {
 async function buildDirview(dirname, items) {
     document.getElementById("dirview-dirname").textContent = dirname;
     
+    const lostAudiobooks = await window.backend.getLostAudiobooks();
     dirviewContainer.innerHTML = "";
     items.forEach(async (ab_id) => {
+        if (lostAudiobooks.includes(ab_id)) return;
+        
         const audiobook = await window.backend.getAudiobookData(ab_id);
 
         const item = document.createElement("div");
@@ -60,7 +63,8 @@ async function buildDirview(dirname, items) {
 
         const rmIcon = document.createElement("i");
         rmIcon.className = "fa-solid fa-folder-minus dirview-rm-icon";
-        rmIcon.onclick = async () => {
+        rmIcon.onclick = async (ev) => {
+            ev.stopPropagation();
             removeItemFromDir(ab_id, dirname);
             item.remove();
         };

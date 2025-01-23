@@ -58,11 +58,12 @@ ipcMain.handle('import-new-ab', async () => {
 });
 
 ipcMain.handle('get-all-audiobooks', async () => {
-    return db.getAllAudiobooks();
+    return db.getAllAudiobooks().filter(a => !audiobook.getLostAudiobooks().includes(a.id));
 });
 
 ipcMain.handle('get-audiobook-data', async (ev, ab_id) => {
-    const abData = db.getAudiobook(ab_id);
+    if (audiobook.getLostAudiobooks().includes(ab_id)) return null;
+    let abData = db.getAudiobook(ab_id);
     abData.bookmarksCount = db.countBookmarksInAudiobook(ab_id);
     return abData;
 });
@@ -184,6 +185,8 @@ ipcMain.handle('prepare-bookmarks-data', async (ev) => {
     const bookmarkedAudiobooks = [];
     
     allAudiobooks.forEach((ab) => {
+        if (audiobook.getLostAudiobooks().includes(ab.id)) return;
+        
         const bookmarksCount = db.countBookmarksInAudiobook(ab.id);
         if (bookmarksCount == 0) return;
 
@@ -221,7 +224,7 @@ ipcMain.handle('get-authors', async (ev) => {
 })
 
 ipcMain.handle('get-author-data', async (ev, name) => {
-    const audiobooks = await db.getAudiobooksByAuthor(name);
+    const audiobooks = await db.getAudiobooksByAuthor(name).filter(ab => !audiobook.getLostAudiobooks().includes(ab.id));
     const avatar = await audiobook.getAuthorImage(name);
     return {
         audiobooks: audiobooks,
@@ -241,6 +244,10 @@ ipcMain.handle('rename-author', async (ev, oldName, newName) => {
 
 ipcMain.handle('update-author-avatar', async (ev, name) => {
     return await audiobook.updateAuthorCover(name);
+})
+
+ipcMain.handle('get-lost-abs', async (ev) => {
+    return audiobook.getLostAudiobooks();
 })
 
 ipcMain.handle('get-state', async () => { return state.STATE; })
