@@ -136,14 +136,23 @@ const AUTHORS_PICS_PATH = path.join(require('electron').app.getPath('userData'),
 if (!fs.existsSync(AUTHORS_PICS_PATH)) fs.mkdirSync(AUTHORS_PICS_PATH, { recursive: true });
 
 
-async function __fetchAuthorImageURL(name) {
-    const data = await GOOGLE_IMG_SCRAP({
-        search: name,
-        limit: 1
-    });
+async function __fetchAuthorImageURL(name, randomize = false) {
+    let url;
+
+    if (!randomize) {
+        url = await GOOGLE_IMG_SCRAP({
+            search: name,
+            limit: 1
+        }).result[0]?.url;
+    } else {
+        const allResults = await GOOGLE_IMG_SCRAP({
+            search: name,
+            limit: 20
+        });
+        url = allResults.result[Math.floor(Math.random() * allResults.result.length)]?.url;
+    }
 
     const defaultAvatar = "./src/default-author.png";
-    const url = data?.result[0]?.url;
 
     if (url) {
         try {
@@ -154,11 +163,18 @@ async function __fetchAuthorImageURL(name) {
                 responseType: 'stream'
             });
 
+            const timestamp = new Date().getTime();
             const writer = fs.createWriteStream(authorPicPath);
-            response.data.pipe(writer);
-            console.log(`Downloaded author's image: ${name}`);
-            return authorPicPath.replaceAll('\\', "/");
 
+            response.data.pipe(writer);
+
+            await new Promise((resolve, reject) => {
+                writer.on('finish', resolve);
+                writer.on('error', reject);
+            });
+
+            console.log(`Downloaded author's image: ${name}`);
+            return authorPicPath.replaceAll('\\', "/") + `?v=${timestamp}`;
         } catch (error) {
             console.error(`Error downloading author image: ${error.message}`);
             return defaultAvatar;
@@ -173,8 +189,16 @@ async function getAuthorImage(name) {
     
     const authorPicPath = path.join(AUTHORS_PICS_PATH, name);
     if (fs.existsSync(authorPicPath)) return authorPicPath.replaceAll('\\', "/");
-
+    
+    const timestamp = new Date().getTime();
     const imagePath = await __fetchAuthorImageURL(name);
+    return imagePath.replaceAll('\\', "/") + `?v=${timestamp}`;
+}
+
+
+async function updateAuthorCover(name) {
+    if (name == "Unknown") return `./src/default-author.png`;
+    const imagePath = await __fetchAuthorImageURL(name, true);
     return imagePath.replaceAll('\\', "/");
 }
 
@@ -185,5 +209,6 @@ module.exports = {
     saveCover,
     removeCover,
     calculateProgress,
-    getAuthorImage
+    getAuthorImage,
+    updateAuthorCover
 }

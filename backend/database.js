@@ -216,7 +216,7 @@ function getAuthors() {
 function getAudiobooksByAuthor(name) {
     try {
         return db.prepare(`
-            SELECT id
+            SELECT *
             FROM audiobooks
             WHERE author='${name}'
         `).all();

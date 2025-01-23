@@ -57,7 +57,8 @@ function acceptInfoEditChanges() {
     Array.from(tracksContainer.children).forEach(tr => { 
         tr.children[0].innerHTML = ++index; 
     })
-
+    
+    buildShelf();
     exitInfoEditMode();
 }
 
@@ -193,9 +194,6 @@ saveAudiobookBtn.addEventListener('click', async () => {
     await window.backend.updateAudiobookMeta(ab_id, newTitle, newAuthor, newTracksOrder);
     acceptInfoEditChanges();
 
-    const shelfItem = document.getElementById(String(ab_id));
-    shelfItem.querySelector(".ab-title").textContent = newTitle;
-    shelfItem.querySelector(".ab-author").textContent = newAuthor;
     if (ab_id == audioPlayer.getAttribute("ab-id")) {
         document.getElementById("pv-curr-audiobook").textContent = newTitle;
         const audiobook = await window.backend.getAudiobookData(ab_id);

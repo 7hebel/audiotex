@@ -67,7 +67,6 @@ async function buildDirview(dirname, items) {
         item.appendChild(rmIcon);
 
         dirviewContainer.appendChild(item);
-
     })
 }
 

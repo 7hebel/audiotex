@@ -72,6 +72,11 @@ function addAuthorToShelf(name, imgUrl, itemsCount) {
     const entry = document.createElement("div");
     entry.className = "ab-entry ab-entry-author";
     entry.id = `author-${name}`;
+    entry.onclick = () => {
+        buildAuthorview(name).then(() => {
+            openAuthorviewPopup();
+        });
+    }
 
     const image = document.createElement("div");
     image.className = "ab-cover";

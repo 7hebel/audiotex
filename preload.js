@@ -22,7 +22,10 @@ contextBridge.exposeInMainWorld('backend', {
     countBookmarks: (ab_id) => ipcRenderer.invoke("count-bookmarks", ab_id),
     countTotalBookmarks: () => ipcRenderer.invoke("count-total-bookmarks"),
     getAllBookmarksData: () => ipcRenderer.invoke("prepare-bookmarks-data"),
-    getAuthors: () => ipcRenderer.invoke("get-authors")
+    getAuthors: () => ipcRenderer.invoke("get-authors"),
+    getAuthorData: (name) => ipcRenderer.invoke("get-author-data", name),
+    renameAuthor: (oldName, newName) => ipcRenderer.invoke("rename-author", oldName, newName),
+    updateAuthorAvatar: (name) => ipcRenderer.invoke("update-author-avatar", name),
 });
 
 contextBridge.exposeInMainWorld('state', {

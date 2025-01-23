@@ -240,7 +240,7 @@
     padding-right: 8px;
 }
 
-#goto-bookmarks-btn {
+#goto-bookmarks-btn, #goto-author-btn {
     color: #565656;
     font-size: 12px;
     cursor: pointer;

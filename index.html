@@ -17,10 +17,11 @@
     <script defer src="src/code/bookmarks-list.js"></script>
     <script defer src="src/code/contentview.js"></script>
     <script defer src="src/code/info-popup.js"></script>
+    <script defer src="src/code/authorview.js"></script>
+    <script defer src="backend/timeutils.js"></script>
     <script defer src="src/code/playview.js"></script>
     <script defer src="src/code/dirview.js"></script>
     <script defer src="src/code/shelf.js"></script>
-    <script defer src="backend/timeutils.js"></script>
 
     <link rel="stylesheet" href="src/style/main.css">
     <link rel="stylesheet" href="src/style/form.css">
@@ -28,6 +29,7 @@
     <link rel="stylesheet" href="src/style/shelf.css">
     <link rel="stylesheet" href="src/style/dirview.css">
     <link rel="stylesheet" href="src/style/playview.css">
+    <link rel="stylesheet" href="src/style/authorview.css">
     <link rel="stylesheet" href="src/style/contentview.css">
     <link rel="stylesheet" href="src/style/bookmarks-list.css">
     <title>AudioTex</title>
@@ -70,6 +72,7 @@
                             <i class="fa-solid fa-user"></i>
                         </div>
                         <span id="info-author" class="info-editable">-</span>
+                        <i id="goto-author-btn" class="fa-solid fa-angle-right" onclick="buildAuthorview(document.getElementById('info-author').textContent); openAuthorviewPopup()"></i>
                     </div>
                     <div class="info-meta-entry info-not-editable">
                         <div class="meta-entry-icon">
@@ -145,6 +148,29 @@
 
     <div id="bookmarks-list-popup" show="0" style="opacity: 0">
         <div id="bm-list-window"></div>
+    </div>
+
+    <div id="author-popup" show="0" style="opacity: 0">
+        <div id="author-window">
+            <div class="author-meta">
+                <div class="author-meta-top">
+                    <div id="author-cover" style="background-image: url('./src/default-author.png');"></div>
+                    <span id="author-name">-</span>
+                    <span class="ab-author" id="author-count">- audiobooks</span>
+                </div>
+                <div class="author-meta-bottom">
+                    <button class="form-btn form-btn-cancel" onclick="openRenameAuthorForm()">
+                        <i class="fa-solid fa-pen"></i>
+                        Rename
+                    </button>
+                    <button class="form-btn form-btn-cancel" onclick="updateAuthorCover()">
+                        <i class="fa-solid fa-shuffle"></i>
+                        Change image
+                    </button>
+                </div>
+            </div>
+            <div id="author-items-container"></div>
+        </div>
     </div>
 
     <div class="shelf">
@@ -231,6 +257,21 @@
                     Rename
                 </button>
                 <button class="form-btn form-btn-cancel" onclick="closeRenameFolderForm()">
+                    <i class="fa-solid fa-xmark"></i>
+                    Cancel
+                </button>
+            </div>
+        </div>
+
+        <div class="user-form" id="rename-author-form" show="0" style="right: -400px; opacity: 0;">
+            <label class="form-label" for="rename-author-name">Rename:</label>
+            <input class="user-form-input" id="rename-author-name" placeholder="name..." maxlength="50">
+            <div class="form-buttons">
+                <button class="form-btn form-btn-primary" onclick="acceptRenameAuthorForm()">
+                    <i class="fa-solid fa-pen"></i>
+                    Rename
+                </button>
+                <button class="form-btn form-btn-cancel" onclick="closeRenameAuthorForm()">
                     <i class="fa-solid fa-xmark"></i>
                     Cancel
                 </button>

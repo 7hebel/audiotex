@@ -200,12 +200,12 @@ ipcMain.handle('prepare-bookmarks-data', async (ev) => {
                 })
                 bookmarks.push(trackBookmarks);
             }
-        })
+        });
         
         bookmarkedAudiobooks.push({
             audiobook: ab,
             bookmarks: bookmarks
-        })
+        });
     })
 
     return bookmarkedAudiobooks;
@@ -217,8 +217,30 @@ ipcMain.handle('get-authors', async (ev) => {
         author.imgUrl = await audiobook.getAuthorImage(author.author);
         author.items = db.getAudiobooksByAuthor(author.author);
     }
-    console.log(authors)
     return authors;
+})
+
+ipcMain.handle('get-author-data', async (ev, name) => {
+    const audiobooks = await db.getAudiobooksByAuthor(name);
+    const avatar = await audiobook.getAuthorImage(name);
+    return {
+        audiobooks: audiobooks,
+        imgUrl: avatar
+    }
+})
+
+ipcMain.handle('rename-author', async (ev, oldName, newName) => {
+    db.db.exec(`
+        UPDATE audiobooks
+        SET author='${newName}'
+        WHERE author='${oldName}'
+    `);
+
+    console.log(`Renamed author ${oldName} to ${newName}`);
+})
+
+ipcMain.handle('update-author-avatar', async (ev, name) => {
+    return await audiobook.updateAuthorCover(name);
 })
 
 ipcMain.handle('get-state', async () => { return state.STATE; })
