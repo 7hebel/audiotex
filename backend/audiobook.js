@@ -44,7 +44,11 @@ async function importAudiobook(dirpath) {
             if (!file.isFile()) continue;
 
             const filePath = path.join(dirpath, file.name);
-            const audioMetadata = await mm.parseFile(filePath);
+            let audioMetadata = null
+            audioMetadata = await mm.parseFile(filePath);
+
+            if (audioMetadata == null) continue;
+            
             const metadata = {
                 name: file.name.split(".")[0],
                 filepath: filePath,
@@ -57,6 +61,8 @@ async function importAudiobook(dirpath) {
             TOTAL_SECONDS += audioMetadata.format.duration;
             index++;
         }
+
+        if (tracks.length == 0) return msg.displayError(`No valid audio files found in: ${TITLE}`);
 
         const TOTAL_TIME = secondsToReadable(TOTAL_SECONDS);
         console.log("Successfuly parsed directory.");

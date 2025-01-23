@@ -97,7 +97,7 @@ audioPlayer.addEventListener("timeupdate", async (e) => {
 
     const ab_id = parseInt(audioPlayer.getAttribute("ab-id"));
     if (ab_id) {
-        const progress = await window.electron.calculateAudiobookProgress(ab_id);
+        const progress = await window.backend.calculateAudiobookProgress(ab_id);
         document.getElementById(String(ab_id)).querySelectorAll(".ab-meta")[1].textContent = `${progress}%`;
     }
 
@@ -178,7 +178,7 @@ setInterval(() => {
         if (!abId || !trackId) return;
 
         const currentMoment_s = audioPlayer.currentTime;
-        window.electron.updateAudiobookState(abId, trackId, currentMoment_s, speedControl.value);
+        window.backend.updateAudiobookState(abId, trackId, currentMoment_s, speedControl.value);
     }
 }, 1000)
 
@@ -206,7 +206,7 @@ function placeBarBookmarks(track) {
         rmBookmarkIcon.className = "rm-bookmark-icon";
         rmBookmarkIcon.onclick = async () => {
             bookmarksContainer.removeChild(bookmarkItem);
-            await window.electron.removeBookmark(bookmark.id);
+            await window.backend.removeBookmark(bookmark.id);
             document.getElementById(`cv-idx-${track.idx}`).setAttribute("bookmarked", "0");
             displayInfoMessage(`Removed bookmark: ${secondsToReadable(bookmark.moment_s)}`);
 
@@ -265,17 +265,17 @@ function placeBarBookmarks(track) {
 
 async function setupAudiobookPlay(ab_id, track_id = null) {
     // If track-id is null, resume from the latest session.
-    const data = await window.electron.playAudiobook(ab_id, track_id);
+    const data = await window.backend.playAudiobook(ab_id, track_id);
     if (data === undefined) return;
 
-    const allTracks = await window.electron.getAllTracks(ab_id);
+    const allTracks = await window.backend.getAllTracks(ab_id);
 
     const ab = data.audiobook;
     const track = data.track;
 
     document.getElementById("pv-cover").src = ab.cover_src ? ab.cover_src : './src/default-cover.png';
 
-    const progress = await window.electron.calculateAudiobookProgress(ab_id);
+    const progress = await window.backend.calculateAudiobookProgress(ab_id);
     document.getElementById(String(ab_id)).querySelectorAll(".ab-meta")[1].textContent = `${progress}%`;
 
     audioPlayer.src = track.filepath;
@@ -301,7 +301,7 @@ async function setupAudiobookPlay(ab_id, track_id = null) {
 async function playNextTrack() {
     const ab_id = audioPlayer.getAttribute("ab-id");
     const nextIndex = parseInt(audioPlayer.getAttribute("track-index")) + 1;
-    const nextTrack = await window.electron.getTrackByIndex(ab_id, nextIndex);
+    const nextTrack = await window.backend.getTrackByIndex(ab_id, nextIndex);
     if (nextTrack === undefined) return;
     
     setupAudiobookPlay(ab_id, nextTrack.id).then(() => { playAudio() });
@@ -313,7 +313,7 @@ document.getElementById("previous-track-btn").addEventListener('click', async ()
     const nextIndex = parseInt(audioPlayer.getAttribute("track-index")) - 1;
     if (nextIndex < 1) { return; }
 
-    const nextTrack = await window.electron.getTrackByIndex(ab_id, nextIndex);
+    const nextTrack = await window.backend.getTrackByIndex(ab_id, nextIndex);
     if (nextTrack === undefined) return;
 
     setupAudiobookPlay(ab_id, nextTrack.id).then(() => { playAudio() });
@@ -347,9 +347,9 @@ async function acceptBookmarkForm() {
     document.getElementById("add-bookmark-comment").value = "";
 
     const trackId = parseInt(audioPlayer.getAttribute("track-id"));
-    await window.electron.addBookmark(trackId, moment_s, comment);
+    await window.backend.addBookmark(trackId, moment_s, comment);
     
-    const track = await window.electron.getTrackById(trackId);
+    const track = await window.backend.getTrackById(trackId);
     placeBarBookmarks(track);
 
     document.getElementById(`cv-idx-${track.idx}`).setAttribute("bookmarked", "1");

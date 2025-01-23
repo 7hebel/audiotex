@@ -118,9 +118,9 @@ function insertAudiobookEntry(audiobook, bookmarks) {
             deleteBtn.className = "fa-solid fa-trash bm-list-item-btn-delete";
             deleteBtn.onclick = async () => {
                 item.remove();
-                await window.electron.removeBookmark(bookmark.id);
+                await window.backend.removeBookmark(bookmark.id);
 
-                const track = await window.electron.getTrackById(bookmark.track_id);
+                const track = await window.backend.getTrackById(bookmark.track_id);
                 if (audiobook.id == audioPlayer.getAttribute("ab-id")) {
                     if (track.bookmarks.length == 0) {
                         document.getElementById(`cv-idx-${bookmark.track_index}`).setAttribute("bookmarked", "0");
@@ -129,7 +129,7 @@ function insertAudiobookEntry(audiobook, bookmarks) {
                     if (bookmark.track_id == audioPlayer.getAttribute("track-id")) placeBarBookmarks(track);
                 }
 
-                const abBookmarksCount = await window.electron.countBookmarks(audiobook.id);
+                const abBookmarksCount = await window.backend.countBookmarks(audiobook.id);
                 if (track.bookmarks.length == 0) {
                     trackHeader.remove();
                     if (abBookmarksCount == 0) entry.remove();
@@ -176,7 +176,7 @@ function insertAudiobookEntry(audiobook, bookmarks) {
 async function buildBookmarksListPopup() {
     bookmarksListEntriesContainer.innerHTML = "";
 
-    const bookmarksData = await window.electron.getAllBookmarksData();
+    const bookmarksData = await window.backend.getAllBookmarksData();
     if (bookmarksData.length == 0) {
         bookmarksListEntriesContainer.innerHTML = `<span class="no-bookmarks">There are no bookmarks.</span>`;
         return;

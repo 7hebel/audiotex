@@ -25,7 +25,7 @@ async function buildDirview(dirname, items) {
     
     dirviewContainer.innerHTML = "";
     items.forEach(async (ab_id) => {
-        const audiobook = await window.electron.getAudiobookData(ab_id);
+        const audiobook = await window.backend.getAudiobookData(ab_id);
 
         const item = document.createElement("div");
         item.className = "dirview-item";

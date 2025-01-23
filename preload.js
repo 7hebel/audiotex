@@ -5,7 +5,7 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
     on: ipcRenderer.on.bind(ipcRenderer)
 });
 
-contextBridge.exposeInMainWorld('electron', {
+contextBridge.exposeInMainWorld('backend', {
     importNewAudiobooks: () => ipcRenderer.invoke("import-new-ab"),
     getAllAudiobooks: () => ipcRenderer.invoke("get-all-audiobooks"),
     getAudiobookData: (ab_id) => ipcRenderer.invoke("get-audiobook-data", ab_id),

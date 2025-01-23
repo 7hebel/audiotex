@@ -4,6 +4,7 @@ const shelfContainer = document.getElementById("shelf-container");
 const createDirForm = document.getElementById("create-dir-form");
 const renameDirForm = document.getElementById("rename-dir-form");
 
+
 function addAudiobookToShelf(ab_id, title, author, cover_src, duration, progress) {
     const abEntry = document.createElement("div");
     abEntry.id = ab_id;
@@ -68,7 +69,7 @@ function addFolderToShelf(dirname, items) {
 
 /// Button: Import audiobook(s)
 document.getElementById('add-audiobook').addEventListener('click', async () => {
-    await window.electron.importNewAudiobooks();
+    await window.backend.importNewAudiobooks();
     await buildShelf();
 });
 
@@ -87,7 +88,7 @@ async function buildShelf() {
         addFolderToShelf(name, items);
     });
 
-    const audiobooks = await window.electron.getAllAudiobooks();
+    const audiobooks = await window.backend.getAllAudiobooks();
     if (audiobooks.length == 0) audiobooksContainer.innerHTML = `<span class="blank-shelf-category">There are no audiobooks.</span>`;
     audiobooks.forEach((ab) => {
         addAudiobookToShelf(ab.id, ab.title, ab.author, ab.cover_src, ab.total_time, ab.progress);
@@ -312,4 +313,19 @@ shelfContainer.addEventListener('dragend', (e) => {
     draggingItem = null;
     lastHoveredElement = null;
 });
+
+
+function switchSectionCollapse(icon, id) {
+    const section = document.getElementById(id);
+
+    if (section.getAttribute("collapsed") == "0") {
+        section.setAttribute("collapsed", "1");
+        icon.style.transform = "rotate(-90deg)";
+        
+    } else {
+        section.setAttribute("collapsed", "0");
+        icon.style.transform = "rotate(0deg)";
+        
+    }
+}
 

@@ -115,7 +115,7 @@ function getDragAfterElement(container, y) {
 function populateInfoPopup(ab_id) {
     document.getElementById("ab-info-popup").setAttribute("target", ab_id);
 
-    window.electron.getAudiobookData(ab_id).then((ab) => {
+    window.backend.getAudiobookData(ab_id).then((ab) => {
         document.getElementById("info-cover").src = ab.cover_src ? ab.cover_src : 'src/default-cover.png';
         document.getElementById("info-author").textContent = ab.author;
         document.getElementById("info-title").textContent = ab.title;
@@ -130,7 +130,7 @@ function populateInfoPopup(ab_id) {
     const tracksContainer = document.getElementById("info-tracks-table");
     tracksContainer.innerHTML = "";
 
-    window.electron.getAllTracks(ab_id).then((tracks) => {
+    window.backend.getAllTracks(ab_id).then((tracks) => {
         for (const track of tracks) {
             const trackItem = document.createElement("div");
             trackItem.className = "info-track-item";
@@ -190,7 +190,7 @@ saveAudiobookBtn.addEventListener('click', async () => {
         ])
     });
 
-    await window.electron.updateAudiobookMeta(ab_id, newTitle, newAuthor, newTracksOrder);
+    await window.backend.updateAudiobookMeta(ab_id, newTitle, newAuthor, newTracksOrder);
     acceptInfoEditChanges();
 
     const shelfItem = document.getElementById(String(ab_id));
@@ -198,8 +198,8 @@ saveAudiobookBtn.addEventListener('click', async () => {
     shelfItem.querySelector(".ab-author").textContent = newAuthor;
     if (ab_id == audioPlayer.getAttribute("ab-id")) {
         document.getElementById("pv-curr-audiobook").textContent = newTitle;
-        const audiobook = await window.electron.getAudiobookData(ab_id);
-        const allTracks = await window.electron.getAllTracks(ab_id);
+        const audiobook = await window.backend.getAudiobookData(ab_id);
+        const allTracks = await window.backend.getAllTracks(ab_id);
         populateContentView(audiobook, allTracks, parseInt(audioPlayer.getAttribute("track-id")));
     }
 
@@ -210,7 +210,7 @@ saveAudiobookBtn.addEventListener('click', async () => {
 const deleteAudiobookBtn = document.getElementById('delete-ab-btn');
 deleteAudiobookBtn.addEventListener('click', async () => {
     const ab_id = parseInt(document.getElementById("ab-info-popup").getAttribute("target"));
-    await window.electron.deleteAudiobook(ab_id);
+    await window.backend.deleteAudiobook(ab_id);
     closeInfoPopup();
     document.getElementById(String(ab_id)).remove();
     displayInfoMessage('Removed audiobook from shelf.')

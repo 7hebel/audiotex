@@ -150,6 +150,7 @@
     <div class="shelf">
         <div id="shelf-container">
             <div class="shelf-category-header">
+                <i class="fa-solid fa-angle-down" onclick="switchSectionCollapse(this, `shelf-folders-container`)"></i>
                 <div class="shelf-category-header-mid">
                     <div class="shelf-category-title-sep"></div>
                     <span class="shelf-category-title">
@@ -165,12 +166,12 @@
                     </button>
                 </div>
             </div>
-
-            <div class="shelf-category-container" id="shelf-folders-container">
+            <div class="shelf-category-container" id="shelf-folders-container" collapsed="0">
                 <span class="blank-shelf-category">There are no folders.</span>
             </div>
 
             <div class="shelf-category-header">
+                <i class="fa-solid fa-angle-down" onclick="switchSectionCollapse(this, `shelf-audiobooks-container`)"></i>
                 <div class="shelf-category-header-mid">
                     <div class="shelf-category-title-sep"></div>
                     <span class="shelf-category-title">
@@ -186,8 +187,23 @@
                     </button>
                 </div>
             </div>
-            <div class="shelf-category-container" id="shelf-audiobooks-container">
+            <div class="shelf-category-container" id="shelf-audiobooks-container" collapsed="0">
                 <span class="blank-shelf-category">There are no audiobooks.</span>
+            </div>
+
+            <div class="shelf-category-header">
+                <i class="fa-solid fa-angle-down" onclick="switchSectionCollapse(this, `shelf-authors-container`)"></i>
+                <div class="shelf-category-header-mid">
+                    <div class="shelf-category-title-sep"></div>
+                    <span class="shelf-category-title">
+                        <i class="fa-solid fa-circle-user"></i>
+                        Authors
+                    </span>
+                    <div class="shelf-category-title-sep"></div>
+                </div>
+            </div>
+            <div class="shelf-category-container" id="shelf-authors-container" collapsed="0">
+                <span class="blank-shelf-category">There are no authors.</span>
             </div>
         </div>
 

@@ -28,6 +28,11 @@
     padding-inline: 36px;
 }
 
+.shelf-category-container[collapsed="1"] {
+    overflow: hidden;
+    height: 0px;
+}
+
 .shelf-category-header {
     width: 100%;
     color: #abb3d136;
@@ -196,5 +201,16 @@
     font-family: 'Code';
     font-size: 14px;
     color: #ffffff21;
+}
+
+
+.shelf-category-header > i {
+    cursor: pointer;
+    color: #abb3d11c;
+    transition: transform .2s, color .4s;
+}
+
+.shelf-category-header > i:hover {
+    color: #abb3d150;
 }
 
