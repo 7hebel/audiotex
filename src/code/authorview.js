@@ -34,7 +34,7 @@ async function buildAuthorview(authorName) {
     authorviewContainer.innerHTML = "";
     author.audiobooks.forEach((audiobook) => {
         const item = document.createElement("div");
-        item.className = "dirview-item";
+        item.className = "authorview-item";
         item.onclick = async () => {
             await populateInfoPopup(audiobook.id);
             closeAuthorviewPopup();
@@ -42,23 +42,23 @@ async function buildAuthorview(authorName) {
         }
 
         const left = document.createElement("div");
-        left.className = "dirview-item-left";
+        left.className = "authorview-item-left";
 
         const cover = document.createElement("img");
-        cover.className = "dirview-item-cover";
+        cover.className = "authorview-item-cover";
         cover.src = audiobook.cover_src ? audiobook.cover_src : './src/default-cover.png';
         left.appendChild(cover);
 
         const meta = document.createElement("div");
-        meta.className = "dirview-item-meta";
+        meta.className = "authorview-item-meta";
 
         const title = document.createElement("span");
-        title.className = "dirview-item-title";
+        title.className = "authorview-item-title";
         title.textContent = audiobook.title;
         meta.appendChild(title);
 
         const author = document.createElement("span");
-        author.className = "dirview-item-author";
+        author.className = "authorview-item-author";
         author.textContent = audiobook.author;
         meta.appendChild(author);
         left.appendChild(meta);
@@ -69,13 +69,11 @@ async function buildAuthorview(authorName) {
         progress.textContent = `${audiobook.progress}%`;
         item.appendChild(progress)
 
-
         authorviewContainer.appendChild(item);
     })
 }
 
-
-/// Button: Rename folder
+/// Button: Rename author
 let renameAuthorFormUsed = false;
 function openRenameAuthorForm() {
     if (document.getElementById("author-name").textContent == "Unknown") return displayErrorMessage("Cannot rename unknown author.");
@@ -123,7 +121,7 @@ async function renameAuthor(targetName, newName) {
 
     if (document.getElementById("cv-author").textContent == targetName) document.getElementById("cv-author").textContent = newName;
     document.getElementById("author-name").textContent = newName;
-    Array.from(document.querySelectorAll(".dirview-item-author")).forEach((el) => {
+    Array.from(document.querySelectorAll(".authorview-item-author")).forEach((el) => {
         el.textContent = newName;
     })
     await buildShelf();    

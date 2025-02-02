@@ -24,6 +24,7 @@
     flex-wrap: wrap;
     height: 100%;
     gap: 32px;
+    height: auto;
     margin-bottom: 24px;
     padding-inline: 36px;
 }

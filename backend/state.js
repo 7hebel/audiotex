@@ -9,7 +9,6 @@ if (!fs.existsSync(stateFilePath)) fs.open(stateFilePath, 'w', () => {});
 var STATE = {
     volume: 0.5,
     recentAudiobook: null,
-    directories: []
 }
 
 try {

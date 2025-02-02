@@ -5,12 +5,14 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "electron ."
+    "start": "electron .",
+    "build": "electron-builder"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "electron": "^34.0.0",
+    "electron-builder": "^25.1.8",
     "electron-rebuild": "^3.2.9"
   },
   "dependencies": {
@@ -18,5 +20,25 @@
     "google-img-scrap": "^1.1.4",
     "images-scraper": "^6.4.0",
     "music-metadata": "^10.7.0"
+  },
+  "build": {
+    "appId": "com.audiotex.audiotex",
+    "productName": "AudioTex",
+    "icon": "./src/icon/app-icon.ico",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "./src/icon/app-icon.ico"
+    },
+    "files": [
+      "**/*",
+      "!node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}",
+      "!node_modules/.bin",
+      "!*.md"
+    ]
   }
 }

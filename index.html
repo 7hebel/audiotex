@@ -20,14 +20,12 @@
     <script defer src="src/code/authorview.js"></script>
     <script defer src="backend/timeutils.js"></script>
     <script defer src="src/code/playview.js"></script>
-    <script defer src="src/code/dirview.js"></script>
     <script defer src="src/code/shelf.js"></script>
 
     <link rel="stylesheet" href="src/style/main.css">
     <link rel="stylesheet" href="src/style/form.css">
     <link rel="stylesheet" href="src/style/info.css">
     <link rel="stylesheet" href="src/style/shelf.css">
-    <link rel="stylesheet" href="src/style/dirview.css">
     <link rel="stylesheet" href="src/style/playview.css">
     <link rel="stylesheet" href="src/style/authorview.css">
     <link rel="stylesheet" href="src/style/contentview.css">
@@ -39,25 +37,6 @@
     <div class="window-titlebar">
         <img src="src/icon/app-icon.png" width="18px" height="18px">
         AudioTex
-    </div>
-
-    <div id="dirview-popup" show="0" style="opacity: 0;">
-        <div id="dirview-window">
-            <div class="dirview-header">
-                <i class="fa-solid fa-folder"></i>
-                <span id="dirview-dirname">-</span>
-                <div class="dirview-actions-group">
-                    <span class="dirview-action action-left" onclick="openRenameFolderForm()">
-                        <i class="fa-solid fa-pen"></i>
-                    </span>
-                    <span class="dirview-action action-right dirview-danger-action"
-                        onclick="removeDirectory(document.getElementById(`dirview-dirname`).textContent); closeDirviewPopup();">
-                        <i class="fa-solid fa-trash"></i>
-                    </span>
-                </div>
-            </div>
-            <div id="dirview-container"></div>
-        </div>
     </div>
 
     <div id="ab-info-popup" show="0" edit="0" target="-1" style="opacity: 0">
@@ -176,27 +155,6 @@
     <div class="shelf">
         <div id="shelf-container">
             <div class="shelf-category-header">
-                <i class="fa-solid fa-angle-down" onclick="switchSectionCollapse(this, `shelf-folders-container`)"></i>
-                <div class="shelf-category-header-mid">
-                    <div class="shelf-category-title-sep"></div>
-                    <span class="shelf-category-title">
-                        <i class="fa-solid fa-folder"></i>
-                        Folders
-                    </span>
-                    <div class="shelf-category-title-sep"></div>
-                </div>
-                <div class="shelf-category-actions-group">
-                    <button class="shelf-category-action-btn" onclick="openCreateFolderForm()">
-                        <i class="fa-solid fa-folder-plus"></i>
-                        Create folder
-                    </button>
-                </div>
-            </div>
-            <div class="shelf-category-container" id="shelf-folders-container" collapsed="0">
-                <span class="blank-shelf-category">There are no folders.</span>
-            </div>
-
-            <div class="shelf-category-header">
                 <i class="fa-solid fa-angle-down" onclick="switchSectionCollapse(this, `shelf-audiobooks-container`)"></i>
                 <div class="shelf-category-header-mid">
                     <div class="shelf-category-title-sep"></div>
@@ -230,36 +188,6 @@
             </div>
             <div class="shelf-category-container" id="shelf-authors-container" collapsed="0">
                 <span class="blank-shelf-category">There are no authors.</span>
-            </div>
-        </div>
-
-        <div class="user-form" id="create-dir-form" show="0" style="right: -400px; opacity: 0;">
-            <label class="form-label" for="create-dir-name">Folder name:</label>
-            <input class="user-form-input" id="create-dir-name" placeholder="name..." maxlength="50">
-            <div class="form-buttons">
-                <button class="form-btn form-btn-primary" onclick="acceptCreateFolderForm()">
-                    <i class="fa-solid fa-folder-plus"></i>
-                    Create
-                </button>
-                <button class="form-btn form-btn-cancel" onclick="closeCreateFolderForm()">
-                    <i class="fa-solid fa-xmark"></i>
-                    Cancel
-                </button>
-            </div>
-        </div>
-
-        <div class="user-form" id="rename-dir-form" show="0" style="right: -400px; opacity: 0;">
-            <label class="form-label" for="rename-dir-name">Rename:</label>
-            <input class="user-form-input" id="rename-dir-name" placeholder="name..." maxlength="50">
-            <div class="form-buttons">
-                <button class="form-btn form-btn-primary" onclick="acceptRenameFolderForm()">
-                    <i class="fa-solid fa-pen"></i>
-                    Rename
-                </button>
-                <button class="form-btn form-btn-cancel" onclick="closeRenameFolderForm()">
-                    <i class="fa-solid fa-xmark"></i>
-                    Cancel
-                </button>
             </div>
         </div>
 
