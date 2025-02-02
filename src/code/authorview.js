@@ -132,6 +132,5 @@ async function updateAuthorCover() {
     const newUrl = await window.backend.updateAuthorAvatar(authorName);
     document.getElementById("author-cover").style.backgroundImage = `url('${newUrl}')`;
     document.getElementById(`author-${authorName}`).querySelector(".ab-cover").style.backgroundImage = `url('${newUrl}')`;
-    displayInfoMessage(`Updated cover for ${authorName}`)
-
+    displayInfoMessage(`Updated cover for ${authorName}`);
 }

@@ -209,8 +209,20 @@ const deleteAudiobookBtn = document.getElementById('delete-ab-btn');
 deleteAudiobookBtn.addEventListener('click', async () => {
     const ab_id = parseInt(document.getElementById("ab-info-popup").getAttribute("target"));
     await window.backend.deleteAudiobook(ab_id);
-    await removeItemFromAllDirs(ab_id);
     closeInfoPopup();
     document.getElementById(String(ab_id)).remove();
     displayInfoMessage('Removed audiobook from shelf.')
 });
+
+
+async function changeAudiobookCover() {
+    const ab_id = document.getElementById("ab-info-popup").getAttribute("target");
+    const newPath = await window.backend.chooseAudiobookCoverFile(ab_id);
+
+    if (newPath) {
+        console.log("changed to:", newPath)
+        document.getElementById("info-cover").src = newPath;
+        document.getElementById(`${ab_id}`).querySelector(".ab-cover").style.backgroundImage = `url('${newPath}')`;
+        displayInfoMessage("Cover image updated.")
+    }
+}

@@ -21,6 +21,7 @@
     "images-scraper": "^6.4.0",
     "music-metadata": "^10.7.0"
   },
+  "postinstall": "electron-builder install-app-deps",
   "build": {
     "appId": "com.audiotex.audiotex",
     "productName": "AudioTex",

@@ -38,6 +38,7 @@
     height: 200px;
     border-radius: 8px;
     border: 1px solid #43434326;
+    cursor: pointer;
 }
 
 #info-title {

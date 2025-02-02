@@ -45,67 +45,79 @@ async function importAudiobook(dirpath) {
     try {
         if (__isDirpathInitialized(dirpath)) return msg.displayError("This audiobook is already imported.");
 
-        const TITLE = path.basename(dirpath);
+        let TITLE = path.basename(dirpath);
         const files = await fs.promises.readdir(dirpath, { withFileTypes: true });
         if (files.length == 0) return msg.displayError(`No files in the directory: ${TITLE}`);
         
         const mm = await loadMusicMetadata();
-
-        const dataFilePath = path.join(dirpath, files[0].name);
-        const albumMetadata = await mm.parseFile(dataFilePath);
-        const AUTHOR = albumMetadata.common.artist || 'Unknown';
-        const COVER = albumMetadata.common.picture;
-        const TOTAL_ITEMS = files.length;
-        
-        let isCorrectlyIndexed = albumMetadata.common.track.no != 32;
-        
+        let albumMetadata = null;
         let TOTAL_SECONDS = 0;
         let index = 1;
+        let coverFile = null;
         const tracks = [];
 
         for (const file of files) {
             if (!file.isFile()) continue;
 
+            if (file.name.endsWith('.png') || file.name.endsWith('.jpg') || file.name.endsWith('.jpeg')) {
+                coverFile = file;
+                console.log(file);
+                continue;
+            }
+
             const filePath = path.join(dirpath, file.name);
-            let audioMetadata = null
-            audioMetadata = await mm.parseFile(filePath);
-
-            if (audioMetadata == null) continue;
-            
-            const metadata = {
-                name: file.name.split(".")[0],
-                filepath: filePath,
-                trackNumber: isCorrectlyIndexed ? audioMetadata.common.track.no : index,
-                length: secondsToReadable(audioMetadata.format.duration),
-                seconds: audioMetadata.format.duration,
-            };
-
-            tracks.push(metadata);
-            TOTAL_SECONDS += audioMetadata.format.duration;
-            index++;
+            await mm.parseFile(filePath).then((audioMetadata) => {
+                if (albumMetadata === null) albumMetadata = audioMetadata;
+                
+                const metadata = {
+                    name: file.name.split(".")[0],
+                    filepath: filePath,
+                    trackNumber: index,
+                    length: secondsToReadable(audioMetadata.format.duration),
+                    seconds: audioMetadata.format.duration,
+                };
+    
+                tracks.push(metadata);
+                TOTAL_SECONDS += audioMetadata.format.duration;
+                index++;
+            }).catch((e) => console.error(e));
         }
-
+        
         if (tracks.length == 0) return msg.displayError(`No valid audio files found in: ${TITLE}`);
 
+        let AUTHOR = albumMetadata.common.artist || 'Unknown';
+        const COVER = albumMetadata.common.picture;
+        const TOTAL_ITEMS = tracks.length;
         const TOTAL_TIME = secondsToReadable(TOTAL_SECONDS);
         console.log("Successfuly parsed directory.");
 
-        const AB_ID = db.insertAudiobook(TITLE, AUTHOR, TOTAL_TIME, TOTAL_SECONDS, dirpath, TOTAL_ITEMS, "");
-        if (AB_ID == -1) return msg.displayError(`Failed to save: ${TITLE}`);
-        
-        for (let track of tracks) {
-            db.insertTrack(track.name, track.filepath, track.trackNumber, track.length, track.seconds, AB_ID);
+        if (AUTHOR == "Unknown" && TITLE.includes("-")) {
+            [AUTHOR, TITLE] = TITLE.split("-");
+            console.log(`Split title to get the author: ${TITLE} ~ ${AUTHOR}`)
         }
 
+        const AB_ID = db.insertAudiobook(TITLE, AUTHOR, TOTAL_TIME, TOTAL_SECONDS, dirpath, TOTAL_ITEMS, "");
+        if (AB_ID == -1) return msg.displayError(`Failed to save: ${TITLE}`);
+
+        for (let track of tracks) db.insertTrack(track.name, track.filepath, track.trackNumber, track.length, track.seconds, AB_ID);
+        
         let coverPath = null;
-        if (COVER) {
+        if (!COVER && coverFile) {
+            const srcPath = path.join(coverFile.parentPath, coverFile.name);
+            coverPath = path.join(COVERS_PATH, `${AB_ID}`).replaceAll("\\", "/");
+            fs.copyFileSync(srcPath, coverPath);
+            console.log(`Used cover from directory: ${coverFile.name}`)
+        } else if (COVER) {
             coverPath = saveCover(AB_ID, COVER[0]);
+        }
+        
+        if (coverPath) {
             db.db.exec(`
                 UPDATE audiobooks
                 SET cover_src='${coverPath}'
                 WHERE id=${AB_ID}
-            `);
-        }
+            `);    
+        } 
         
         console.log(`Inserted all contents of: ${TITLE} into the DB.`);
         msg.displayInfo(`Imported: ${TITLE}`);
@@ -117,7 +129,6 @@ async function importAudiobook(dirpath) {
         return msg.displayError("Failed to read directory.");
     }
 };
-
 
 function calculateProgress(ab_id) {
     const audiobook = db.getAudiobook(ab_id);
@@ -134,26 +145,30 @@ function calculateProgress(ab_id) {
 }
 
 
-
 /// Covers related stuff
-
 const COVERS_PATH = path.join(require('electron').app.getPath('userData'), 'covers')
 if (!fs.existsSync(COVERS_PATH)) fs.mkdirSync(COVERS_PATH, { recursive: true });
 
 function saveCover(ab_id, cover_arr) {
-    const coverFilePath = path.join(COVERS_PATH, `${ab_id}.jpg`);
-    fs.writeFile(coverFilePath, Buffer.from(cover_arr.data), () => {});
+    const coverFilePath = path.join(COVERS_PATH, `${ab_id}`);
+    fs.writeFileSync(coverFilePath, Buffer.from(cover_arr.data));
+    return coverFilePath.replaceAll("\\", "/");
+}
+
+function saveCoverFromFile(ab_id, new_cover_path) {
+    const coverFilePath = path.join(COVERS_PATH, `${ab_id}`);
+    if (fs.existsSync(coverFilePath)) fs.unlinkSync(coverFilePath);
+    fs.copyFileSync(new_cover_path, coverFilePath);
     return coverFilePath.replaceAll("\\", "/");
 }
 
 function removeCover(ab_id) {
-    const coverFilePath = path.join(COVERS_PATH, `${ab_id}.jpg`);
+    const coverFilePath = path.join(COVERS_PATH, `${ab_id}`);
     if (fs.existsSync(coverFilePath)) fs.unlinkSync(coverFilePath);
 }
 
 
 /// Authors images related stuff
-
 const AUTHORS_PICS_PATH = path.join(require('electron').app.getPath('userData'), 'authors')
 if (!fs.existsSync(AUTHORS_PICS_PATH)) fs.mkdirSync(AUTHORS_PICS_PATH, { recursive: true });
 
@@ -162,10 +177,12 @@ async function __fetchAuthorImageURL(name, randomize = false) {
     let url;
 
     if (!randomize) {
-        url = await GOOGLE_IMG_SCRAP({
+        const result = await GOOGLE_IMG_SCRAP({
             search: name,
             limit: 1
-        }).result[0]?.url;
+        });
+        url = result.result[0]?.url;
+
     } else {
         const allResults = await GOOGLE_IMG_SCRAP({
             search: name,
@@ -228,6 +245,7 @@ async function updateAuthorCover(name) {
 module.exports = {
     importAudiobook,
     saveCover,
+    saveCoverFromFile,
     removeCover,
     calculateProgress,
     getAuthorImage,

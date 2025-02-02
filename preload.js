@@ -7,6 +7,7 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
 
 contextBridge.exposeInMainWorld('backend', {
     importNewAudiobooks: () => ipcRenderer.invoke("import-new-ab"),
+    chooseAudiobookCoverFile: (ab_id) => ipcRenderer.invoke("get-new-ab-cover-file", ab_id),
     getAllAudiobooks: () => ipcRenderer.invoke("get-all-audiobooks"),
     getAudiobookData: (ab_id) => ipcRenderer.invoke("get-audiobook-data", ab_id),
     getTrackByIndex: (ab_id, track_index) => ipcRenderer.invoke("get-track-index", ab_id, track_index),
@@ -27,6 +28,7 @@ contextBridge.exposeInMainWorld('backend', {
     renameAuthor: (oldName, newName) => ipcRenderer.invoke("rename-author", oldName, newName),
     updateAuthorAvatar: (name) => ipcRenderer.invoke("update-author-avatar", name),
     getLostAudiobooks: () => ipcRenderer.invoke("get-lost-abs"),
+    openPathInExplorer: (path) => ipcRenderer.invoke("open-file-in-explorer", path),
 });
 
 contextBridge.exposeInMainWorld('state', {

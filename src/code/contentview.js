@@ -12,6 +12,8 @@ function hideContentView() {
 }
 
 function showContentView() {
+    if (!audioPlayer.getAttribute("track-id")) return;
+    
     closeInfoPopup();
     closeBookmarksListPopup();
     contentViewContainer.setAttribute("show", "1");

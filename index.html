@@ -42,7 +42,7 @@
     <div id="ab-info-popup" show="0" edit="0" target="-1" style="opacity: 0">
         <div class="info-window">
             <div class="info-meta-part">
-                <img id="info-cover" class="info-not-editable" src="src/default-cover.png">
+                <img id="info-cover" class="info-editable" src="src/default-cover.png" onclick="changeAudiobookCover()">
                 <h5 id="info-title" class="info-editable">-</h5>
                 
                 <div class="meta-container">
@@ -64,6 +64,7 @@
                             <i class="fa-regular fa-folder"></i>
                         </div>
                         <span id="info-path">-</span>
+                        <i id="goto-author-btn" class="fa-solid fa-angle-right" onclick="window.backend.openPathInExplorer(document.getElementById('info-path').textContent)"></i>
                     </div>
                     <div class="info-meta-entry info-not-editable">
                         <div class="meta-entry-icon">

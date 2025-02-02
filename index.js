@@ -1,4 +1,4 @@
-const { app, BrowserWindow, dialog, ipcMain } = require('electron');
+const { app, BrowserWindow, dialog, ipcMain, shell } = require('electron');
 const audiobook = require('./backend/audiobook');
 const timeutils = require('./backend/timeutils')
 const msg = require('./backend/messages');
@@ -54,6 +54,27 @@ ipcMain.handle('import-new-ab', async () => {
         return imported;
     }
 
+    return false;
+});
+
+ipcMain.handle('get-new-ab-cover-file', async (ev, ab_id) => {
+    const result = await dialog.showOpenDialog({
+        properties: ["openFile"],
+        filters: [{ name: 'Image', extensions: ['jpg', 'jpeg', 'png'] }]
+    });
+
+    if (!result.canceled) {
+        const timestamp = new Date().getTime();
+        const coverPath = audiobook.saveCoverFromFile(ab_id, result.filePaths[0]) + `?v=${timestamp}`;
+        db.db.exec(`
+            UPDATE audiobooks
+            SET cover_src='${coverPath}'
+            WHERE id=${ab_id}
+        `);
+            
+        return coverPath;
+    }
+    
     return false;
 });
 
@@ -248,6 +269,10 @@ ipcMain.handle('update-author-avatar', async (ev, name) => {
 
 ipcMain.handle('get-lost-abs', async (ev) => {
     return audiobook.getLostAudiobooks();
+})
+
+ipcMain.handle('open-file-in-explorer', async (ev, path) => {
+    shell.openPath(path);
 })
 
 ipcMain.handle('get-state', async () => { return state.STATE; })
