@@ -314,7 +314,7 @@ async function playNextTrack() {
 }
 
 /// Button: Play previous track
-document.getElementById("previous-track-btn").addEventListener('click', async () => {
+async function playPrevTrack() {
     const ab_id = audioPlayer.getAttribute("ab-id");
     const nextIndex = parseInt(audioPlayer.getAttribute("track-index")) - 1;
     if (nextIndex < 1) { return; }
@@ -323,7 +323,7 @@ document.getElementById("previous-track-btn").addEventListener('click', async ()
     if (nextTrack === undefined) return;
 
     setupAudiobookPlay(ab_id, nextTrack.id).then(() => { playAudio() });
-})
+}
 
 /// Button: Add bookmark
 let addBookmarkFormUsed = false;

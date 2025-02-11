@@ -1,17 +1,21 @@
 {
   "name": "audiotex",
+  "version": "1.0.0",
   "dependencies": {
     "@types/axios": "^0.14.4",
     "@types/better-sqlite3": "^7.6.12",
     "axios": "^1.7.9",
     "better-sqlite3": "^11.8.1",
-    "electron": "^34.1.0",
     "google-img-scrap": "^1.1.4",
     "music-metadata": "^10.8.3",
     "path": "^0.12.7",
     "typescript": "^5.7.3"
   },
-  "main": "build/main.js",
+  "devDependencies": {
+    "electron": "^34.1.0",
+    "electron-builder": "^25.1.8"
+  },
+  "main": "dist/main.js",
   "scripts": {
     "start": "tsc && electron .",
     "build": "electron-builder"
@@ -32,6 +36,7 @@
     },
     "files": [
       "**/*",
+      "dist/**/*",
       "!node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}",
       "!node_modules/.bin",
       "!*.md"

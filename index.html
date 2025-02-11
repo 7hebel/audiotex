@@ -6,9 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://kit.fontawesome.com/e526ea242b.js" crossorigin="anonymous"></script>
 
-    <script>
+    <script defer>
         window.ipcRenderer.on('MSG:info', (event, message) => { displayInfoMessage(message) });
         window.ipcRenderer.on('MSG:error', (event, message) => { displayErrorMessage(message) });
+        window.ipcRenderer.on('CTRL:prev', () => { playPrevTrack() });
+        window.ipcRenderer.on('CTRL:next', () => { playNextTrack() });
+        window.ipcRenderer.on('CTRL:playPause', () => { audioPlayer.paused ? playAudio() : pauseAudio() });
     </script>
 
     <script src="src/code/lib/butterup/butterup.min.js"></script>
@@ -225,7 +228,7 @@
             <audio id="audio-player" src="" track-id="" track-index="" ab-id=""></audio>
 
             <div class="flow-controls-group">
-                <button class="flow-ctrl-btn" id="previous-track-btn">
+                <button class="flow-ctrl-btn" id="previous-track-btn" onclick="playPrevTrack()">
                     <i class="fa-solid fa-backward-step"></i>
                 </button>
                 <button class="flow-ctrl-btn" id="play-state-track-btn"

@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, dialog, shell } from 'electron';
+import { app, BrowserWindow, ipcMain, dialog, shell, nativeImage } from 'electron';
 const path = require('path');
 
 import * as TIMEUTILS from './backend/timeutils';
@@ -35,7 +35,33 @@ function initializeWindow() {
     
     mainWindow.setMenu(null);
     mainWindow.loadFile('index.html');
-    mainWindow.webContents.openDevTools();
+    // mainWindow.webContents.openDevTools();
+
+    console.log(path.join(__dirname, '/src/icon/prev.png'));
+
+    mainWindow.setThumbarButtons([
+        {
+            tooltip: 'Previous',
+            icon: nativeImage.createFromPath(path.join(__dirname, '../src/icon/prev.png')),
+            click: () => {
+                mainWindow?.webContents.send('CTRL:prev');
+            }
+        },
+        {
+            tooltip: 'Play/Pause',
+            icon: nativeImage.createFromPath(path.join(__dirname, '../src/icon/pause.png')),
+            click: () => {
+                mainWindow?.webContents.send('CTRL:playPause');
+            }
+        },
+        {
+            tooltip: 'Next',
+            icon: nativeImage.createFromPath(path.join(__dirname, '../src/icon/next.png')),
+            click: () => {
+                mainWindow?.webContents.send('CTRL:next');
+            }
+        }
+    ]);
 }
 
 app.whenReady().then(() => {
