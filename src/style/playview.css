@@ -26,7 +26,7 @@ input[type="range"]::-moz-range-thumb {
     width: 100%;
     height: 80px;
     bottom: 0px;
-    background-color: #202127eb;
+    background-color: #212027cf;
     box-shadow: 0px -3px 20px 0px #00000085;
     border: 1px solid #ffffff08;
     border-bottom: none;
@@ -56,7 +56,7 @@ input[type="range"]::-moz-range-thumb {
     width: calc(100% - 180px);
     margin-left: 180px;
     cursor: pointer;
-    background: linear-gradient(to right, #444e5f 0%, #94a5c4 var(--play-bar-value), #323a49 var(--play-bar-value), #323a49 100%);
+    background: linear-gradient(to right, #9686c033 0%, #9686c0 var(--play-bar-value), #9686c033 var(--play-bar-value), #9686c033 100%)
 }
 
 #play-bar::-webkit-slider-thumb {
@@ -124,17 +124,17 @@ input[type="range"]::-moz-range-thumb {
     font-size: 24px;
     background-color: transparent;
     border: none;
-    color: #cfd9e6c7;
+    color: #ffffffb8;
     cursor: pointer;
     transition: color .3s;
 }
 
 .flow-ctrl-btn:hover {
-    color: #b6cbe6;
+    color: white;
 }
 
 #pv-track-time {
-    color: #c8daf2d6;
+    color: #cbc8f2f2;
     font-family: 'Code';
     font-size: 14px;
     padding-top: 2px;
@@ -160,7 +160,7 @@ input[type="range"]::-moz-range-thumb {
 }
 
 #pv-curr-audiobook {
-    color: #c7d2e994;
+    color: #b5b2d1f2;
     font-family: 'Code';
     font-size: 14px;
 }
@@ -175,7 +175,7 @@ input[type="range"]::-moz-range-thumb {
     font-size: 20px;
     background-color: transparent;
     border: none;
-    color: #a0a7afc7;
+    color: #ffffff99;
     cursor: pointer;
     transition: color .3s;
     display: flex;
@@ -184,7 +184,7 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .feature-btn:hover {
-    color: #beccdbc7;
+    color: white;
 }
 
 .feature-range-container {
@@ -240,11 +240,11 @@ input[type="range"]::-moz-range-thumb {
 }
 
 #volume-bar {
-    background: linear-gradient(to top, #444e5f 0%, #94a5c4 var(--volume-bar-value), #323a49 var(--volume-bar-value), #323a49 100%);
+    background: linear-gradient(to top, #9686c033 0%, #9686c0 var(--volume-bar-value), #9686c033 var(--volume-bar-value), #9686c033 100%);
 }
 
 #speed-bar {
-    background: linear-gradient(to top, #444e5f 0%, #94a5c4 var(--speed-bar-value), #323a49 var(--speed-bar-value), #323a49 100%);
+    background: linear-gradient(to top, #9686c033 0%, #9686c0 var(--speed-bar-value), #9686c033 var(--speed-bar-value), #9686c033 100%);
 }
 
 .feature-btn[showContent="0"] > .feature-range-container {
@@ -278,7 +278,7 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .on-bar-bookmark > i {
-    color: #a2a9e3;
+    color: var(--bookmark-color);
     text-shadow: 0px 0px 6px #0000009c;
     font-size: 12px;
     cursor: pointer;
@@ -292,11 +292,12 @@ input[type="range"]::-moz-range-thumb {
     font-family: 'Code';
     font-size: 14px;
     color: rgb(209, 214, 224);
-    background-color: #2a2f3a;
+    background-color: var(--fluent-bg);
+    backdrop-filter: blur(20px);
     padding-inline: 8px;
     padding-block: 2px;
     border-radius: 4px;
-    border: 1px solid #ffffff1c;
+    border: 1px solid var(--subtle-border-color);
     box-shadow: 0px 0px 20px 0px #0000009c;
     opacity: 1;
     max-width: 400px;

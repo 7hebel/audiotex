@@ -1,0 +1,38 @@
+.popup[show="0"] {
+    display: none;
+}
+
+.popup[show="1"] {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity .15s;
+    background-color: rgba(0, 0, 0, 0.116);
+    padding-top: 8px;
+}
+
+@media only screen and (max-height: 900px)  {
+    .popup[show="1"] {
+        align-items: start;
+    }
+}
+
+.window {
+    width: 1050px;
+    min-height: 400px;
+    max-height: 540px;
+    background-color: #131217ab;
+    border-radius: 12px;
+    border: 1px solid var(--subtle-border-color);
+    padding: 16px;
+    display: flex;
+    flex-direction: row;
+    box-shadow: 0px 0px 20px 2px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(90px);
+}
+
+

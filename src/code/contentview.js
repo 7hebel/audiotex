@@ -31,7 +31,7 @@ function switchContentView() {
 function populateContentView(audiobook, allTracks, currTrackID) {
     document.getElementById("cv-title").textContent = audiobook.title;
     document.getElementById("cv-author").textContent = audiobook.author;
-    contentViewContainer.style.setProperty('--cover-src', `url("${audiobook.cover_src ? audiobook.cover_src : '../default-cover.png'}")`);
+    contentViewContainer.style.setProperty('--cover-src', `url("${audiobook.coverSrc ? audiobook.coverSrc : '../default-cover.png'}")`);
 
     const tracksContainer = document.querySelector(".cv-tracks-container");
     let activeItem = null;
@@ -40,7 +40,7 @@ function populateContentView(audiobook, allTracks, currTrackID) {
     allTracks.forEach(track => {
         const trackItem = document.createElement("div");
         trackItem.className = "cv-track-item";
-        trackItem.id = `cv-idx-${track.idx}`;
+        trackItem.id = `cv-idx-${track.index}`;
         trackItem.onclick = async () => {
             setupAudiobookPlay(audiobook.id, track.id).then(() => { playAudio(); });
         }
@@ -52,7 +52,7 @@ function populateContentView(audiobook, allTracks, currTrackID) {
         }
         
         itemIndex.className = "cv-item-index";
-        itemIndex.textContent = track.idx;
+        itemIndex.textContent = track.index;
         trackItem.appendChild(itemIndex);
         
         const itemTitle = document.createElement("span");
@@ -67,7 +67,7 @@ function populateContentView(audiobook, allTracks, currTrackID) {
         
         const itemTime = document.createElement("span");
         itemTime.className = "cv-item-time";
-        itemTime.textContent = track.total_time;
+        itemTime.textContent = track.totalTime;
         trackItem.appendChild(itemTime);
 
         tracksContainer.appendChild(trackItem);
@@ -75,4 +75,3 @@ function populateContentView(audiobook, allTracks, currTrackID) {
 
     if (activeItem) activeItem.scrollIntoView({ behaviour: 'smooth', block: 'center' });
 }
-

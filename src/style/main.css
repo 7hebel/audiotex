@@ -1,3 +1,15 @@
+:root {
+    --blur-element-bg: #ffffff17;
+    --blur-element-blurLevel: 28px;
+
+    --fluent-bg: #212027cf;
+
+    --subtle-border-color: #ffffff11;
+    --bookmark-color: #c8c5e3;
+
+}
+
+
 @font-face {
     font-family: 'Code';
     src: url('../font/SourceCodePro.ttf')
@@ -49,6 +61,8 @@
 
 body {
     background-color: #0f0e11;
+    background-image: url("../background.png");
+    background-size: cover;
     margin: 0;
     padding: 0;
     overflow: hidden;
@@ -61,7 +75,7 @@ body {
     display: flex;
     flex-direction: row;
     align-items: end;
-    background-color: #0f0e11;
+    background-color: transparent;
     font-family: 'Code';
     font-size: 14px;
     gap: 8px;

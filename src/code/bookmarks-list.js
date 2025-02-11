@@ -5,6 +5,7 @@ const bookmarksListEntriesContainer = document.getElementById("bm-list-window");
 bookmarksListPopup.onclick = (ev) => { if (ev.target.id === "bookmarks-list-popup") closeBookmarksListPopup(); }
 
 function openBookmarksListPopup() { 
+    closeInfoPopup();
     bookmarksListPopup.setAttribute("show", "1"); 
 
     setTimeout(() => {
@@ -53,7 +54,7 @@ function insertAudiobookEntry(audiobook, bookmarks) {
 
     const cover = document.createElement("img");
     cover.className = "ab-list-entry-cover";
-    cover.src = audiobook.cover_src ? audiobook.cover_src : "./src/default-cover.png";
+    cover.src = audiobook.coverSrc ? audiobook.coverSrc : "./src/default-cover.png";
     headerMeta.appendChild(cover);
 
     const metaContainer = document.createElement("div");
@@ -74,7 +75,7 @@ function insertAudiobookEntry(audiobook, bookmarks) {
 
     const bookmarksCount = document.createElement("div");
     bookmarksCount.className = "bm-list-header-bm-count";
-    bookmarksCount.innerHTML = `${audiobook.bookmarksCount} <i class="fa-solid fa-bookmark"></i>`;
+    bookmarksCount.innerHTML = `${audiobook.bookmarks.length} <i class="fa-solid fa-bookmark"></i>`;
     header.appendChild(bookmarksCount);
 
     entry.appendChild(header);
@@ -118,7 +119,7 @@ function insertAudiobookEntry(audiobook, bookmarks) {
             deleteBtn.className = "fa-solid fa-trash bm-list-item-btn-delete";
             deleteBtn.onclick = async () => {
                 item.remove();
-                await window.backend.removeBookmark(bookmark.id);
+                await window.backend.deleteBookmark(bookmark.id);
 
                 const track = await window.backend.getTrackById(bookmark.track_id);
                 if (audiobook.id == audioPlayer.getAttribute("ab-id")) {
@@ -129,7 +130,8 @@ function insertAudiobookEntry(audiobook, bookmarks) {
                     if (bookmark.track_id == audioPlayer.getAttribute("track-id")) placeBarBookmarks(track);
                 }
 
-                const abBookmarksCount = await window.backend.countBookmarks(audiobook.id);
+                const abData = await window.backend.fetchAudiobook(audiobook.id);
+                const abBookmarksCount = abData.bookmarks.length;
                 if (track.bookmarks.length == 0) {
                     trackHeader.remove();
                     if (abBookmarksCount == 0) entry.remove();
@@ -183,9 +185,7 @@ async function buildBookmarksListPopup() {
     }
 
     bookmarksData.forEach((data) => {
-        const audiobook = data.audiobook;
-        const bookmarks = data.bookmarks;
-        insertAudiobookEntry(audiobook, bookmarks);
+        insertAudiobookEntry(data.audiobook, data.bookmarksData);
     })
 }
 

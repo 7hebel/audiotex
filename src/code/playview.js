@@ -62,7 +62,7 @@ Array.from(document.getElementsByClassName("feature-btn")).forEach(el => {
 
 /// Manually seek track.
 playBar.addEventListener("input", (e) => {
-    if (!audioPlayer) return;
+    if (!audioPlayer || isNaN(audioPlayer.duration)) return;
 
     const newProgress = playBar.value / 1000;
     const newTime = newProgress * audioPlayer.duration;
@@ -97,8 +97,8 @@ audioPlayer.addEventListener("timeupdate", async (e) => {
 
     const ab_id = parseInt(audioPlayer.getAttribute("ab-id"));
     if (ab_id) {
-        const progress = await window.backend.calculateAudiobookProgress(ab_id);
-        document.getElementById(String(ab_id)).querySelectorAll(".ab-meta")[1].textContent = `${progress}%`;
+        const progress = await window.backend.getAudiobookProgress(ab_id);
+        document.getElementById(String(ab_id)).querySelector(".ab-meta").textContent = `${progress}%`;
     }
 
     updateTimeInformation(current, total);
@@ -174,11 +174,10 @@ function setPlaySpeed(rate) {
 setInterval(() => {
     if (!audioPlayer.paused) {
         const abId = audioPlayer.getAttribute("ab-id");
-        const trackId = audioPlayer.getAttribute("track-id");
-        if (!abId || !trackId) return;
+        const trackIndex = audioPlayer.getAttribute("track-index");
+        if (!abId || !trackIndex) return;
 
-        const currentMoment_s = audioPlayer.currentTime;
-        window.backend.updateAudiobookState(abId, trackId, currentMoment_s, speedControl.value);
+        window.backend.updatePlaybackState(abId, trackIndex, audioPlayer.currentTime, speedControl.value);
     }
 }, 1000)
 
@@ -189,14 +188,14 @@ function placeBarBookmarks(track) {
     bookmarksContainer.innerHTML = "";
 
     track.bookmarks.forEach((bookmark) => {
-        const timePercentage = (bookmark.moment_s / track.total_seconds) * 100;
+        const timePercentage = (bookmark.moment_s / track.totalSeconds) * 100;
     
         const bookmarkItem = document.createElement("div");
         bookmarkItem.className = "on-bar-bookmark";
         bookmarkItem.style = `left: calc(${timePercentage}% - 4px)`;
         bookmarkItem.setAttribute("hovered", "0");
         bookmarkItem.innerHTML = `<i class="fa-solid fa-bookmark" onclick="seekAudioAt(${bookmark.moment_s});"></i>`;
-    
+
         const bookmarkComment = document.createElement("span");
         bookmarkComment.className = "bookmark-comment";
         if (bookmark.comment) bookmarkComment.textContent = bookmark.comment;
@@ -206,8 +205,8 @@ function placeBarBookmarks(track) {
         rmBookmarkIcon.className = "rm-bookmark-icon";
         rmBookmarkIcon.onclick = async () => {
             bookmarksContainer.removeChild(bookmarkItem);
-            await window.backend.removeBookmark(bookmark.id);
-            document.getElementById(`cv-idx-${track.idx}`).setAttribute("bookmarked", "0");
+            await window.backend.deleteBookmark(bookmark.id);
+            document.getElementById(`cv-idx-${track.index}`).setAttribute("bookmarked", "0");
             displayInfoMessage(`Removed bookmark: ${secondsToReadable(bookmark.moment_s)}`);
 
             if (bookmarksListPopup.getAttribute("show") == "1") buildBookmarksListPopup();
@@ -265,36 +264,43 @@ function placeBarBookmarks(track) {
 
 async function setupAudiobookPlay(ab_id, track_id = null) {
     // If track-id is null, resume from the latest session.
-    const data = await window.backend.playAudiobook(ab_id, track_id);
+    const data = await window.backend.fetchAudiobook(ab_id);
     if (data === undefined) return;
 
-    const allTracks = await window.backend.getAllTracks(ab_id);
+    let track = null;
+    for (const t of data.tracks) {
+        if (track_id === null && t.index == data.currTrack || t.id == track_id) {
+            track = t;
+            break;
+        }
+    }
 
-    const ab = data.audiobook;
-    const track = data.track;
+    if (track === null) return;
 
-    document.getElementById("pv-cover").src = ab.cover_src ? ab.cover_src : './src/default-cover.png';
+    document.getElementById("pv-cover").src = data.coverSrc ? data.coverSrc : './src/default-cover.png';
 
-    const progress = await window.backend.calculateAudiobookProgress(ab_id);
-    document.getElementById(String(ab_id)).querySelectorAll(".ab-meta")[1].textContent = `${progress}%`;
+    const progress = await window.backend.getAudiobookProgress(ab_id);
+    document.getElementById(String(ab_id)).querySelector(".ab-meta").textContent = `${progress}%`;
 
     audioPlayer.src = track.filepath;
-    setTrackMeta(track.id, track.idx, ab.id);
-    setTrackData(track.title, ab.title);
-    setPlaySpeed(ab.play_speed);
+    setTrackMeta(track.id, track.index, data.id);
+    setTrackData(track.title, data.title);
+    setPlaySpeed(data.playSpeed);
 
-    if (track_id === null) seekAudioAt(ab.curr_moment_s);
-    else {
+    if (track_id === null) {
+        seekAudioAt(data.currMomentS);
+    } else {
         playBar.value = 0;
         playBar.style.setProperty('--play-bar-value', `0%`);
-        document.getElementById("pv-track-time").textContent = "00:00 / " + track.total_time;
+        document.getElementById("pv-track-time").textContent = "00:00 / " + track.totalTime;
     }
 
     placeBarBookmarks(track);
 
     const state = await window.state.get();
     setAudioVolume(state.volume);
-    populateContentView(ab, allTracks, track.id);
+    populateContentView(data, data.tracks, track.id);
+
 }
 
 /// Button: Play next track
@@ -302,9 +308,9 @@ async function playNextTrack() {
     const ab_id = audioPlayer.getAttribute("ab-id");
     const nextIndex = parseInt(audioPlayer.getAttribute("track-index")) + 1;
     const nextTrack = await window.backend.getTrackByIndex(ab_id, nextIndex);
-    if (nextTrack === undefined) return;
+    if (!nextTrack) return;
     
-    setupAudiobookPlay(ab_id, nextTrack.id).then(() => { playAudio() });
+    setupAudiobookPlay(ab_id, nextTrack.id).then(() => { playAudio(); });
 }
 
 /// Button: Play previous track
@@ -321,7 +327,6 @@ document.getElementById("previous-track-btn").addEventListener('click', async ()
 
 /// Button: Add bookmark
 let addBookmarkFormUsed = false;
-
 document.getElementById("add-bookmark").addEventListener('click', async () => {
     if (addBookmarkFormUsed) return;
     addBookmarkFormUsed = true;
@@ -352,7 +357,7 @@ async function acceptBookmarkForm() {
     const track = await window.backend.getTrackById(trackId);
     placeBarBookmarks(track);
 
-    document.getElementById(`cv-idx-${track.idx}`).setAttribute("bookmarked", "1");
+    document.getElementById(`cv-idx-${track.index}`).setAttribute("bookmarked", "1");
 
     if (infoPopupContainer.getAttribute("target") == audioPlayer.getAttribute("ab-id")) {
         const infoItem = document.querySelector(`.info-track-item[track-id="${trackId}"] .info-track-item-bookmarks`);

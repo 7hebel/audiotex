@@ -24,12 +24,10 @@ function closeAuthorviewPopup() {
 
 
 async function buildAuthorview(authorName) {
-    const author = await window.backend.getAuthorData(authorName);
+    const author = await window.backend.fetchAuthor(authorName);
 
     document.getElementById("author-name").textContent = authorName;
-    document.getElementById("author-count").textContent = `${author.audiobooks.length} audiobooks`;
-    document.getElementById("author-cover").style.backgroundImage = `url('${author.imgUrl}')`;
-
+    document.getElementById("author-cover").style.backgroundImage = `url('${author.picture}')`;
 
     authorviewContainer.innerHTML = "";
     author.audiobooks.forEach((audiobook) => {
@@ -46,7 +44,7 @@ async function buildAuthorview(authorName) {
 
         const cover = document.createElement("img");
         cover.className = "authorview-item-cover";
-        cover.src = audiobook.cover_src ? audiobook.cover_src : './src/default-cover.png';
+        cover.src = audiobook.coverSrc ? audiobook.coverSrc : './src/default-cover.png';
         left.appendChild(cover);
 
         const meta = document.createElement("div");
@@ -112,7 +110,7 @@ function acceptRenameAuthorForm() {
 
 
 async function renameAuthor(targetName, newName) {
-    const allAuthors = await window.backend.getAuthors();
+    const allAuthors = await window.backend.fetchAllAuthors();
     for (const author of allAuthors) {
         if (author.author == newName) return displayErrorMessage("This name is already taken.");
     }
@@ -129,7 +127,7 @@ async function renameAuthor(targetName, newName) {
 
 async function updateAuthorCover() {
     const authorName = document.getElementById('author-name').textContent;
-    const newUrl = await window.backend.updateAuthorAvatar(authorName);
+    const newUrl = await window.backend.shuffleAuthorPicture(authorName);
     document.getElementById("author-cover").style.backgroundImage = `url('${newUrl}')`;
     document.getElementById(`author-${authorName}`).querySelector(".ab-cover").style.backgroundImage = `url('${newUrl}')`;
     displayInfoMessage(`Updated cover for ${authorName}`);

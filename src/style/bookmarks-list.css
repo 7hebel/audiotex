@@ -1,36 +1,3 @@
-#bookmarks-list-popup[show="0"] {
-    display: none;
-}
-
-#bookmarks-list-popup[show="1"] {
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    z-index: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    backdrop-filter: blur(10px);
-    transition: opacity .15s;
-}
-
-#bm-list-window {
-    width: 1050px;
-    min-height: 650px;
-    max-height: 650px;
-    height: 650px;
-    background-color: #151518;
-    border-radius: 12px;
-    border: 1px solid #43434326;
-    padding: 10px;
-    padding-right: 7px;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0px 0px 20px 2px rgba(0, 0, 0, 0.479);
-    overflow-y: scroll;
-    gap: 12px
-}
-
 .bm-list-ab-entry {
     height: fit-content;
     width: 100%;
@@ -92,7 +59,7 @@
 
 .bm-list-header-bm-count {
     font-family: 'Code';
-    color: #a2a9e3;
+    color: var(--bookmark-color);
     display: flex;
     flex-direction: row;
     gap: 8px;
@@ -144,7 +111,7 @@
 }
 
 .bm-list-track-time {
-    color: #5e6370;
+    color: #818199;
     padding-inline: 4px;
     border-radius: 4px;
     background-color: #393c4f1c;

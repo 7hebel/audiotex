@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
-    
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://kit.fontawesome.com/e526ea242b.js" crossorigin="anonymous"></script>
-    
+
     <script>
-        window.ipcRenderer.on('msg-info', (event, message) => { displayInfoMessage(message) });
-        window.ipcRenderer.on('msg-error', (event, message) => { displayErrorMessage(message) });
+        window.ipcRenderer.on('MSG:info', (event, message) => { displayInfoMessage(message) });
+        window.ipcRenderer.on('MSG:error', (event, message) => { displayErrorMessage(message) });
     </script>
 
     <script src="src/code/lib/butterup/butterup.min.js"></script>
     <link rel="stylesheet" href="src/code/lib/butterup/butterup.min.css">
-    
+
     <script defer src="src/code/bookmarks-list.js"></script>
     <script defer src="src/code/contentview.js"></script>
     <script defer src="src/code/info-popup.js"></script>
     <script defer src="src/code/authorview.js"></script>
-    <script defer src="backend/timeutils.js"></script>
+    <script defer src="src/code/timeutils.js"></script>
     <script defer src="src/code/playview.js"></script>
     <script defer src="src/code/shelf.js"></script>
 
@@ -26,6 +26,7 @@
     <link rel="stylesheet" href="src/style/form.css">
     <link rel="stylesheet" href="src/style/info.css">
     <link rel="stylesheet" href="src/style/shelf.css">
+    <link rel="stylesheet" href="src/style/window.css">
     <link rel="stylesheet" href="src/style/playview.css">
     <link rel="stylesheet" href="src/style/authorview.css">
     <link rel="stylesheet" href="src/style/contentview.css">
@@ -39,12 +40,12 @@
         AudioTex
     </div>
 
-    <div id="ab-info-popup" show="0" edit="0" target="-1" style="opacity: 0">
-        <div class="info-window">
+    <div id="ab-info-popup" class="popup" show="0" edit="0" target="-1" style="opacity: 0">
+        <div class="window">
             <div class="info-meta-part">
                 <img id="info-cover" class="info-editable" src="src/default-cover.png" onclick="changeAudiobookCover()">
                 <h5 id="info-title" class="info-editable">-</h5>
-                
+
                 <div class="meta-container">
                     <div class="info-meta-entry">
                         <div class="meta-entry-icon">
@@ -63,8 +64,8 @@
                         <div class="meta-entry-icon">
                             <i class="fa-regular fa-folder"></i>
                         </div>
-                        <span id="info-path">-</span>
-                        <i id="goto-author-btn" class="fa-solid fa-angle-right" onclick="window.backend.openPathInExplorer(document.getElementById('info-path').textContent)"></i>
+                        <span id="info-path">open location</span>
+                        <i id="goto-author-btn" class="fa-solid fa-angle-right" onclick="window.backend.openPathInExplorer(document.getElementById('info-path').getAttribute('path'))"></i>
                     </div>
                     <div class="info-meta-entry info-not-editable">
                         <div class="meta-entry-icon">
@@ -89,7 +90,8 @@
                             <i class="fa-solid fa-bookmark"></i>
                         </div>
                         <span id="info-bookmarks">-</span>
-                        <i id="goto-bookmarks-btn" class="fa-solid fa-angle-right" onclick="buildBookmarksListPopup(); openBookmarksListPopup()"></i>
+                        <i id="goto-bookmarks-btn" class="fa-solid fa-angle-right"
+                            onclick="buildBookmarksListPopup(); openBookmarksListPopup()"></i>
                     </div>
                 </div>
 
@@ -117,26 +119,25 @@
                     </button>
                 </div>
             </div>
-            
+
             <div class="vertical-sep"></div>
 
             <div class="info-tracks-part">
                 <div id="info-tracks-table"></div>
-            </div>            
+            </div>
         </div>
     </div>
 
-    <div id="bookmarks-list-popup" show="0" style="opacity: 0">
-        <div id="bm-list-window"></div>
+    <div id="bookmarks-list-popup" class="popup" show="0" style="opacity: 0">
+        <div id="bm-list-window" class="window"></div>
     </div>
 
-    <div id="author-popup" show="0" style="opacity: 0">
-        <div id="author-window">
+    <div id="author-popup" class="popup" show="0" style="opacity: 0">
+        <div id="author-window" class="window">
             <div class="author-meta">
                 <div class="author-meta-top">
                     <div id="author-cover" style="background-image: url('./src/default-author.png');"></div>
                     <span id="author-name">-</span>
-                    <span class="ab-author" id="author-count">- audiobooks</span>
                 </div>
                 <div class="author-meta-bottom">
                     <button class="form-btn form-btn-cancel" onclick="openRenameAuthorForm()">
@@ -153,59 +154,55 @@
         </div>
     </div>
 
+    <div id="shelf-ctx-menu" style="display: none;" target="-1">
+        <span class="shelf-ctx-menu-entry" onclick="contextMenu_about();">
+            <i class="fa-solid fa-circle-info"></i>
+            About
+        </span>
+        <span class="shelf-ctx-menu-entry" onclick="contextMenu_play()">
+            <i class="fa-solid fa-play"></i>
+            Play
+        </span>
+        <span class="shelf-ctx-menu-entry" onclick="contextMenu_finish()">
+            <i class="fa-solid fa-check"></i>
+            Finish
+        </span>
+        <span class="shelf-ctx-menu-entry" onclick="contextMenu_delete()">
+            <i class="fa-solid fa-trash"></i>
+            Delete
+        </span>
+    </div>
+
     <div class="shelf">
-        <div id="shelf-container">
-            <div class="shelf-category-header">
-                <i class="fa-solid fa-angle-down" onclick="switchSectionCollapse(this, `shelf-audiobooks-container`)"></i>
-                <div class="shelf-category-header-mid">
-                    <div class="shelf-category-title-sep"></div>
-                    <span class="shelf-category-title">
-                        <i class="fa-solid fa-headphones"></i>
-                        Audiobooks
-                    </span>
-                    <div class="shelf-category-title-sep"></div>
-                </div>
-                <div class="shelf-category-actions-group">
-                    <button class="shelf-category-action-btn" id="add-audiobook">
-                        <i class="fa-solid fa-upload"></i>
-                        Import audiobook(s)
-                    </button>
-                </div>
-            </div>
-            <div class="shelf-category-container" id="shelf-audiobooks-container" collapsed="0">
-                <span class="blank-shelf-category">There are no audiobooks.</span>
+        <div class="shelf-controls-container">
+            <div class="shelf-control" id="add-audiobook">
+                <i class="fa-solid fa-book"></i>
+                Import
             </div>
 
-            <div class="shelf-category-header">
-                <i class="fa-solid fa-angle-down" onclick="switchSectionCollapse(this, `shelf-authors-container`)"></i>
-                <div class="shelf-category-header-mid">
-                    <div class="shelf-category-title-sep"></div>
-                    <span class="shelf-category-title">
-                        <i class="fa-solid fa-circle-user"></i>
-                        Authors
-                    </span>
-                    <div class="shelf-category-title-sep"></div>
-                </div>
+            <div class="shelf-control" id="shelf-category-bar">
+                <span class="shelf-control-picker" active="1" onclick="switchShelfMode(this, 0)">All</span>
+                <div class="shelf-control-sep"></div>
+                <span class="shelf-control-picker" active="0" onclick="switchShelfMode(this, 1)">In progress</span>
+                <div class="shelf-control-sep"></div>
+                <span class="shelf-control-picker" active="0" onclick="switchShelfMode(this, 2)">Not started</span>
+                <div class="shelf-control-sep"></div>
+                <span class="shelf-control-picker" active="0" onclick="switchShelfMode(this, 3)">Finished</span>
+                <div class="shelf-control-sep"></div>
+                <span class="shelf-control-picker" active="0" onclick="switchShelfMode(this, 4)">Authors</span>
             </div>
-            <div class="shelf-category-container" id="shelf-authors-container" collapsed="0">
-                <span class="blank-shelf-category">There are no authors.</span>
+
+            <div class="shelf-control" id="shelf-display-type">
+                <div class="shelf-control-picker" active="1" onclick="setDisplayType(this, 'cards')">
+                    <i class="fa-solid fa-table-cells-large"></i>
+                </div>
+                <div class="shelf-control-picker" active="0" onclick="setDisplayType(this, 'list')">
+                    <i class="fa-solid fa-list"></i>
+                </div>
             </div>
         </div>
 
-        <div class="user-form" id="rename-author-form" show="0" style="right: -400px; opacity: 0;">
-            <label class="form-label" for="rename-author-name">Rename:</label>
-            <input class="user-form-input" id="rename-author-name" placeholder="name..." maxlength="50">
-            <div class="form-buttons">
-                <button class="form-btn form-btn-primary" onclick="acceptRenameAuthorForm()">
-                    <i class="fa-solid fa-pen"></i>
-                    Rename
-                </button>
-                <button class="form-btn form-btn-cancel" onclick="closeRenameAuthorForm()">
-                    <i class="fa-solid fa-xmark"></i>
-                    Cancel
-                </button>
-            </div>
-        </div>
+        <div id="shelf-container" displayType="cards"></div>
     </div>
 
     <div class="contentview" show="0" style="top: 100%; opacity: 0;">
@@ -231,7 +228,8 @@
                 <button class="flow-ctrl-btn" id="previous-track-btn">
                     <i class="fa-solid fa-backward-step"></i>
                 </button>
-                <button class="flow-ctrl-btn" id="play-state-track-btn" onclick="audioPlayer.paused ? playAudio() : pauseAudio()">
+                <button class="flow-ctrl-btn" id="play-state-track-btn"
+                    onclick="audioPlayer.paused ? playAudio() : pauseAudio()">
                     <i id="play-state-icon" class="fa-solid fa-play"></i>
                 </button>
                 <button class="flow-ctrl-btn" id="next-track-btn" onclick="playNextTrack()">
@@ -239,29 +237,31 @@
                 </button>
                 <span id="pv-track-time">00:00 / 00:00</span>
             </div>
-            
+
             <div class="current-info-group" onclick="showContentView()">
                 <span id="pv-curr-track">-</span>
                 <span id="pv-curr-audiobook">AudioTex</span>
             </div>
-            
+
             <div class="features-group">
                 <button class="feature-btn" id="volume-control-btn" showContent="0">
                     <i class="fa-solid fa-volume-low" id="volume-icon"></i>
                     <div class="feature-range-container" style="opacity: 0;">
                         <div class="feature-range-bg">
                             <span class="feature-value" id="volume-info-value">50%</span>
-                            <input type="range" id="volume-bar" class="feature-range" orient="vertical" min="0" max="100" value="50">
+                            <input type="range" id="volume-bar" class="feature-range" orient="vertical" min="0"
+                                max="100" value="50">
                         </div>
                     </div>
                 </button>
-                
+
                 <button class="feature-btn" id="speed-control-btn" showContent="0">
                     <i class="fa-solid fa-gauge-high"></i>
                     <div class="feature-range-container" style="opacity: 0;">
                         <div class="feature-range-bg">
                             <span class="feature-value" id="speed-info-value">1x</span>
-                            <input type="range" id="speed-bar" class="feature-range" orient="vertical" min="0.5" max="2" value="1" step="0.1">
+                            <input type="range" id="speed-bar" class="feature-range" orient="vertical" min="0.5" max="2"
+                                value="1" step="0.1">
                         </div>
                     </div>
                 </button>
@@ -274,19 +274,36 @@
                     <i class="fa-solid fa-angle-up"></i>
                 </button>
             </div>
+        </div>
+    </div>
 
-            <div class="user-form" id="add-bookmark-form" show="0" style="right: -400px; opacity: 0;" target-s="-1">
-                <textarea id="add-bookmark-comment" maxlength="200" placeholder="Optional comment"></textarea>
-                <div class="form-buttons">
-                    <button class="form-btn form-btn-primary" onclick="acceptBookmarkForm()">
-                        <i class="fa-solid fa-bookmark"></i>
-                        Bookmark <span id="add-bookmark-time"></span>
-                    </button>
-                    <button class="form-btn form-btn-cancel" onclick="cancelBookmarkForm()">
-                        <i class="fa-solid fa-xmark"></i>
-                        Cancel
-                    </button>
-                </div>
+    <div class="forms">
+        <div class="user-form" id="rename-author-form" show="0" style="right: -400px; opacity: 0;">
+            <label class="form-label" for="rename-author-name">Rename:</label>
+            <input class="user-form-input" id="rename-author-name" placeholder="name..." maxlength="50">
+            <div class="form-buttons">
+                <button class="form-btn form-btn-primary" onclick="acceptRenameAuthorForm()">
+                    <i class="fa-solid fa-pen"></i>
+                    Rename
+                </button>
+                <button class="form-btn form-btn-cancel" onclick="closeRenameAuthorForm()">
+                    <i class="fa-solid fa-xmark"></i>
+                    Cancel
+                </button>
+            </div>
+        </div>
+        
+        <div class="user-form" id="add-bookmark-form" show="0" style="right: -400px; opacity: 0;" target-s="-1">
+            <textarea id="add-bookmark-comment" maxlength="200" placeholder="Optional comment"></textarea>
+            <div class="form-buttons">
+                <button class="form-btn form-btn-primary" onclick="acceptBookmarkForm()">
+                    <i class="fa-solid fa-bookmark"></i>
+                    Bookmark <span id="add-bookmark-time"></span>
+                </button>
+                <button class="form-btn form-btn-cancel" onclick="cancelBookmarkForm()">
+                    <i class="fa-solid fa-xmark"></i>
+                    Cancel
+                </button>
             </div>
         </div>
     </div>

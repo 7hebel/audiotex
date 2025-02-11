@@ -116,22 +116,24 @@ function getDragAfterElement(container, y) {
 function populateInfoPopup(ab_id) {
     document.getElementById("ab-info-popup").setAttribute("target", ab_id);
 
-    window.backend.getAudiobookData(ab_id).then((ab) => {
-        document.getElementById("info-cover").src = ab.cover_src ? ab.cover_src : 'src/default-cover.png';
+    window.backend.fetchAudiobook(ab_id).then((ab) => {
+        const totalTracks = ab.tracks.length;
+        
+        document.getElementById("info-cover").src = ab.coverSrc ? ab.coverSrc : 'src/default-cover.png';
         document.getElementById("info-author").textContent = ab.author;
         document.getElementById("info-title").textContent = ab.title;
-        document.getElementById("info-duration").textContent = ab.total_time;
-        document.getElementById("info-path").textContent = ab.dirpath;
-        document.getElementById("info-items").textContent = ab.total_tracks + " items";
-        document.getElementById("info-progress").textContent = ab.curr_track + "/" + ab.total_tracks + " - " + ab.progress + "%";
-        document.getElementById("info-recent").textContent = ab.last_listened;
-        document.getElementById("info-bookmarks").textContent = (ab.bookmarksCount == 0) ? "No bookmarks" : ab.bookmarksCount + " bookmarks";
-    })
+        document.getElementById("info-duration").textContent = ab.totalTime;
+        document.getElementById("info-items").textContent = totalTracks + " items";
+        document.getElementById("info-progress").textContent = ab.currTrack + "/" + totalTracks + " - " + ab.progress + "%";
+        document.getElementById("info-recent").textContent = ab.lastListened;
+        document.getElementById("info-bookmarks").textContent = (ab.bookmarks.length == 0) ? "No bookmarks" : ab.bookmarks.length + " bookmarks";
+        
+        document.getElementById('info-path').setAttribute('path', ab.dirPath)
 
-    const tracksContainer = document.getElementById("info-tracks-table");
-    tracksContainer.innerHTML = "";
+        const tracks = ab.tracks;
+        const tracksContainer = document.getElementById("info-tracks-table");
+        tracksContainer.innerHTML = "";
 
-    window.backend.getAllTracks(ab_id).then((tracks) => {
         for (const track of tracks) {
             const trackItem = document.createElement("div");
             trackItem.className = "info-track-item";
@@ -140,7 +142,7 @@ function populateInfoPopup(ab_id) {
 
             const index = document.createElement("span");
             index.className = "info-track-item-index";
-            index.textContent = track.idx;
+            index.textContent = track.index;
             trackItem.appendChild(index);
 
             const title = document.createElement("span");
@@ -155,7 +157,7 @@ function populateInfoPopup(ab_id) {
             trackItem.appendChild(title);
 
             const bookmarks = document.createElement("span");
-            const bookmarksCount = track.bookmarks.length;
+            const bookmarksCount = 0;//track.bookmarks.length;
             bookmarks.className = "info-track-item-bookmarks";
             if (bookmarksCount > 0) {
                 bookmarks.innerHTML = `${bookmarksCount} <i class="fa-solid fa-bookmark"></i>`
@@ -165,7 +167,7 @@ function populateInfoPopup(ab_id) {
 
             const time = document.createElement("span");
             time.className = "info-track-item-time";
-            time.textContent = track.total_time;
+            time.textContent = track.totalTime;
             trackItem.appendChild(time);
 
             tracksContainer.appendChild(trackItem);
@@ -191,12 +193,12 @@ saveAudiobookBtn.addEventListener('click', async () => {
         ])
     });
 
-    await window.backend.updateAudiobookMeta(ab_id, newTitle, newAuthor, newTracksOrder);
+    await window.backend.editAudiobook(ab_id, newTitle, newAuthor, newTracksOrder);
     acceptInfoEditChanges();
 
     if (ab_id == audioPlayer.getAttribute("ab-id")) {
         document.getElementById("pv-curr-audiobook").textContent = newTitle;
-        const audiobook = await window.backend.getAudiobookData(ab_id);
+        const audiobook = await window.backend.fetchAudiobook(ab_id);
         const allTracks = await window.backend.getAllTracks(ab_id);
         populateContentView(audiobook, allTracks, parseInt(audioPlayer.getAttribute("track-id")));
     }
@@ -217,10 +219,9 @@ deleteAudiobookBtn.addEventListener('click', async () => {
 
 async function changeAudiobookCover() {
     const ab_id = document.getElementById("ab-info-popup").getAttribute("target");
-    const newPath = await window.backend.chooseAudiobookCoverFile(ab_id);
+    const newPath = await window.backend.switchAudiobookCover(ab_id);
 
     if (newPath) {
-        console.log("changed to:", newPath)
         document.getElementById("info-cover").src = newPath;
         document.getElementById(`${ab_id}`).querySelector(".ab-cover").style.backgroundImage = `url('${newPath}')`;
         displayInfoMessage("Cover image updated.")

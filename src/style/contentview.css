@@ -109,7 +109,7 @@
 
 .cv-item-bookmark {
     font-size: 12px;
-    color: #a2a9e3;
+    color: var(--bookmark-color);
 }
 
 .cv-item-title {

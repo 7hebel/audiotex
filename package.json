@@ -1,25 +1,20 @@
 {
   "name": "audiotex",
-  "version": "1.0.0",
-  "description": "Audiobooks manager",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "electron .",
-    "build": "electron-builder"
-  },
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "electron": "^34.0.0",
-    "electron-builder": "^25.1.8",
-    "electron-rebuild": "^3.2.9"
-  },
   "dependencies": {
-    "better-sqlite3": "^11.8.0",
+    "@types/axios": "^0.14.4",
+    "@types/better-sqlite3": "^7.6.12",
+    "axios": "^1.7.9",
+    "better-sqlite3": "^11.8.1",
+    "electron": "^34.1.0",
     "google-img-scrap": "^1.1.4",
-    "images-scraper": "^6.4.0",
-    "music-metadata": "^10.7.0"
+    "music-metadata": "^10.8.3",
+    "path": "^0.12.7",
+    "typescript": "^5.7.3"
+  },
+  "main": "build/main.js",
+  "scripts": {
+    "start": "tsc && electron .",
+    "build": "electron-builder"
   },
   "postinstall": "electron-builder install-app-deps",
   "build": {
