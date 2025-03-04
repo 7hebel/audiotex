@@ -35,7 +35,7 @@ function initializeWindow() {
     
     mainWindow.setMenu(null);
     mainWindow.loadFile('index.html');
-    // mainWindow.webContents.openDevTools();
+    mainWindow.webContents.openDevTools();
 
     console.log(path.join(__dirname, '/src/icon/prev.png'));
 
