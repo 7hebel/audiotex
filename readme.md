@@ -1,6 +1,6 @@
 <div align="center">
     <br>
-    <img src="./assets/baner.png" width="280" alt="AudioTex" />
+    <img src="./assets/banner.png" alt="AudioTex" />
     <br>
     <h4>Modern audiobooks library.</h4>
 </div>
